@@ -1,6 +1,7 @@
 package com.example.farmealotu.ui.screens.geo
 
 import android.content.Context
+import com.example.farmealotu.BuildConfig
 import android.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -41,8 +42,10 @@ private fun configureOsmdroid(context: Context) {
     val base = File(context.cacheDir, "osmdroid")
     config.osmdroidBasePath = base
     config.osmdroidTileCache = File(base, "tiles")
-    // La política de teselas de OpenStreetMap exige identificar a la aplicación.
-    config.userAgentValue = context.packageName
+    // La política de teselas de OpenStreetMap exige identificar a la aplicación con un nombre propio.
+    // OSM bloquea (HTTP 403) los identificadores genéricos como «com.example.*», que es nuestro
+    // applicationId: por eso no se usa context.packageName. Sin datos personales en el encabezado.
+    config.userAgentValue = "FarmealoTu-Android/${BuildConfig.VERSION_NAME}"
 }
 
 /** Fuente XYZ/WMTS-REST a partir de una plantilla con {z}/{x}/{y} o {TileMatrix}/{TileCol}/{TileRow}. */
