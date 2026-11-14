@@ -8,7 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.farmealotu.ui.navigation.FarmealoTuNavHost
 import com.example.farmealotu.ui.theme.FarmealoTuTheme
-
+//xd
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
