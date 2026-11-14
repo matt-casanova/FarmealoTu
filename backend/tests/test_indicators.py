@@ -62,10 +62,15 @@ def test_heavy_rain_dry_month_no_threshold():
 def test_monthly_grid_and_campaigns_synthetic():
     df = _synthetic()
     g = I.monthly_grid(df)
-    assert g["years"] == list(range(2015, 2026)) and len(g["cells"]) == 11 * 12
-    c = g["cells"][0]
-    assert c["rain_mm"] == 62.0 and c["rain_anomaly_pct"] == 0.0 and c["complete"]
-    assert c["effective_rain_mm"] == 27.2    # 0.6·62 − 10
+    assert g["years"] == list(range(2015, 2026))
+    s = {x["id"]: x for x in g["indicators"]}
+    assert "et0_total" not in s              # serie sin ningún valor → se omite
+    assert len(s["rain_total"]["cells"]) == 11 * 12 and s["rain_total"]["unit"] == "mm"
+    c0 = {k: v["cells"][0] for k, v in s.items()}
+    assert c0["rain_total"]["value"] == 62.0 and c0["rain_anomaly"]["value"] == 0.0
+    assert c0["rain_total"]["quality"] == "ok"
+    assert c0["effective_rain_total"]["value"] == 27.2    # 0.6·62 − 10
+    assert s["effective_rain_total"]["evidence_status"] == "assumption"
     camps = I.campaign_indicators(df)
     full = camps[camps["complete"]]
     assert set(full["season"]) == {"verano", "invierno"}
@@ -76,8 +81,9 @@ def test_monthly_grid_and_campaigns_synthetic():
 
 def test_monthly_grid_zero_climatology_gives_null_anomaly():
     df = _synthetic(rain=0.0)
-    cell = I.monthly_grid(df)["cells"][5]
-    assert cell["rain_mm"] == 0.0 and cell["rain_anomaly_pct"] is None
+    s = {x["id"]: x for x in I.monthly_grid(df)["indicators"]}
+    assert s["rain_total"]["cells"][5]["value"] == 0.0
+    assert "rain_anomaly" not in s           # media 0 en todos los meses → anomalía no definida en ninguna celda
 
 
 # --------------------------------------------------------------------------- caché real
@@ -92,11 +98,14 @@ def response(real_df):
 
 
 def test_response_contract_shape(response):
-    for k in ("site", "source", "data_window", "period", "quality", "indicators", "monthly_grid",
-              "campaigns", "campaign_definition", "limitations"):
+    for k in ("site", "source", "last_observation_date", "data_window", "period", "period_detail", "quality",
+              "indicators", "monthly_grid", "campaigns", "campaign_definition", "limitations"):
         assert k in response
     assert response["site"]["elevation_m"] == pytest.approx(276.15)
-    assert response["period"]["start"] == "2026-01-01"
+    assert response["period_detail"]["start"] == "2026-01-01" and isinstance(response["period"], str)
+    assert "2026-11" in response["last_observation_date"]
+    for ind in response["indicators"]:      # campos que lee la app Android (DtoMappers de Kendra)
+        assert isinstance(ind["period"], str) and ind["description"] and "valid_days" in ind["quality"]
     assert "regional" in response["source"]["scale"]
     json.dumps(response)  # serializable (sin numpy ni NaN)
     assert "NaN" not in json.dumps(response)
@@ -121,9 +130,12 @@ def test_real_values_plausible(response):
 
 
 def test_real_grid_and_years(real_df, response):
-    cells = response["monthly_grid"]["cells"]
+    series = {x["id"]: x for x in response["monthly_grid"]["indicators"]}
+    cells = series["rain_anomaly"]["cells"]
     assert cells[0]["year"] == 2015 and cells[-1]["year"] == 2026
-    assert all(c["rain_anomaly_pct"] is None for c in cells if not c["complete"])
+    assert all(c["value"] is None for c in cells if c["quality"] != "ok")
+    for s in series.values():
+        assert s["unit"] and s["source"] and "regional" in s["scale"] and s["evidence_status"]
     years = I.yearly_indicators(real_df)
     # nov-2015 → oct-2026: 11 años agrícolas completos (2015-16 … 2025-26)
     assert len(years) == 11 and years["agro_year"].iloc[0] == "2015-16"
@@ -139,7 +151,7 @@ def test_s2_drought_window_is_dry(real_df):
 
 def test_campaign_period_and_bad_period(real_df):
     r = I.build_indicators_response("campaign:verano-2025-26", df=real_df)
-    assert r["period"]["start"] == "2025-11-01" and r["period"]["end"] == "2026-04-30"
+    assert r["period_detail"]["start"] == "2025-11-01" and r["period_detail"]["end"] == "2026-04-30"
     with pytest.raises(ValueError):
         I.build_indicators_response("campaign:otono-1999", df=real_df)
     with pytest.raises(ValueError):

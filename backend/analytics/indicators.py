@@ -199,8 +199,41 @@ def _block_stats(w: pd.DataFrame, p90: pd.Series, p95: pd.Series, heat_thr: floa
     return d
 
 
+GRID_SERIES = [  # (campo de celda, id, nombre, unidad, fuente, evidence_status, descripción)
+    ("rain_mm", "rain_total", "Lluvia mensual", "mm", SOURCE_P, "derived", "suma de la lluvia diaria del mes"),
+    ("rain_anomaly_pct", "rain_anomaly", "Anomalía de lluvia", "%", SOURCE_P, "derived",
+     "vs. media 2015–2025 del mismo mes; sin dato si el mes está incompleto"),
+    ("dry_spell_max_days", "dry_spell_max", "Racha seca máxima", "días", SOURCE_P, "derived",
+     "días consecutivos con P < 1 mm/día dentro del mes"),
+    ("heat_days", "heat_days", "Días de calor", "días", SOURCE_TMAX, "derived",
+     "Tmáx > P90 histórico del mes (indicador meteorológico general; no afirma daño a un cultivo)"),
+    ("heavy_rain_days", "heavy_rain_days", "Días de lluvia intensa", "días", SOURCE_P, "derived",
+     "P > P95 de los días húmedos del mes (exposición; no predice inundación)"),
+    ("effective_rain_mm", "effective_rain_total", "Lluvia efectiva", "mm", SOURCE_P, "assumption",
+     "método empírico FAO (Brouwer y Heibloem 1986)"),
+    ("et0_mm", "et0_total", "ET0 FAO-56", "mm", "NASA POWER + FAO-56 (physics.py)", "derived",
+     "evapotranspiración de referencia mensual"),
+]
+
+
 def monthly_grid(df: pd.DataFrame, et0: pd.Series | None = None) -> dict:
-    """Grilla meses × años para el mapa de calor (módulo Riesgos)."""
+    """Grilla meses × años para el mapa de calor (módulo Riesgos), una serie por indicador.
+    Forma: {"years", "months", "indicators": [{id, name, unit, source, scale, evidence_status,
+    description, cells: [{year, month, value, valid_days, quality}]}]}. Series sin ningún valor se omiten."""
+    cells = _monthly_cells(df, et0)
+    series = []
+    for field, id_, name, unit, src, status, desc in GRID_SERIES:
+        sc = [{"year": c["year"], "month": c["month"], "value": c[field], "valid_days": c["valid_days"],
+               "quality": "ok" if c["complete"] else "incomplete"} for c in cells]
+        if all(x["value"] is None for x in sc):
+            continue
+        series.append({"id": id_, "name": name, "unit": unit, "source": src, "scale": P.SCALE_LABEL,
+                       "evidence_status": status, "description": desc, "cells": sc})
+    return {"years": sorted({c["year"] for c in cells}), "months": list(range(1, 13)), "indicators": series}
+
+
+def _monthly_cells(df: pd.DataFrame, et0: pd.Series | None = None) -> list[dict]:
+    """Celdas planas (año, mes) con todos los indicadores; uso interno."""
     p90, p95 = heat_thresholds_p90(df), heavy_rain_thresholds_p95(df)
     hist = df[df.index.year.isin(HIST_YEARS)]["PRECTOTCORR"]
     full_months = hist.groupby([hist.index.year, hist.index.month]).agg(["sum", "count"])
@@ -220,16 +253,7 @@ def monthly_grid(df: pd.DataFrame, et0: pd.Series | None = None) -> dict:
         st["rain_anomaly_pct"] = anomaly_pct(st["rain_mm"], clim[m]) if complete else None
         cells.append({"year": int(y), "month": int(m), **{k: v for k, v in st.items() if k != "n_days"},
                       "complete": bool(complete)})
-    years = sorted({c["year"] for c in cells})
-    return {
-        "years": years, "months": list(range(1, 13)),
-        "fields": {"rain_mm": "mm", "rain_anomaly_pct": "%", "dry_spell_max_days": "días", "heat_days": "días",
-                   "heavy_rain_days": "días", "effective_rain_mm": "mm", "et0_mm": "mm"},
-        "notes": {"rain_anomaly_pct": "vs. media 2015–2025 del mismo mes; null si el mes está incompleto",
-                  "dry_spell_max_days": "racha dentro del mes (se reinicia cada mes)",
-                  "heat_days": "Tmáx > P90 histórico del mes (indicador meteorológico general)"},
-        "cells": cells,
-    }
+    return cells
 
 
 def _campaign_windows(df: pd.DataFrame) -> list[tuple[str, str, pd.Timestamp, pd.Timestamp]]:
@@ -284,10 +308,9 @@ def yearly_indicators(df: pd.DataFrame, et0: pd.Series | None = None) -> pd.Data
 
 def monthly_inputs(df: pd.DataFrame, et0: pd.Series | None = None) -> pd.DataFrame:
     """Insumos del balance hídrico por mes: P, Pef (supuesto FAO) y ET0. Matías aplica Kc → ETc."""
-    g = monthly_grid(df, et0)
     return pd.DataFrame([{"year": c["year"], "month": c["month"], "rain_mm": c["rain_mm"],
                           "effective_rain_mm": c["effective_rain_mm"], "et0_mm": c["et0_mm"],
-                          "complete": c["complete"]} for c in g["cells"]])
+                          "complete": c["complete"]} for c in _monthly_cells(df, et0)])
 
 
 # =========================================================================== respuesta API
@@ -298,6 +321,15 @@ def _ind(id_, name, value, unit, status, source, method, **extra) -> dict:
         d["evidence_status"] = "unavailable"
         d.setdefault("reason", "sin datos válidos en el período")
     d.update({k: v for k, v in extra.items() if v is not None})
+    # texto legible para la app: método + referencia + nota/motivo
+    parts = [method]
+    ref = d.get("reference")
+    if ref and ref.get("value") is not None:
+        parts.append(f"Referencia: {ref['value']} {ref['unit']} ({ref['label']}).")
+    for k in ("note", "reason"):
+        if d.get(k):
+            parts.append(str(d[k]))
+    d["description"] = " · ".join(parts)
     return d
 
 
@@ -359,9 +391,17 @@ def period_indicators(df: pd.DataFrame, start, end, heat_threshold_c: float | No
         out.append(_ind("et0_total", "Evapotranspiración de referencia (ET0)", st["et0_mm"], "mm", "derived",
                         "NASA POWER + FAO-56 Penman–Monteith (physics.py)", "suma de ET0 diaria FAO-56"))
     else:
+        reason = et0_reason or "ET0 incompleta en el período"
         out.append({"id": "et0_total", "name": "Evapotranspiración de referencia (ET0)", "value": None,
-                    "unit": "mm", "evidence_status": "unavailable",
-                    "reason": et0_reason or "ET0 incompleta en el período", "scale": P.SCALE_LABEL})
+                    "unit": "mm", "evidence_status": "unavailable", "reason": reason,
+                    "description": reason, "scale": P.SCALE_LABEL})
+    period_txt = f"{pd.Timestamp(start).date()} → {pd.Timestamp(end).date()}"
+    n = st["n_days"]
+    quality = {"valid_days": st["valid_days"], "n_days": n,
+               "missing_pct": round(100 * (1 - st["valid_days"] / n), 1) if n else None}
+    for ind in out:
+        ind["period"] = period_txt
+        ind["quality"] = quality
     return out
 
 
@@ -383,9 +423,11 @@ def build_indicators_response(period: str = "recent", heat_threshold_c: float | 
                    "downloaded_at": max((c.get("downloaded_at") or "") for c in parts.values()) if parts else None,
                    "from_cache": all(c.get("used") for c in parts.values()) if parts else True,
                    "warnings": pw.get("warnings", [])},
+        "last_observation_date": df.dropna(subset=["PRECTOTCORR", "T2M_MAX"]).index.max().date().isoformat(),
         "data_window": {"historical": {"start": P.HIST_START, "end": P.HIST_END},
                         "recent": {"start": P.RECENT_START, "last_valid_date": pw.get("last_valid_date")}},
-        "period": {"key": key, "start": s.date().isoformat(), "end": e.date().isoformat(), "label": label},
+        "period": label,
+        "period_detail": {"key": key, "start": s.date().isoformat(), "end": e.date().isoformat(), "label": label},
         "quality": {"n_days": int(len(w)), "n_valid_days": n_valid,
                     "missing_pct": round(100 * (1 - n_valid / len(w)), 1) if len(w) else None},
         "indicators": period_indicators(df, s, e, heat_threshold_c, et0, et0_reason),

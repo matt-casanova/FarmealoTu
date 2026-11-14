@@ -1,6 +1,25 @@
 # Contratos de la API — endpoints de datos NASA (Alvin)
 
-> Estado: **v0, borrador para acordar** (Alvin · Matías · Kendra). Cambios solo por acuerdo, anotados en `docs/decisiones.md`.
+> Estado: **v1 implementado** en `alvin/datos-nasa` y alineado con los mappers de Kendra (`DtoMappers.kt`, rama `ui_kendra`).
+> Cambios solo por acuerdo, anotados en `docs/decisiones.md`. **Si un ejemplo de abajo choca con la sección «v1 (implementado)», manda esta última.**
+>
+> ## v1 (implementado): diferencias respecto del borrador v0
+>
+> - **Nivel superior:** `last_observation_date` (último día con lluvia y Tmáx válidas). `period` es **texto** (p. ej. `"2026-01-01 → 2026-11-11"`) y el detalle va en `period_detail: {key, start, end, label}`.
+> - **Cada indicador** trae además: `period` (texto), `quality: {valid_days, n_days, missing_pct}` y `description` (método + referencia + nota, listo para mostrar).
+> - **`monthly_grid`** pasa a tener **una serie por indicador** (la forma propuesta en `docs/UI_BACKEND_CONTRACT.md` de Kendra):
+>   ```json
+>   {"years": [2015, …, 2026], "months": [1, …, 12],
+>    "indicators": [{"id": "rain_anomaly", "name": "Anomalía de lluvia", "unit": "%", "source": "NASA POWER PRECTOTCORR",
+>                    "scale": "contexto regional (~50 km, …)", "evidence_status": "derived", "description": "…",
+>                    "cells": [{"year": 2015, "month": 1, "value": 12.5, "valid_days": 31, "quality": "ok"}]}]}
+>   ```
+>   - `id` de las series: `rain_total`, `rain_anomaly`, `dry_spell_max`, `heat_days`, `heavy_rain_days`, `effective_rain_total` y `et0_total`. Esta última solo aparece cuando exista `physics.py`; **una serie sin ningún valor se omite**.
+>   - `quality` vale `ok` (mes completo) o `incomplete`. En los meses incompletos, `rain_anomaly` es `null`.
+> - **Ubicación:** solo hay caché del punto de referencia. Con `lat`/`lon` a ≤ 0.25° (unos 27 km) se responden los datos del punto de referencia, junto con `site.requested`, `site.distance_km` y un aviso en `source.warnings`. Más lejos → **404** con `detail`. Nunca se consulta NASA en vivo.
+> - **`period` inválido → 422** con `detail`.
+> - `/api/nasa/status` trae además, en el nivel superior, `last_observation_date` y `last_download`.
+> - **Contexto POWER para «Datos de terreno»:** `pipeline.status.power_context(day)` devuelve `{date, t2m_c, rh2m_pct, source, scale, evidence_status, label, note?}`. **Matías** lo incluye como `power_context` dentro de `GET /api/field-node/status`, que es lo que pidió Kendra.
 > Los endpoints viven en `backend/app/routers/nasa.py` (`APIRouter`, prefijo `/api`) y Matías los incluye en `main.py`.
 > **Todas las respuestas se leen de la caché**: ninguna petición llama a NASA en vivo.
 
