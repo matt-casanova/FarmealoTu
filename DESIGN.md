@@ -259,8 +259,11 @@ de arriba abajo: primero la conclusión o la acción, después el detalle y, ple
 de marca sirven para orientar (acción principal, tarjeta destacada, procedencia); los gráficos usan una paleta
 aparte, validada para daltonismo, que nunca se mezcla con la de la interfaz.
 
-Hoy solo existe un esquema claro, sin color dinámico, elegido por legibilidad al sol (`Theme.kt`). No hay un
-esquema oscuro.
+La app sigue el modo del teléfono, sin color dinámico (`Theme.kt`). El esquema claro, de papel, es el de pleno sol.
+El esquema oscuro está diseñado aparte: carbón cálido con un matiz verde, con los mismos tonos de cultivo, tierra y
+ocre en versión nocturna. En oscuro, los gráficos se dibujan sobre una tarjeta clara (`chartSurface()`) para usar
+`ChartPalette` sin cambios. Los valores del esquema oscuro están en `Theme.kt` (`FarmDarkScheme`); los tokens de
+arriba describen el claro.
 
 **Key Characteristics:**
 - Una columna, tarjetas grandes y un ritmo vertical constante de 16 dp.
@@ -360,9 +363,8 @@ para leer al sol.
 **The 16 sp Floor Rule.** El texto que hay que leer va a 16 sp o más. 14 sp queda para lo auxiliar, y 12–13 sp solo
 para ejes y etiquetas de gráficos.
 
-**The Roles Not Sizes Rule.** Las pantallas usan `MaterialTheme.typography.*`. Hoy quedan tamaños a mano en algunos
-lugares: los glifos «←» (26 sp) y «›» (24 sp), los emoji de la barra de navegación (20 sp) y los estilos de texto del
-geovisor (15 y 13 sp).
+**The Roles Not Sizes Rule.** Las pantallas usan `MaterialTheme.typography.*`, también las etiquetas de la pila de
+capas del geovisor. Solo el texto de ejes de los gráficos (12–13 sp) queda fuera de la escala.
 
 ## Layout
 
@@ -373,10 +375,14 @@ geovisor (15 y 13 sp).
 - **Dentro de las tarjetas:** 16 dp de relleno y 12 dp entre elementos. Las listas internas usan 4–8 dp.
 - **Ritmo:** la escala que domina es 4 / 8 / 12 / 16 / 24 dp. Todavía aparecen valores sueltos de 2, 6, 10 y 14 dp
   (6 dp es el más repetido, sobre todo en listas y leyendas).
-- **Pares de botones:** dos `SecondaryButton` con `weight(1f)` y 8 dp de separación (en «Estado de conexión»).
+- **Pares de acciones discretas:** dos `QuietAction` con `weight(1f)` y 8 dp de separación (pie de los módulos y
+  «Estado de conexión»).
+- **Tablas:** entran en el ancho del teléfono, sin scroll lateral. Si no caben, se parten en filas de dos líneas o
+  en bloques (6 meses + 6 meses).
 - **Responsivo:** no hay disposición específica para tablet ni horizontal. La columna se estira al ancho disponible.
-- **Insets:** edge-to-edge (`enableEdgeToEdge`) con `imePadding()` en el andamiaje de pantalla. La barra de estado se
-  ve sobre el verde de la barra superior.
+- **Insets:** edge-to-edge (`enableEdgeToEdge`) con `imePadding()` en el andamiaje de pantalla. La barra superior
+  consume la barra de estado; el `Scaffold` de `FarmScreen` no aplica insets propios (`WindowInsets(0)`) porque la
+  barra inferior ya consume la de navegación.
 
 ### Named Rules
 **The One Column Rule.** Una pantalla es una sola columna que se lee de arriba abajo: conclusión, acción y luego el
@@ -420,8 +426,12 @@ acción principal clara por pantalla.
   «Reintentar».
 - **Secondary (`SecondaryButton`):** contorno de 1,5 dp en Verde Cultivo y texto verde en Label Large SemiBold;
   ancho completo, alto mínimo de 50 dp. Se usa para navegar y para acciones alternativas.
-- **Text (`ExplainButton`):** botón de texto verde Bold con alto mínimo de 48 dp, para «❓ ¿Qué significa?», que abre
-  un `AlertDialog` con explicación, detalles y «Límite».
+- **Íconos en botones:** `PrimaryButton` y `SecondaryButton` aceptan un ícono decorativo de 20 dp antes del texto.
+- **Discreta (`QuietAction`):** botón de texto verde con ícono opcional, alto mínimo de 48 dp. Para acciones de
+  salida o mantenimiento («Editar mis datos», «Volver al inicio», «Recomprobar»), que no deben competir con la
+  acción principal.
+- **Text (`ExplainButton`):** botón de texto verde Bold con ícono de ayuda, alto mínimo de 48 dp y alineado al borde
+  del texto, para «¿Qué significa?». Abre un `AlertDialog` con explicación, detalles y «Límite».
 - **Estados:** los que trae Material 3 por defecto (ripple, deshabilitado). No hay tratamientos propios de foco ni de
   pulsación.
 
@@ -450,14 +460,22 @@ acción principal clara por pantalla.
 - **Switch:** el `Switch` de Material 3 en «Conexión» (modo demo).
 
 ### Navigation
-- **Top app bar (`FarmScreen`):** `TopAppBar` con fondo Verde Cultivo y texto blanco. Título en Title Large Bold (una
-  línea, con elipsis) y subtítulo opcional en Body Small (por ejemplo «Módulo 01»). Para volver usa el glifo «←» en
-  un `IconButton` con contentDescription «Volver»; a la derecha, el botón de texto «🏠 Inicio».
+- **Íconos (`FarmIcons`):** trazados de Material Icons (Apache 2.0) escritos como `ImageVector`, sin biblioteca de
+  íconos: Volver, Inicio, Siguiente, Editar, Ayuda, Hoja (Siembra), Nube (Riesgos), Mapa, Más. Nunca emoji.
+- **Barra superior (`FarmScreen`):** barra propia con fondo Verde Cultivo (Verde Hondo en tema oscuro). El título va
+  en Title Large Bold y ocupa hasta 3 líneas, para que el título obligatorio de cada módulo se lea completo; el
+  subtítulo opcional va en Body Small (por ejemplo «Módulo 01»). Volver e Inicio son `IconButton` de 48 dp con
+  descripción («Volver», «Ir al inicio»).
 - **Barra inferior:** `NavigationBar` sobre Hoja, con indicador Brote, ícono y texto seleccionados en Verde Cultivo y
-  los no seleccionados en Tinta Gris. Las etiquetas van en Label Medium (Bold si está seleccionada). **Los íconos son
-  emoji** (🏠 🌾 🌧️ 🗺️ ⚙️): el proyecto no tiene una biblioteca de íconos.
+  los no seleccionados en Tinta Gris. Las etiquetas van en Label Small, en una línea (Bold si está seleccionada).
+  «Siembra» abarca las preguntas, el resultado y los módulos 01, 02 y 04; el 03 tiene su pestaña «Riesgos».
 - **Filas de módulo (`ModuleRow`):** superficies tocables de 64 dp de alto mínimo, en Cartulina con borde suave.
-  Llevan el número de módulo en verde, título y descripción, y el glifo «›».
+  Llevan el número de módulo en verde, título, descripción e ícono de avance. Son el único modo de abrir un módulo,
+  en Inicio y en Resultado.
+
+### Aviso de decisión (`DecisionDisclaimer`)
+Texto exacto del plan (§6), en Body Small: «Esta herramienta apoya tu decisión; no reemplaza tu experiencia ni a tu
+técnico.» Va al pie de Inicio y de cada módulo (dentro de `FooterActions`).
 
 ### Franja MODO DEMO (`DemoBanner`)
 Firma del sistema. Es una franja a todo el ancho en Morado Demo, justo debajo de la barra superior, en todas las
@@ -493,6 +511,9 @@ Cada gráfico tiene `contentDescription` o un equivalente en texto.
 - **Do** usar el color de serie de `ChartPalette.forStrategy(id)` para identificar E0–E3 en todos los gráficos.
 
 ### Don't:
+- **Don't** usar emoji ni glifos de texto (←, ›, ❓) como íconos: van los de `FarmIcons`, y TalkBack lee el texto del
+  botón, no el ícono.
+- **Don't** usar scroll lateral en tablas ni recortar texto de procedencia o títulos de módulo.
 - **Don't** cambiar valores ni orden de `ChartPalette` sin volver a validarla para daltonismo.
 - **Don't** usar el morado de la franja demo en otro lugar, ni esconder, achicar o volver ambigua la franja «MODO
   DEMO · DATOS DE EJEMPLO».

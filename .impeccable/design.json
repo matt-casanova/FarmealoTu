@@ -1,51 +1,225 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-14T00:00:00Z",
+  "generatedAt": "2026-11-14T23:55:00Z",
   "title": "Design System: FarmealoTu",
   "extensions": {
     "colorMeta": {
-      "field-green": { "role": "primary", "displayName": "Verde Cultivo", "canonical": "oklch(47.3% 0.107 145.5)", "tonalRamp": ["#001001", "#0B2D0F", "#1B4721", "#2E6B34", "#5A925D", "#84B386", "#D9EBD3", "#DAF8DB"] },
-      "field-green-deep": { "role": "primary", "displayName": "Verde Cultivo Hondo" },
-      "field-green-container": { "role": "primary", "displayName": "Brote" },
-      "earth": { "role": "secondary", "displayName": "Tierra Cañadera", "canonical": "oklch(46.8% 0.078 59.8)", "tonalRamp": ["#160700", "#361F0A", "#593A1F", "#7A4F2A", "#A37856", "#C29D7F", "#E1C2AA", "#F1E2CF"] },
-      "earth-container": { "role": "secondary", "displayName": "Tierra Clara" },
-      "clay": { "role": "tertiary", "displayName": "Ocre Rastrojo", "canonical": "oklch(50.8% 0.108 73.3)", "tonalRamp": ["#170700", "#381E00", "#5C3A00", "#8A5A00", "#A67837", "#C59D69", "#E4C399", "#FFE9B8"] },
-      "clay-container": { "role": "tertiary", "displayName": "Rastrojo Claro" },
-      "paper": { "role": "neutral", "displayName": "Papel de Libreta", "canonical": "oklch(96.7% 0.011 89.7)", "tonalRamp": ["#14180F", "#45493F", "#7B7F72", "#CFCBBD", "#E6E2D4", "#EDE9DD", "#F3F0E6", "#FCFCFB"] },
-      "card-surface": { "role": "neutral", "displayName": "Hoja" },
-      "surface-container": { "role": "neutral", "displayName": "Papel Tostado" },
-      "card-surface-variant": { "role": "neutral", "displayName": "Cartulina" },
-      "ink": { "role": "neutral", "displayName": "Tinta de Campo", "canonical": "oklch(20.2% 0.018 127.4)" },
-      "ink-secondary": { "role": "neutral", "displayName": "Tinta Gris" },
-      "outline": { "role": "neutral", "displayName": "Alambrado" },
-      "outline-soft": { "role": "neutral", "displayName": "Alambrado Suave" },
-      "alert-red": { "role": "error", "displayName": "Rojo Alerta", "canonical": "oklch(48.2% 0.161 28.8)", "tonalRamp": ["#220000", "#4A0604", "#761D17", "#A62B22", "#CC594C", "#E88578", "#FFB1A4", "#FBE0DC"] },
-      "demo-stripe": { "role": "signal", "displayName": "Morado Demo", "canonical": "oklch(40.0% 0.148 305.0)", "tonalRamp": ["#120222", "#301548", "#5B2A86", "#74499F", "#966BC3", "#B692DF", "#D7BAFA", "#F9E4FF"] },
-      "chart-series-e0": { "role": "chart", "displayName": "Serie E0 / Zona A" },
-      "chart-series-e1": { "role": "chart", "displayName": "Serie E1 / Zona B" },
-      "chart-series-e2": { "role": "chart", "displayName": "Serie E2 / Zona C" },
-      "chart-series-e3": { "role": "chart", "displayName": "Serie E3" }
+      "field-green": {
+        "role": "primary",
+        "displayName": "Verde Cultivo",
+        "canonical": "oklch(47.3% 0.107 145.5)",
+        "tonalRamp": [
+          "#001001",
+          "#0B2D0F",
+          "#1B4721",
+          "#2E6B34",
+          "#5A925D",
+          "#84B386",
+          "#D9EBD3",
+          "#DAF8DB"
+        ]
+      },
+      "field-green-deep": {
+        "role": "primary",
+        "displayName": "Verde Cultivo Hondo"
+      },
+      "field-green-container": {
+        "role": "primary",
+        "displayName": "Brote"
+      },
+      "earth": {
+        "role": "secondary",
+        "displayName": "Tierra Cañadera",
+        "canonical": "oklch(46.8% 0.078 59.8)",
+        "tonalRamp": [
+          "#160700",
+          "#361F0A",
+          "#593A1F",
+          "#7A4F2A",
+          "#A37856",
+          "#C29D7F",
+          "#E1C2AA",
+          "#F1E2CF"
+        ]
+      },
+      "earth-container": {
+        "role": "secondary",
+        "displayName": "Tierra Clara"
+      },
+      "clay": {
+        "role": "tertiary",
+        "displayName": "Ocre Rastrojo",
+        "canonical": "oklch(50.8% 0.108 73.3)",
+        "tonalRamp": [
+          "#170700",
+          "#381E00",
+          "#5C3A00",
+          "#8A5A00",
+          "#A67837",
+          "#C59D69",
+          "#E4C399",
+          "#FFE9B8"
+        ]
+      },
+      "clay-container": {
+        "role": "tertiary",
+        "displayName": "Rastrojo Claro"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Papel de Libreta",
+        "canonical": "oklch(96.7% 0.011 89.7)",
+        "tonalRamp": [
+          "#14180F",
+          "#45493F",
+          "#7B7F72",
+          "#CFCBBD",
+          "#E6E2D4",
+          "#EDE9DD",
+          "#F3F0E6",
+          "#FCFCFB"
+        ]
+      },
+      "card-surface": {
+        "role": "neutral",
+        "displayName": "Hoja"
+      },
+      "surface-container": {
+        "role": "neutral",
+        "displayName": "Papel Tostado"
+      },
+      "card-surface-variant": {
+        "role": "neutral",
+        "displayName": "Cartulina"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Tinta de Campo",
+        "canonical": "oklch(20.2% 0.018 127.4)"
+      },
+      "ink-secondary": {
+        "role": "neutral",
+        "displayName": "Tinta Gris"
+      },
+      "outline": {
+        "role": "neutral",
+        "displayName": "Alambrado"
+      },
+      "outline-soft": {
+        "role": "neutral",
+        "displayName": "Alambrado Suave"
+      },
+      "alert-red": {
+        "role": "error",
+        "displayName": "Rojo Alerta",
+        "canonical": "oklch(48.2% 0.161 28.8)",
+        "tonalRamp": [
+          "#220000",
+          "#4A0604",
+          "#761D17",
+          "#A62B22",
+          "#CC594C",
+          "#E88578",
+          "#FFB1A4",
+          "#FBE0DC"
+        ]
+      },
+      "demo-stripe": {
+        "role": "signal",
+        "displayName": "Morado Demo",
+        "canonical": "oklch(40.0% 0.148 305.0)",
+        "tonalRamp": [
+          "#120222",
+          "#301548",
+          "#5B2A86",
+          "#74499F",
+          "#966BC3",
+          "#B692DF",
+          "#D7BAFA",
+          "#F9E4FF"
+        ]
+      },
+      "chart-series-e0": {
+        "role": "chart",
+        "displayName": "Serie E0 / Zona A"
+      },
+      "chart-series-e1": {
+        "role": "chart",
+        "displayName": "Serie E1 / Zona B"
+      },
+      "chart-series-e2": {
+        "role": "chart",
+        "displayName": "Serie E2 / Zona C"
+      },
+      "chart-series-e3": {
+        "role": "chart",
+        "displayName": "Serie E3"
+      }
     },
     "typographyMeta": {
-      "headline-small": { "displayName": "Headline Small", "purpose": "Nombre de la opción recomendada e «Información insuficiente»." },
-      "title-large": { "displayName": "Title Large", "purpose": "Títulos de pantalla y conclusión de la tarjeta principal." },
-      "title-medium": { "displayName": "Title Medium", "purpose": "Títulos de tarjeta y texto del botón principal." },
-      "body-medium": { "displayName": "Body Medium", "purpose": "Texto corriente; piso de 16 sp para texto principal." },
-      "body-small": { "displayName": "Body Small", "purpose": "Solo notas auxiliares." },
-      "label-large": { "displayName": "Label Large", "purpose": "Botones y chips." },
-      "chart-axis": { "displayName": "Eje de gráfico", "purpose": "Texto de ejes dibujado en Canvas." }
+      "headline-small": {
+        "displayName": "Headline Small",
+        "purpose": "Nombre de la opción recomendada e «Información insuficiente»."
+      },
+      "title-large": {
+        "displayName": "Title Large",
+        "purpose": "Títulos de pantalla y conclusión de la tarjeta principal."
+      },
+      "title-medium": {
+        "displayName": "Title Medium",
+        "purpose": "Títulos de tarjeta y texto del botón principal."
+      },
+      "body-medium": {
+        "displayName": "Body Medium",
+        "purpose": "Texto corriente; piso de 16 sp para texto principal."
+      },
+      "body-small": {
+        "displayName": "Body Small",
+        "purpose": "Solo notas auxiliares."
+      },
+      "label-large": {
+        "displayName": "Label Large",
+        "purpose": "Botones y chips."
+      },
+      "chart-axis": {
+        "displayName": "Eje de gráfico",
+        "purpose": "Texto de ejes dibujado en Canvas."
+      }
     },
     "shadows": [
-      { "name": "card", "value": "Material elevation 1dp + 1dp border outline-soft @70%", "purpose": "Todas las SectionCard (pendiente: pasar a plano tonal)." },
-      { "name": "button-primary", "value": "Material elevation 2dp", "purpose": "PrimaryButton (pendiente: pasar a plano tonal)." },
-      { "name": "navigation-bar", "value": "tonal elevation 6dp", "purpose": "Barra de navegación inferior." },
-      { "name": "geo-layer", "value": "#000000 @20% (0x33000000)", "purpose": "Sombra de capas en la pila isométrica del geovisor." }
+      {
+        "name": "card",
+        "value": "Material elevation 1dp + 1dp border outline-soft @70%",
+        "purpose": "Todas las SectionCard (pendiente: pasar a plano tonal)."
+      },
+      {
+        "name": "button-primary",
+        "value": "Material elevation 2dp",
+        "purpose": "PrimaryButton (pendiente: pasar a plano tonal)."
+      },
+      {
+        "name": "navigation-bar",
+        "value": "tonal elevation 6dp",
+        "purpose": "Barra de navegación inferior."
+      },
+      {
+        "name": "geo-layer",
+        "value": "#000000 @20% (0x33000000)",
+        "purpose": "Sombra de capas en la pila isométrica del geovisor."
+      }
     ],
     "motion": [
-      { "name": "material-default", "value": "Material 3 component defaults", "purpose": "No hay transiciones propias; ripple y animaciones de componentes M3." }
+      {
+        "name": "material-default",
+        "value": "Material 3 component defaults",
+        "purpose": "No hay transiciones propias; ripple y animaciones de componentes M3."
+      }
     ],
     "breakpoints": [
-      { "name": "compact", "value": "single column at any width (no tablet layout yet)" }
+      {
+        "name": "compact",
+        "value": "single column at any width (no tablet layout yet)"
+      }
     ]
   },
   "components": [
@@ -94,29 +268,29 @@
       "kind": "custom",
       "refersTo": "module-row",
       "description": "Acceso tocable a uno de los 4 módulos de decisión.",
-      "html": "<button class=\"ds-module-row\"><span class=\"ds-mr-num\">01</span><span class=\"ds-mr-text\"><strong>Comparar formas de sembrar</strong><small>Tu rotación actual frente a las alternativas.</small></span><span class=\"ds-mr-chev\">›</span></button>",
+      "html": "<button class=\"ds-module-row\"><span class=\"ds-mr-num\">01</span><span class=\"ds-mr-text\"><strong>Comparar formas de sembrar</strong><small>Tu rotación actual frente a las alternativas.</small></span><span class=\"ds-mr-chev\"><svg viewBox='0 0 24 24' width='24' height='24' fill='currentColor' aria-hidden='true'><path d='M10,6L8.59,7.41 13.17,12l-4.58,4.59L10,18l6,-6z'/></svg></span></button>",
       "css": ".ds-module-row { width: 100%; min-height: 64px; display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #EDE9DD; color: #14180F; border: 1px solid rgba(207,203,189,0.5); border-radius: 14px; text-align: left; cursor: pointer; font-family: Roboto, system-ui, sans-serif; } .ds-module-row:hover { background: #E6E2D4; } .ds-module-row:focus-visible { outline: 3px solid #1B4721; outline-offset: 2px; } .ds-mr-num { width: 36px; font: 700 18px/24px Roboto, system-ui, sans-serif; color: #2E6B34; } .ds-mr-text { flex: 1; display: flex; flex-direction: column; } .ds-mr-text strong { font: 700 16px/22px Roboto, system-ui, sans-serif; } .ds-mr-text small { font: 400 14px/20px Roboto, system-ui, sans-serif; color: #45493F; } .ds-mr-chev { font: 700 24px/1 Roboto, system-ui, sans-serif; color: #2E6B34; }"
     },
     {
       "name": "Top App Bar + Demo Stripe",
       "kind": "nav",
       "refersTo": "top-app-bar",
-      "description": "Barra superior verde y franja persistente de MODO DEMO.",
-      "html": "<header class=\"ds-topbar\"><div class=\"ds-tb-row\"><button class=\"ds-tb-back\" aria-label=\"Volver\">←</button><div class=\"ds-tb-titles\"><strong>Comparar formas de sembrar</strong><small>Módulo 01</small></div><button class=\"ds-tb-home\">🏠 Inicio</button></div><div class=\"ds-demo\">MODO DEMO · DATOS DE EJEMPLO</div></header>",
+      "description": "Barra superior verde (título hasta 3 líneas, Volver e Inicio como íconos de 48 dp) y franja MODO DEMO.",
+      "html": "<header class=\"ds-topbar\"><div class=\"ds-tb-row\"><button class=\"ds-tb-back\" aria-label=\"Volver\"><svg viewBox='0 0 24 24' width='24' height='24' fill='currentColor' aria-hidden='true'><path d='M20,11H7.83l5.59,-5.59L12,4l-8,8 8,8 1.41,-1.41L7.83,13H20v-2z'/></svg></button><div class=\"ds-tb-titles\"><strong>Comparar formas de sembrar</strong><small>Módulo 01</small></div><button class=\"ds-tb-home\" aria-label=\"Ir al inicio\"><svg viewBox='0 0 24 24' width='24' height='24' fill='currentColor' aria-hidden='true'><path d='M10,20v-6h4v6h5v-8h3L12,3 2,12h3v8z'/></svg></button></div><div class=\"ds-demo\">MODO DEMO · DATOS DE EJEMPLO</div></header>",
       "css": ".ds-topbar { font-family: Roboto, system-ui, sans-serif; } .ds-tb-row { display: flex; align-items: center; gap: 4px; min-height: 64px; padding: 0 4px; background: #2E6B34; color: #FFFFFF; } .ds-tb-back, .ds-tb-home { background: transparent; color: #FFFFFF; border: none; min-width: 48px; min-height: 48px; border-radius: 24px; cursor: pointer; font: 600 16px/22px Roboto, system-ui, sans-serif; } .ds-tb-back { font: 700 26px/1 Roboto, system-ui, sans-serif; } .ds-tb-back:hover, .ds-tb-home:hover { background: rgba(255,255,255,0.12); } .ds-tb-back:focus-visible, .ds-tb-home:focus-visible { outline: 2px solid #FFFFFF; } .ds-tb-titles { flex: 1; display: flex; flex-direction: column; } .ds-tb-titles strong { font: 700 21px/27px Roboto, system-ui, sans-serif; } .ds-tb-titles small { font: 400 14px/20px Roboto, system-ui, sans-serif; opacity: 0.9; } .ds-demo { background: #5B2A86; color: #FFFFFF; text-align: center; padding: 6px 12px; font: 700 16px/22px Roboto, system-ui, sans-serif; }"
     },
     {
       "name": "Navigation Bar",
       "kind": "nav",
       "refersTo": "navigation-bar",
-      "description": "Barra inferior de 5 destinos con íconos emoji.",
-      "html": "<nav class=\"ds-navbar\"><a class=\"ds-nav-item is-selected\"><span class=\"ds-nav-ind\">🏠</span>Inicio</a><a class=\"ds-nav-item\"><span class=\"ds-nav-ind\">🌾</span>Siembra</a><a class=\"ds-nav-item\"><span class=\"ds-nav-ind\">🌧️</span>Riesgos</a><a class=\"ds-nav-item\"><span class=\"ds-nav-ind\">🗺️</span>Mi Zona</a><a class=\"ds-nav-item\"><span class=\"ds-nav-ind\">⚙️</span>Más</a></nav>",
-      "css": ".ds-navbar { display: flex; background: #FCFCFB; padding: 12px 0 16px; box-shadow: 0 -1px 0 rgba(207,203,189,0.7); font-family: Roboto, system-ui, sans-serif; } .ds-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #45493F; font: 500 14px/18px Roboto, system-ui, sans-serif; cursor: pointer; text-decoration: none; } .ds-nav-ind { display: flex; align-items: center; justify-content: center; width: 64px; height: 32px; border-radius: 16px; font-size: 20px; } .ds-nav-item:hover .ds-nav-ind { background: rgba(46,107,52,0.08); } .ds-nav-item.is-selected { color: #2E6B34; font-weight: 700; } .ds-nav-item.is-selected .ds-nav-ind { background: #D9EBD3; }"
+      "description": "Barra inferior de 5 destinos con íconos vectoriales (FarmIcons) y etiqueta siempre visible.",
+      "html": "<nav class=\"ds-navbar\"><a class=\"ds-nav-item is-selected\"><span class=\"ds-nav-ind\"><svg viewBox='0 0 24 24' width='24' height='24' fill='currentColor' aria-hidden='true'><path d='M10,20v-6h4v6h5v-8h3L12,3 2,12h3v8z'/></svg></span>Inicio</a><a class=\"ds-nav-item\"><span class=\"ds-nav-ind\"><svg viewBox='0 0 24 24' width='24' height='24' fill='currentColor' aria-hidden='true'><path d='M6.05,8.05c-2.73,2.73 -2.73,7.15 -0.02,9.88c1.47,-3.4 4.09,-6.24 7.36,-7.93c-2.77,2.34 -4.71,5.61 -5.39,9.32c2.6,1.23 5.8,0.78 7.95,-1.37C19.43,14.47 20,4 20,4S9.53,4.57 6.05,8.05z'/></svg></span>Siembra</a><a class=\"ds-nav-item\"><span class=\"ds-nav-ind\"><svg viewBox='0 0 24 24' width='24' height='24' fill='currentColor' aria-hidden='true'><path d='M19.35,10.04C18.67,6.59 15.64,4 12,4 9.11,4 6.6,5.64 5.35,8.04 2.34,8.36 0,10.91 0,14c0,3.31 2.69,6 6,6h13c2.76,0 5,-2.24 5,-5 0,-2.64 -2.05,-4.78 -4.65,-4.96z'/></svg></span>Riesgos</a><a class=\"ds-nav-item\"><span class=\"ds-nav-ind\"><svg viewBox='0 0 24 24' width='24' height='24' fill='currentColor' aria-hidden='true'><path d='M20.5,3l-0.16,0.03L15,5.1 9,3 3.36,4.9c-0.21,0.07 -0.36,0.25 -0.36,0.48V20.5c0,0.28 0.22,0.5 0.5,0.5l0.16,-0.03L9,18.9l6,2.1 5.64,-1.9c0.21,-0.07 0.36,-0.25 0.36,-0.48V3.5c0,-0.28 -0.22,-0.5 -0.5,-0.5zM15,19l-6,-2.11V5l6,2.11V19z'/></svg></span>Mi Zona</a><a class=\"ds-nav-item\"><span class=\"ds-nav-ind\"><svg viewBox='0 0 24 24' width='24' height='24' fill='currentColor' aria-hidden='true'><path d='M6,10c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2 -0.9,-2 -2,-2zM18,10c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2 -0.9,-2 -2,-2zM12,10c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2 -0.9,-2 -2,-2z'/></svg></span>Más</a></nav>",
+      "css": ".ds-navbar { display: flex; background: #FCFCFB; padding: 12px 0 16px; box-shadow: 0 -1px 0 rgba(207,203,189,0.7); font-family: Roboto, system-ui, sans-serif; } .ds-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #45493F; font: 500 13px/17px Roboto, system-ui, sans-serif; cursor: pointer; text-decoration: none; } .ds-nav-ind { display: flex; align-items: center; justify-content: center; width: 64px; height: 32px; border-radius: 16px;  } .ds-nav-item:hover .ds-nav-ind { background: rgba(46,107,52,0.08); } .ds-nav-item.is-selected { color: #2E6B34; font-weight: 700; } .ds-nav-item.is-selected .ds-nav-ind { background: #D9EBD3; }"
     }
   ],
   "narrative": {
     "northStar": "El Campo Ordenado",
-    "overview": "Una herramienta de trabajo sobria y honesta: tonos de campo suaves de fondo, una estructura clara y ordenada, poco texto por bloque y nada que abrume. La sencillez está pensada para el agricultor que lee despacio y usa el celular con una mano y a pleno sol. El mismo orden tiene que convencer a un jurado de que hay buen diseño detrás. La marca no se luce con adornos: está en el verde de cultivo, en la tierra y el ocre que distinguen procedencias, y en lo preciso de cada etiqueta.\n\nLa densidad es baja y vertical. Cada pantalla es una sola columna de tarjetas grandes con 16 dp de aire, que se lee de arriba abajo: primero la conclusión o la acción, después el detalle y, plegado al final, lo técnico. Los colores de marca sirven para orientar (acción principal, tarjeta destacada, procedencia); los gráficos usan una paleta aparte, validada para daltonismo, que nunca se mezcla con la de la interfaz.\n\nHoy solo existe un esquema claro, sin color dinámico, elegido por legibilidad al sol (Theme.kt). No hay un esquema oscuro.",
+    "overview": "Una herramienta de trabajo sobria y honesta: tonos de campo suaves de fondo, una estructura clara y ordenada, poco texto por bloque y nada que abrume. La sencillez está pensada para el agricultor que lee despacio y usa el celular con una mano y a pleno sol. El mismo orden tiene que convencer a un jurado de que hay buen diseño detrás. La marca no se luce con adornos: está en el verde de cultivo, en la tierra y el ocre que distinguen procedencias, y en lo preciso de cada etiqueta.\n\nLa densidad es baja y vertical. Cada pantalla es una sola columna de tarjetas grandes con 16 dp de aire, que se lee de arriba abajo: primero la conclusión o la acción, después el detalle y, plegado al final, lo técnico. Los colores de marca sirven para orientar (acción principal, tarjeta destacada, procedencia); los gráficos usan una paleta aparte, validada para daltonismo, que nunca se mezcla con la de la interfaz.\n\nLa app sigue el modo del teléfono, sin color dinámico (Theme.kt). El esquema claro, de papel, es el de pleno sol. El esquema oscuro está diseñado aparte: carbón cálido con un matiz verde, con los mismos tonos de cultivo, tierra y ocre en versión nocturna. En oscuro, los gráficos se dibujan sobre una tarjeta clara (chartSurface()) para usar ChartPalette sin cambios.",
     "keyCharacteristics": [
       "Una columna, tarjetas grandes y un ritmo vertical constante de 16 dp.",
       "Verde de cultivo para la acción y lo destacado, tierra y ocre para matizar, papel claro de base.",
@@ -126,14 +300,46 @@
       "Gráficos en Canvas con paleta propia y alternativa en texto o tabla."
     ],
     "rules": [
-      { "name": "The Two Palettes Rule", "body": "La interfaz usa los roles de MaterialTheme.colorScheme; los gráficos usan ChartPalette. Ningún color de la interfaz representa una serie y ningún color de serie pinta la interfaz.", "section": "colors" },
-      { "name": "The Fixed Order Rule", "body": "El orden y los valores de ChartPalette están validados para daltonismo. No se reciclan, no se reordenan y no se cambian sin volver a validarlos.", "section": "colors" },
-      { "name": "The Purple Means Demo Rule", "body": "El morado aparece solo en la franja de MODO DEMO. Si lo ves en otro lugar, es un error.", "section": "colors" },
-      { "name": "The Green Paper Rule", "body": "(Aprobada, pendiente de aplicar.) Llevar paper y las superficies neutras a un papel con un matiz verde leve, sin perder la calidez ni el contraste de la tinta. Es un cambio pequeño dentro de la misma identidad; se aplica en la Fase 2 (tema) y se revalidan los contrastes.", "section": "colors" },
-      { "name": "The 16 sp Floor Rule", "body": "El texto que hay que leer va a 16 sp o más. 14 sp queda para lo auxiliar, y 12–13 sp solo para ejes y etiquetas de gráficos.", "section": "typography" },
-      { "name": "The Roles Not Sizes Rule", "body": "Las pantallas usan MaterialTheme.typography.*. Hoy quedan tamaños a mano en algunos lugares: los glifos «←» (26 sp) y «›» (24 sp), los emoji de la barra de navegación (20 sp) y los estilos de texto del geovisor (15 y 13 sp).", "section": "typography" },
-      { "name": "The One Column Rule", "body": "Una pantalla es una sola columna que se lee de arriba abajo: conclusión, acción y luego el detalle. Lo técnico va al final y plegado.", "section": "layout" },
-      { "name": "The Flat Tonal Rule", "body": "(Aprobada, pendiente de aplicar.) La profundidad se expresa con los niveles tonales de superficie de Material 3 y bordes finos, con una sombra casi nula. Así se lee más limpio y ordenado, y al sol no se ensucia. La tarjeta destacada se distingue por su contenedor y su borde de 2 dp, no por la sombra.", "section": "elevation" }
+      {
+        "name": "The Two Palettes Rule",
+        "body": "La interfaz usa los roles de MaterialTheme.colorScheme; los gráficos usan ChartPalette. Ningún color de la interfaz representa una serie y ningún color de serie pinta la interfaz.",
+        "section": "colors"
+      },
+      {
+        "name": "The Fixed Order Rule",
+        "body": "El orden y los valores de ChartPalette están validados para daltonismo. No se reciclan, no se reordenan y no se cambian sin volver a validarlos.",
+        "section": "colors"
+      },
+      {
+        "name": "The Purple Means Demo Rule",
+        "body": "El morado aparece solo en la franja de MODO DEMO. Si lo ves en otro lugar, es un error.",
+        "section": "colors"
+      },
+      {
+        "name": "The Green Paper Rule",
+        "body": "(Aprobada, pendiente de aplicar.) Llevar paper y las superficies neutras a un papel con un matiz verde leve, sin perder la calidez ni el contraste de la tinta. Es un cambio pequeño dentro de la misma identidad; se aplica en la Fase 2 (tema) y se revalidan los contrastes.",
+        "section": "colors"
+      },
+      {
+        "name": "The 16 sp Floor Rule",
+        "body": "El texto que hay que leer va a 16 sp o más. 14 sp queda para lo auxiliar, y 12–13 sp solo para ejes y etiquetas de gráficos.",
+        "section": "typography"
+      },
+      {
+        "name": "The Roles Not Sizes Rule",
+        "body": "Las pantallas usan MaterialTheme.typography.*, también las etiquetas de la pila de capas del geovisor. Solo el texto de ejes de los gráficos (12–13 sp) queda fuera de la escala.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Column Rule",
+        "body": "Una pantalla es una sola columna que se lee de arriba abajo: conclusión, acción y luego el detalle. Lo técnico va al final y plegado.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat Tonal Rule",
+        "body": "(Aprobada, pendiente de aplicar.) La profundidad se expresa con los niveles tonales de superficie de Material 3 y bordes finos, con una sombra casi nula. Así se lee más limpio y ordenado, y al sol no se ensucia. La tarjeta destacada se distingue por su contenedor y su borde de 2 dp, no por la sombra.",
+        "section": "elevation"
+      }
     ],
     "dos": [
       "Do usar los roles de MaterialTheme.colorScheme y MaterialTheme.typography en las pantallas; los valores hex viven solo en ui/theme/.",
@@ -149,7 +355,9 @@
       "Don't quitar ni esconder las etiquetas de procedencia, la escala «contexto regional (~50 km)» o las insignias SIMULADO / WOKWI / FÍSICO.",
       "Don't pintar un dato null o unavailable como 0 o en verde.",
       "Don't poner gráficos técnicos en el Inicio ni delante de la conclusión en lenguaje sencillo.",
-      "Don't mostrar «RotaSat» en pantalla."
+      "Don't mostrar «RotaSat» en pantalla.",
+      "Don't usar emoji ni glifos de texto (←, ›, ❓) como íconos: van los de FarmIcons, y TalkBack lee el texto del botón, no el ícono.",
+      "Don't usar scroll lateral en tablas ni recortar texto de procedencia o títulos de módulo."
     ]
   }
 }
