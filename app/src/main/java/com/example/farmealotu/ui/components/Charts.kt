@@ -1,6 +1,8 @@
 package com.example.farmealotu.ui.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.example.farmealotu.data.model.formatNumber
 import com.example.farmealotu.domain.HeatmapSeries
 import com.example.farmealotu.ui.theme.ChartPalette
+import com.example.farmealotu.ui.theme.LocalFarmDarkTheme
 import kotlin.math.PI
 import kotlin.math.ceil
 import kotlin.math.cos
@@ -151,6 +154,7 @@ fun RangeBar(
         (p50?.let { ", valor del medio ${formatNumber(it, decimals)}" } ?: "")
     Canvas(
         modifier
+            .chartSurface()
             .fillMaxWidth()
             .height(54.dp)
             .semantics { contentDescription = description }
@@ -203,12 +207,19 @@ fun RadarChart(
     val description = "Radar comparativo de ${axes.joinToString(", ")}. Los mismos números están en la tabla de abajo."
     Canvas(
         modifier
+            .chartSurface()
             .fillMaxWidth()
-            .height(280.dp)
+            .height(240.dp)
             .semantics { contentDescription = description }
     ) {
-        val center = Offset(size.width / 2f, size.height / 2f + 8.dp.toPx())
-        val radius = minOf(size.width, size.height) / 2f - 40.dp.toPx()
+        // Se centra la figura real (con 3 ejes es un triángulo que baja solo medio radio),
+        // no un círculo imaginario: así no queda un hueco vacío debajo.
+        val sines = axes.indices.map { sin(-PI / 2 + 2 * PI * it / axes.size).toFloat() }
+        val top = sines.min()
+        val bottom = sines.max()
+        val labelRoom = 28.dp.toPx()
+        val radius = minOf(size.width / 2f - 48.dp.toPx(), (size.height - 2 * labelRoom) / (bottom - top))
+        val center = Offset(size.width / 2f, size.height / 2f - radius * (top + bottom) / 2f)
         fun point(axisIndex: Int, fraction: Float): Offset {
             val angle = -PI / 2 + 2 * PI * axisIndex / axes.size
             return Offset(center.x + radius * fraction * cos(angle).toFloat(), center.y + radius * fraction * sin(angle).toFloat())
@@ -229,8 +240,10 @@ fun RadarChart(
             val labelAnchor = point(index, 1.16f)
             drawLabel(measurer, axes[index], labelAnchor, LabelTextStyle, alignX = 0.5f, alignY = 0.5f)
         }
-        drawLabel(measurer, formatNumber(axisMax / 2, scoreDecimals(axisMax)), point(0, 0.5f) + Offset(4.dp.toPx(), 0f), alignY = 0.5f)
-        drawLabel(measurer, formatNumber(axisMax, scoreDecimals(axisMax)), point(0, 1f) + Offset(4.dp.toPx(), 0f), alignY = 0.5f)
+        // Solo el máximo, junto a la punta superior: los valores intermedios (p. ej. «50») caían justo
+        // donde pasan las series y quedaban tapados. Los anillos se explican en el texto del gráfico
+        // y los números exactos están en la tabla.
+        drawLabel(measurer, formatNumber(axisMax, scoreDecimals(axisMax)), point(0, 1f) + Offset(-10.dp.toPx(), 0f), alignX = 1f, alignY = 0.5f)
 
         series.forEach { item ->
             val points = axes.indices.map { index ->
@@ -276,7 +289,7 @@ fun MonthYearHeatmap(
     val cellsByKey = remember(series) { series.cells.associateBy { it.year to it.month } }
     val description = "Mapa de calor de ${series.name} por mes y año, de ${years.firstOrNull()} a ${years.lastOrNull()}. " +
         "Tocá una celda para ver el valor, o usá «Ver como tabla»."
-    BoxWithConstraints(modifier.fillMaxWidth()) {
+    BoxWithConstraints(modifier.chartSurface().fillMaxWidth()) {
         val yearColumn = 44.dp
         val header = 22.dp
         val cellWidth = (maxWidth - yearColumn) / 12
@@ -331,34 +344,63 @@ fun MonthYearHeatmap(
     }
 }
 
-/** Los mismos datos del mapa de calor como tabla (alternativa accesible, sin depender del color). */
+/**
+ * Los mismos datos del mapa de calor como tabla (alternativa accesible, sin depender del color).
+ * Dos bloques de 6 meses para que entre en el ancho de un teléfono sin desplazarse de costado
+ * y sin perder la columna del año.
+ */
 @Composable
 fun HeatmapTable(series: HeatmapSeries, modifier: Modifier = Modifier) {
     val cellsByKey = remember(series) { series.cells.associateBy { it.year to it.month } }
-    Column(modifier.horizontalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Row {
-            Text("Año", style = MaterialTheme.typography.labelMedium, modifier = Modifier.width(52.dp))
-            MONTH_NAMES.forEach { month ->
-                Text(month.take(3), style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.End, modifier = Modifier.width(52.dp))
-            }
-        }
-        series.years.forEach { year ->
-            Row {
-                Text(year.toString(), style = MaterialTheme.typography.labelMedium, modifier = Modifier.width(52.dp))
-                for (month in 1..12) {
-                    val value = cellsByKey[year to month]?.value
-                    Text(
-                        text = value?.let { formatNumber(it, 1) } ?: "s/d",
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier.width(52.dp),
-                    )
+    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        listOf(1..6, 7..12).forEach { months ->
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Row(Modifier.fillMaxWidth()) {
+                    Text("Año", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1.3f))
+                    months.forEach { month ->
+                        Text(
+                            MONTH_NAMES[month - 1].take(3),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
+                series.years.forEach { year ->
+                    Row(Modifier.fillMaxWidth()) {
+                        Text(year.toString(), style = MaterialTheme.typography.labelMedium, modifier = Modifier.weight(1.3f))
+                        months.forEach { month ->
+                            val value = cellsByKey[year to month]?.value
+                            Text(
+                                text = value?.let { formatNumber(it, 1) } ?: "s/d",
+                                style = MaterialTheme.typography.bodySmall,
+                                textAlign = TextAlign.End,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                    }
                 }
             }
         }
         Text("s/d = sin dato", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
+
+/**
+ * En tema oscuro los gráficos se dibujan sobre una tarjeta clara con el fondo de [ChartPalette]:
+ * así la paleta validada (tinta, rejilla, ejes) se usa tal cual y no hay que revalidarla.
+ * En tema claro no cambia nada (el fondo del gráfico ya es el de la tarjeta).
+ */
+@Composable
+fun Modifier.chartSurface(): Modifier =
+    if (LocalFarmDarkTheme.current) {
+        this
+            .background(ChartPalette.surface, RoundedCornerShape(12.dp))
+            .padding(8.dp)
+    } else {
+        this
+    }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -414,6 +456,7 @@ fun TimeSeriesChart(
 
     Canvas(
         modifier
+            .chartSurface()
             .fillMaxWidth()
             .height(200.dp)
             .semantics { contentDescription = description }

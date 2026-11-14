@@ -28,7 +28,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Constraints
+import com.example.farmealotu.ui.components.chartSurface
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -176,15 +178,19 @@ private fun LayerStackCard(layers: List<MapLayer>, selected: LayerKind, onSelect
 @Composable
 private fun IsometricLayerStack(layers: List<MapLayer>, selected: LayerKind, onSelect: (LayerKind) -> Unit) {
     val measurer = rememberTextMeasurer()
-    val titleStyle = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = ChartPalette.ink)
-    val statusStyle = TextStyle(fontSize = 13.sp, color = ChartPalette.inkSecondary)
+    // Escala tipográfica del tema (sigue la letra del teléfono); el color es la tinta de los gráficos.
+    val titleStyle = MaterialTheme.typography.titleSmall.copy(color = ChartPalette.ink)
+    val statusStyle = MaterialTheme.typography.bodySmall.copy(color = ChartPalette.inkSecondary)
+    // Con letra grande las etiquetas ocupan más líneas: la pila crece en vez de recortarlas.
+    val fontScale = LocalDensity.current.fontScale.coerceAtLeast(1f)
     val description = "Pila de 5 capas: " + layers.joinToString(", ") { "${it.kind.title} (${it.availability.label})" } +
         ". Seleccionada: ${selected.title}."
 
     Canvas(
         Modifier
+            .chartSurface()
             .fillMaxWidth()
-            .height(300.dp)
+            .height(300.dp * fontScale)
             .semantics { contentDescription = description }
             .pointerInput(layers) {
                 detectTapGestures { tap ->
@@ -214,8 +220,10 @@ private fun IsometricLayerStack(layers: List<MapLayer>, selected: LayerKind, onS
             )
             // Etiqueta a la derecha: nombre + estado en texto (no depende del color).
             val labelX = geometry.centerX + geometry.halfWidth + 10.dp.toPx()
-            val title = measurer.measure("${index + 1} · ${layer.kind.title}", titleStyle)
-            val status = measurer.measure(layer.availability.label, statusStyle)
+            // El texto parte línea dentro del ancho que queda: antes se cortaba («Información regiona»).
+            val labelWidth = Constraints(maxWidth = (size.width - labelX).toInt().coerceAtLeast(1))
+            val title = measurer.measure("${index + 1} · ${layer.kind.title}", titleStyle, constraints = labelWidth)
+            val status = measurer.measure(layer.availability.label, statusStyle, constraints = labelWidth)
             val top = center.y - (title.size.height + status.size.height) / 2f
             drawText(title, topLeft = Offset(labelX, top))
             drawText(status, topLeft = Offset(labelX, top + title.size.height))
