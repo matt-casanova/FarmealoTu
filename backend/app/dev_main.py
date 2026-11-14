@@ -7,11 +7,14 @@ Cuando Matías suba app/main.py (con `app.include_router(nasa.router)`), este ar
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 
 from app.routers import nasa
 
 app = FastAPI(title="FarmealoTu API (dev de Alvin: solo endpoints NASA)", version="0.1.0-dev")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"], allow_headers=["*"])
+# /api/indicators pesa ~70 KB en JSON; con gzip baja mucho (OkHttp lo descomprime solo). Matías: copiá esto a main.py
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.include_router(nasa.router)
 
 
