@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Solo en DEBUG: permite HTTP plano hacia la API local (emulador 10.0.2.2 / LAN).
+     En release no aplica: usar la URL HTTPS del túnel o del despliegue. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:networkSecurityConfig="@xml/network_security_config" />
+</manifest>
