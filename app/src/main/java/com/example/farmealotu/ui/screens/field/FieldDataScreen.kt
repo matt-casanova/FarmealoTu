@@ -29,6 +29,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -57,7 +58,9 @@ import com.example.farmealotu.ui.components.TimeSeriesChart
 import com.example.farmealotu.ui.components.formatApiDate
 import com.example.farmealotu.ui.components.formatClock
 import com.example.farmealotu.ui.components.formatOrMissing
+import com.example.farmealotu.ui.components.sampleFieldDataViewModel
 import com.example.farmealotu.ui.theme.ChartPalette
+import com.example.farmealotu.ui.theme.FarmealoTuTheme
 import com.example.farmealotu.viewmodel.AppViewModelFactory
 import com.example.farmealotu.viewmodel.FieldDataViewModel
 import com.example.farmealotu.viewmodel.UiState
@@ -68,7 +71,6 @@ import kotlinx.coroutines.isActive
 private const val REFRESH_MILLIS = 15_000L
 private const val MAX_CHART_POINTS = 240
 
-/** Zonas del prototipo de 3 macetas (plan, sección 6). El color sigue a la zona. */
 private data class ZoneInfo(val id: String, val title: String, val color: Color)
 
 private val ZONES = listOf(
@@ -77,7 +79,6 @@ private val ZONES = listOf(
     ZoneInfo("C", "Zona C · húmeda", ChartPalette.series[2]),
 )
 
-/** Texto de la insignia de calibración según lo que REALMENTE dice el registro. */
 fun calibrationLabel(method: String?, flags: List<String>): String = when {
     flags.any { it.contains("uncalibrated", ignoreCase = true) } ->
         "Humedad SIN calibrar: el valor es relativo, no un % volumétrico real"
@@ -87,9 +88,7 @@ fun calibrationLabel(method: String?, flags: List<String>): String = when {
 }
 
 /**
- * «Datos de terreno»: lecturas del nodo ESP32 de 3 zonas (GET /api/field-node/readings y /status).
- * La insignia de origen (SIMULADO / WOKWI / FÍSICO) está siempre visible y nunca se mezclan
- * lecturas de orígenes distintos en una misma curva.
+ * «Datos de terreno»: lecturas del nodo ESP32 de 3 zonas.
  */
 @Composable
 fun FieldDataScreen(
@@ -102,7 +101,6 @@ fun FieldDataScreen(
     val status by viewModel.status.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // Se actualiza solo mientras la pantalla está visible (sirve para ver el riego en vivo).
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (isActive) {
@@ -113,17 +111,16 @@ fun FieldDataScreen(
     }
 
     FarmScreen(title = "Datos de terreno", subtitle = "Nodo de campo de 3 zonas", demoMode = demoMode, onBack = onBack, onHome = onHome) {
-        // Aviso permanente.
         SectionCard(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary),
         ) {
-            Text("Estos datos no cambian la recomendación en esta versión.", style = MaterialTheme.typography.titleSmall)
+            Text("Estos datos no cambian la recomendación en esta versión.", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
             Text(
                 "Muestran cómo varía un campo de un punto a otro: algo que el satélite, que mira zonas de kilómetros, promedia.",
                 style = MaterialTheme.typography.bodyMedium,
             )
-            ExplainButton(Glossary.satelliteVsGround, label = "Satélite y sensor: ¿en qué se diferencian?")
+            ExplainButton(Glossary.satelliteVsGround, label = "❓ Satélite y sensor: ¿en qué se diferencian?")
         }
 
         when (val state = readings) {
@@ -135,14 +132,14 @@ fun FieldDataScreen(
             UiState.Empty -> {
                 EmptyBlock(
                     title = "Todavía no hay lecturas del nodo",
-                    message = "El servidor respondió, pero no tiene lecturas guardadas. No se muestran valores de relleno.",
+                    message = "El servidor respondió, pero no tiene lecturas guardadas.",
                 ) { SecondaryButton("Volver a consultar", viewModel::refresh) }
                 StatusCard(status.dataOrNull, latest = null)
             }
             is UiState.Success -> {
                 FreshnessNote(state, onRetry = viewModel::refresh)
                 ReadingsContent(state.data, status.dataOrNull)
-                SecondaryButton("Actualizar ahora", viewModel::refresh)
+                SecondaryButton("🔄 Actualizar ahora", viewModel::refresh)
             }
         }
     }
@@ -168,7 +165,7 @@ private fun ReadingsContent(data: FieldReadings, status: NodeStatus?) {
                     FilterChip(
                         selected = item == source,
                         onClick = { chosenCode = item.name },
-                        label = { Text(item.badge, style = MaterialTheme.typography.labelLarge) },
+                        label = { Text(item.badge, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold) },
                         modifier = Modifier.heightIn(min = 48.dp),
                     )
                 }
@@ -176,15 +173,13 @@ private fun ReadingsContent(data: FieldReadings, status: NodeStatus?) {
         }
     }
 
-    // Calidad / calibración, tal como lo dice el registro.
     SectionCard(title = "Calibración") {
-        Text(calibrationLabel(latest.calibrationMethod, latest.qualityFlags), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+        Text(calibrationLabel(latest.calibrationMethod, latest.qualityFlags), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
         InfoRow("Fecha de calibración", formatApiDate(latest.calibrationDate) ?: "no informada")
-        InfoRow("Profundidad de los sensores", formatOrMissing(latest.depthCm, 0, "cm", missing = "no informada"))
+        InfoRow("Profundidad de sensores", formatOrMissing(latest.depthCm, 0, "cm", missing = "no informada"))
         ExplainButton(Glossary.vwc)
     }
 
-    // Tarjetas por zona.
     ZONES.forEach { zone -> ZoneCard(zone, latest, source) }
     val extraZones = latest.zones.filter { reading -> ZONES.none { it.id.equals(reading.id, ignoreCase = true) } }
     if (extraZones.isNotEmpty()) {
@@ -201,14 +196,13 @@ private fun ReadingsContent(data: FieldReadings, status: NodeStatus?) {
         SectionCard(title = "Avisos de calidad") {
             BulletList(flags.map { "Bandera del nodo: $it" })
             if (data.skipped > 0) {
-                Text("${data.skipped} lectura(s) llegaron con un formato inválido y no se muestran.", style = MaterialTheme.typography.bodyMedium)
+                Text("${data.skipped} lectura(s) llegaron con formato inválido.", style = MaterialTheme.typography.bodyMedium)
             }
-            Text("Un dato faltante se muestra como «sin dato»; nunca se reemplaza por cero.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("Un dato faltante se muestra como «sin dato».", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
 
-/** Insignia de origen, siempre visible: SIMULADO, WOKWI o FÍSICO. */
 @Composable
 private fun SourceBadge(source: NodeSource, scenario: String?) {
     val scheme = MaterialTheme.colorScheme
@@ -224,9 +218,9 @@ private fun SourceBadge(source: NodeSource, scenario: String?) {
             .semantics { contentDescription = "Origen de los datos: ${source.badge}. ${source.description}" },
     ) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text("ORIGEN: ${source.badge}", style = MaterialTheme.typography.titleLarge)
+            Text("ORIGEN: ${source.badge}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Text(source.description, style = MaterialTheme.typography.bodyMedium)
-            if (scenario != null) Text("Escenario de simulación: $scenario", style = MaterialTheme.typography.bodyMedium)
+            if (scenario != null) Text("Escenario de simulación: $scenario", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -235,15 +229,15 @@ private fun SourceBadge(source: NodeSource, scenario: String?) {
 private fun ZoneCard(zone: ZoneInfo, latest: NodeReading, source: NodeSource) {
     val reading = latest.zone(zone.id)
     SectionCard(title = zone.title) {
-        Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
         if (reading == null) {
             Text("Sin dato de esta zona en la última lectura.", style = MaterialTheme.typography.bodyMedium)
             return@SectionCard
         }
-        // soil_moisture_vwc llega en m³/m³: para mostrar % volumétrico se multiplica por 100.
         Text(
             text = "Humedad del suelo: " + formatOrMissing(reading.moisturePct, 1, "%"),
             style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
         )
         reading.moistureVwc?.let {
             Text("(${formatOrMissing(it, 3)} m³/m³, tal como lo envía el nodo)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -251,10 +245,11 @@ private fun ZoneCard(zone: ZoneInfo, latest: NodeReading, source: NodeSource) {
         Text(
             text = "Temperatura del suelo: " + formatOrMissing(reading.soilTempC, 1, "°C"),
             style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
         )
         InfoRow("Hora de la lectura", formatApiDate(latest.timestamp) ?: "no informada")
         if (reading.flags.isNotEmpty()) {
-            Text("Avisos: ${reading.flags.joinToString()}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+            Text("Avisos: ${reading.flags.joinToString()}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -276,9 +271,8 @@ private fun Charts(readings: List<NodeReading>, source: NodeSource) {
         LineSeries(zone.id, zone.color, timed.map { LinePoint(it.epochMillis!!, value(it, zone.id)) })
     }
 
-    // Gráfico 1: humedad de las 3 zonas.
     SectionCard(title = "Humedad del suelo por zona (%)") {
-        Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
         SeriesLegend(ZONES.map { it.color to it.title })
         TimeSeriesChart(
             series = series { reading, id -> reading.zone(id)?.moisturePct },
@@ -289,9 +283,8 @@ private fun Charts(readings: List<NodeReading>, source: NodeSource) {
         SelectedReadout(selected) { reading, id -> formatOrMissing(reading.zone(id)?.moisturePct, 1, "%") }
     }
 
-    // Gráfico 2, separado: temperatura del suelo (nunca doble eje).
     SectionCard(title = "Temperatura del suelo por zona (°C)") {
-        Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
         SeriesLegend(ZONES.map { it.color to it.title })
         TimeSeriesChart(
             series = series { reading, id -> reading.zone(id)?.soilTempC },
@@ -302,7 +295,7 @@ private fun Charts(readings: List<NodeReading>, source: NodeSource) {
         SelectedReadout(selected) { reading, id -> formatOrMissing(reading.zone(id)?.soilTempC, 1, "°C") }
     }
 
-    SecondaryButton(if (showTable) "Ocultar tabla de lecturas" else "Ver lecturas como tabla", { showTable = !showTable })
+    SecondaryButton(if (showTable) "Ocultar tabla de lecturas" else "📋 Ver lecturas como tabla", { showTable = !showTable })
     if (showTable) ReadingsTable(timed.takeLast(20).reversed())
 }
 
@@ -312,6 +305,7 @@ private fun SelectedReadout(selected: NodeReading?, value: (NodeReading, String)
         text = if (selected?.epochMillis == null) "Tocá el gráfico para ver los valores de un momento."
         else "${formatClock(selected.epochMillis)} — " + ZONES.joinToString(" · ") { "${it.id}: ${value(selected, it.id)}" },
         style = MaterialTheme.typography.bodyMedium,
+        fontWeight = FontWeight.Bold,
     )
 }
 
@@ -320,10 +314,10 @@ private fun ReadingsTable(readings: List<NodeReading>) {
     SectionCard(title = "Últimas ${readings.size} lecturas") {
         Column(Modifier.horizontalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row {
-                Text("Hora", style = MaterialTheme.typography.labelMedium, modifier = Modifier.width(140.dp))
+                Text("Hora", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, modifier = Modifier.width(140.dp))
                 ZONES.forEach { zone ->
-                    Text("${zone.id} hum. %", style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.End, modifier = Modifier.width(84.dp))
-                    Text("${zone.id} temp. °C", style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.End, modifier = Modifier.width(92.dp))
+                    Text("${zone.id} hum. %", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.End, modifier = Modifier.width(84.dp))
+                    Text("${zone.id} temp. °C", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.End, modifier = Modifier.width(92.dp))
                 }
             }
             readings.forEach { reading ->
@@ -343,35 +337,23 @@ private fun ReadingsTable(readings: List<NodeReading>) {
 
 @Composable
 private fun AirCard(latest: NodeReading, source: NodeSource) {
-    SectionCard(title = "Aire y luz (sensores fuera de la tierra)") {
-        Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text("BME680 (sensor principal)", style = MaterialTheme.typography.titleSmall)
+    SectionCard(title = "Aire y luz (sensores externos)") {
+        Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+        Text("BME680 (sensor principal)", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
         InfoRow("Temperatura", formatOrMissing(latest.bmeTempC, 1, "°C"))
         InfoRow("Humedad del aire", formatOrMissing(latest.bmeRhPct, 1, "%"))
         InfoRow("Presión", formatOrMissing(latest.bmePressureHpa, 1, "hPa"))
         InfoRow("Gas (resistencia)", formatOrMissing(latest.bmeGasKohm, 1, "kΩ"))
 
-        Text("DHT11 (segundo sensor, para control)", style = MaterialTheme.typography.titleSmall)
+        Text("DHT11 (segundo sensor de control)", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
         InfoRow("Temperatura", formatOrMissing(latest.dhtTempC, 1, "°C"))
         InfoRow("Humedad del aire", formatOrMissing(latest.dhtRhPct, 1, "%"))
 
-        Text("Diferencia entre los dos sensores", style = MaterialTheme.typography.titleSmall)
-        val tempDiff = if (latest.bmeTempC != null && latest.dhtTempC != null) latest.bmeTempC - latest.dhtTempC else null
-        val rhDiff = if (latest.bmeRhPct != null && latest.dhtRhPct != null) latest.bmeRhPct - latest.dhtRhPct else null
-        InfoRow("Temperatura (BME680 − DHT11)", formatOrMissing(tempDiff, 1, "°C", missing = "no se puede comparar"))
-        InfoRow("Humedad (BME680 − DHT11)", formatOrMissing(rhDiff, 1, "puntos de %", missing = "no se puede comparar"))
-        Text(
-            "Dos sensores distintos midiendo lo mismo sirven de control: si se alejan mucho, uno de los dos es sospechoso.",
-            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
-        Text("Luz (LDR)", style = MaterialTheme.typography.titleSmall)
+        Text("Luz (LDR)", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
         InfoRow("Luz relativa", formatOrMissing(latest.ldrLightPct, 0, "%", missing = "no disponible"))
-        Text("Es un índice relativo de 0 a 100; no es radiación medida.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
-/** Banda de contexto NASA POWER del mismo día: comparación solo cualitativa. */
 @Composable
 private fun RegionalBand(status: NodeStatus?) {
     val context = status?.regionalContext
@@ -380,17 +362,13 @@ private fun RegionalBand(status: NodeStatus?) {
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
     ) {
         if (context == null || (context.t2mC == null && context.rh2mPct == null)) {
-            Text("El servidor no envió el dato regional de NASA POWER para comparar.", style = MaterialTheme.typography.bodyMedium)
+            Text("El servidor no envió el dato regional de NASA POWER.", style = MaterialTheme.typography.bodyMedium)
         } else {
             InfoRow("Temperatura del aire (regional)", formatOrMissing(context.t2mC, 1, "°C"))
             InfoRow("Humedad del aire (regional)", formatOrMissing(context.rh2mPct, 1, "%"))
             InfoRow("Día", formatApiDate(context.date) ?: "no informado")
             InfoRow("Fuente", context.source ?: "no informada")
         }
-        Text(
-            "Se compara solo «a ojo»: una maceta y una zona de 50 km son escalas muy distintas.",
-            style = MaterialTheme.typography.bodySmall,
-        )
         ExplainButton(Glossary.regional)
     }
 }
@@ -400,11 +378,19 @@ private fun StatusCard(status: NodeStatus?, latest: NodeReading?) {
     SectionCard(title = "Estado del nodo") {
         InfoRow("Último contacto", formatApiDate(status?.lastContact ?: latest?.timestamp) ?: "sin registro")
         InfoRow("Nodo", status?.nodeId ?: latest?.nodeId ?: "no informado")
-        InfoRow("Origen según el servidor", status?.source?.badge ?: "no informado")
-        if (status == null) {
-            Text("El servidor no entregó el estado del nodo.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        } else if (status.qualityFlags.isNotEmpty()) {
-            Text("Banderas recientes: ${status.qualityFlags.joinToString()}", style = MaterialTheme.typography.bodySmall)
-        }
+        InfoRow("Origen", status?.source?.badge ?: "no informado")
+    }
+}
+
+@Preview(showBackground = true, name = "Datos de Terreno (FieldDataScreen)")
+@Composable
+fun FieldDataScreenPreview() {
+    FarmealoTuTheme {
+        FieldDataScreen(
+            demoMode = true,
+            onBack = {},
+            onHome = {},
+            viewModel = sampleFieldDataViewModel(),
+        )
     }
 }

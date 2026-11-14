@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.farmealotu.domain.Concern
@@ -56,6 +57,8 @@ import com.example.farmealotu.ui.components.SecondaryButton
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.formatCoordinate
 import com.example.farmealotu.ui.components.formatPercentWeight
+import com.example.farmealotu.ui.components.sampleMainViewModel
+import com.example.farmealotu.ui.theme.FarmealoTuTheme
 import com.example.farmealotu.viewmodel.MainViewModel
 
 private const val SUMMARY_STEP = 5
@@ -63,8 +66,6 @@ private val CROP_OPTIONS = listOf(Crop.SOY, Crop.MAIZE, Crop.SORGHUM, Crop.SUNFL
 
 /**
  * Las 5 preguntas, una por pantalla, y un resumen editable antes de consultar al servidor.
- * Nada de lo que escribe el agricultor se interpreta con IA: los cultivos se reconocen con un
- * diccionario fijo y, si no se reconocen, se pide elegir de la lista.
  */
 @Composable
 fun FarmerInputScreen(
@@ -119,7 +120,7 @@ fun FarmerInputScreen(
     ) {
         if (step < SUMMARY_STEP) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("Pregunta ${step + 1} de 5", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Pregunta ${step + 1} de 5", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                 LinearProgressIndicator(progress = { (step + 1) / 5f }, modifier = Modifier.fillMaxWidth())
             }
         }
@@ -207,7 +208,7 @@ fun FarmerInputScreen(
     }
 }
 
-/** Mensaje de error del paso de cultivo, o null si se puede avanzar. Nunca adivina el cultivo. */
+/** Mensaje de error del paso de cultivo */
 private fun cropError(selected: Crop?, text: String, allowFallow: Boolean): String? {
     if (selected != null) return null
     return when (val match = CropNormalizer.match(text, allowFallow)) {
@@ -220,13 +221,13 @@ private fun cropError(selected: Crop?, text: String, allowFallow: Boolean): Stri
 
 @Composable
 private fun QuestionTitle(text: String) {
-    Text(text, style = MaterialTheme.typography.headlineSmall, modifier = Modifier.semantics { heading() })
+    Text(text, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, modifier = Modifier.semantics { heading() })
 }
 
 @Composable
 private fun StepError(error: String?) {
     if (error != null) {
-        Text(error, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Medium)
+        Text(error, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -246,19 +247,19 @@ private fun CropStep(
     val focusRequester = remember { FocusRequester() }
     QuestionTitle(question)
     Text("Tocá una opción o escribilo con tus palabras.", style = MaterialTheme.typography.bodyMedium)
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         options.forEach { crop ->
             FilterChip(
                 selected = selected == crop && text.isBlank(),
                 onClick = { onPick(crop) },
-                label = { Text(crop.label, style = MaterialTheme.typography.labelLarge) },
+                label = { Text(crop.label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold) },
                 modifier = Modifier.heightIn(min = 48.dp),
             )
         }
         FilterChip(
             selected = text.isNotBlank(),
             onClick = { focusRequester.requestFocus() },
-            label = { Text("Otro", style = MaterialTheme.typography.labelLarge) },
+            label = { Text("Otro", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold) },
             modifier = Modifier.heightIn(min = 48.dp),
         )
     }
@@ -323,8 +324,8 @@ private fun ChoiceButton(label: String, selected: Boolean, onClick: () -> Unit) 
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(if (selected) "✓" else "○", style = MaterialTheme.typography.titleLarge, color = scheme.primary)
-            Text(label, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            Text(if (selected) "✓" else "○", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = scheme.primary)
+            Text(label, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
         }
     }
 }
@@ -384,7 +385,7 @@ private fun SummaryStep(
                 FilterChip(
                     selected = crop in input.excludedCrops,
                     onClick = { onToggleExcluded(crop) },
-                    label = { Text(crop.label, style = MaterialTheme.typography.labelLarge) },
+                    label = { Text(crop.label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold) },
                     modifier = Modifier.heightIn(min = 48.dp),
                 )
             }
@@ -394,7 +395,7 @@ private fun SummaryStep(
     LocationCard(input, onSetLocation, onResetLocation)
 
     if (!input.isComplete) {
-        Text("Todavía faltan respuestas. Tocá «Cambiar» en la que falte.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+        Text("Todavía faltan respuestas. Tocá «Cambiar» en la que falte.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
     }
     PrimaryButton("Comparar opciones de siembra", onCompare, enabled = input.isComplete)
 }
@@ -407,11 +408,11 @@ private fun SummaryRow(label: String, value: String?, onEdit: () -> Unit) {
             Text(
                 text = value ?: "Falta responder",
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
                 color = if (value == null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
             )
         }
-        TextButton(onClick = onEdit, modifier = Modifier.heightIn(min = 48.dp)) { Text("Cambiar") }
+        TextButton(onClick = onEdit, modifier = Modifier.heightIn(min = 48.dp)) { Text("Cambiar", fontWeight = FontWeight.Bold) }
     }
 }
 
@@ -427,14 +428,15 @@ private fun LocationCard(input: FarmerInput, onSetLocation: (Double, Double) -> 
             text = "Lat ${formatCoordinate(input.lat)}, Lon ${formatCoordinate(input.lon)}" +
                 if (PilotArea.isPilotPoint(input.lat, input.lon)) " (punto piloto de ${PilotArea.NAME})" else " (punto que indicaste)",
             style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.SemiBold,
         )
         Text(
-            "Es un punto de referencia de la zona, no necesariamente tu finca. Los datos son regionales (~50 km): no tienen precisión de parcela.",
+            "Es un punto de referencia de la zona, no necesariamente tu finca. Los datos son regionales (~50 km).",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         if (!editing) {
-            SecondaryButton("Cambiar ubicación", { editing = true })
+            SecondaryButton("✏️ Cambiar ubicación", { editing = true })
         } else {
             OutlinedTextField(
                 value = latText, onValueChange = { latText = it; error = null },
@@ -448,13 +450,13 @@ private fun LocationCard(input: FarmerInput, onSetLocation: (Double, Double) -> 
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                 modifier = Modifier.fillMaxWidth(),
             )
-            if (error != null) Text(error!!, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+            if (error != null) Text(error!!, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
             SecondaryButton("Guardar ubicación", {
                 val lat = latText.trim().replace(',', '.').toDoubleOrNull()
                 val lon = lonText.trim().replace(',', '.').toDoubleOrNull()
                 when {
                     lat == null || lon == null -> error = "Escribí la latitud y la longitud con números, por ejemplo -17.2374."
-                    !onSetLocation(lat, lon) -> error = "Ese punto queda fuera del área piloto de ${PilotArea.NAME} (hasta medio grado del punto de referencia)."
+                    !onSetLocation(lat, lon) -> error = "Ese punto queda fuera del área piloto de ${PilotArea.NAME}."
                     else -> editing = false
                 }
             })
@@ -464,5 +466,35 @@ private fun LocationCard(input: FarmerInput, onSetLocation: (Double, Double) -> 
                 editing = false
             })
         }
+    }
+}
+
+@Preview(showBackground = true, name = "Formulario - Preguntas (FarmerInputScreen)")
+@Composable
+fun FarmerInputScreenPreview() {
+    FarmealoTuTheme {
+        FarmerInputScreen(
+            viewModel = sampleMainViewModel(withComparison = false),
+            demoMode = true,
+            startAtSummary = false,
+            onExit = {},
+            onHome = {},
+            onCompare = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Formulario - Resumen (FarmerInputSummary)")
+@Composable
+fun FarmerInputSummaryPreview() {
+    FarmealoTuTheme {
+        FarmerInputScreen(
+            viewModel = sampleMainViewModel(withComparison = true),
+            demoMode = true,
+            startAtSummary = true,
+            onExit = {},
+            onHome = {},
+            onCompare = {},
+        )
     }
 }

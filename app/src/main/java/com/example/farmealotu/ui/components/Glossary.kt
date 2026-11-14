@@ -123,5 +123,4 @@ val FIXED_LIMITATIONS = listOf(
     "Los datos del nodo de campo son de un prototipo y no cambian la recomendación en esta versión.",
 )
 
-const val DISCLAIMER = "Esta herramienta apoya tu decisión; no reemplaza tu experiencia ni a tu técnico."
 const val NASA_ROLE = "NASA aporta datos; FarmealoTu los interpreta. No es un producto oficial de NASA."

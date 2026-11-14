@@ -19,7 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.farmealotu.ConnectionSettings
 import com.example.farmealotu.domain.Alert
@@ -35,14 +37,16 @@ import com.example.farmealotu.ui.components.SecondaryButton
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.formatApiDate
 import com.example.farmealotu.ui.components.formatClock
+import com.example.farmealotu.ui.components.sampleMainViewModel
+import com.example.farmealotu.ui.theme.FarmealoTuTheme
 import com.example.farmealotu.viewmodel.MainViewModel
 import com.example.farmealotu.viewmodel.UiState
 import com.example.farmealotu.viewmodel.dataOrNull
 
 /**
- * Inicio «Mi campo — Cuatro Cañadas», en el orden de la página 16 del plan:
- * encabezado, fecha de los datos, acción a revisar, advertencias fechadas, botón principal,
- * los 4 módulos, accesos secundarios y estado de conexión. Sin gráficos técnicos.
+ * Inicio «Mi campo — Cuatro Cañadas».
+ * Jerarquía limpia: fecha de actualización, tarjeta principal de recomendación,
+ * advertencias, botón principal de siembra y acceso a los 4 módulos.
  */
 @Composable
 fun HomeScreen(
@@ -66,19 +70,20 @@ fun HomeScreen(
     val result = compare.dataOrNull
 
     FarmScreen(title = "FarmealoTu", subtitle = "Mi campo — Cuatro Cañadas", demoMode = connection.demoMode) {
-        // 2. Fecha REAL de la última observación (distinta de la fecha de descarga).
         val observation = result?.lastObservationDate ?: nasaStatus.dataOrNull?.lastObservationDate
         val download = result?.downloadedAt ?: nasaStatus.dataOrNull?.lastDownload
+
         SectionCard(containerColor = MaterialTheme.colorScheme.surfaceContainer, border = null) {
             Text(
                 text = "Datos actualizados al: " + (formatApiDate(observation) ?: "fecha no disponible"),
                 style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 text = when {
                     observation == null && nasaStatus is UiState.Loading -> "Consultando el estado de los datos…"
                     observation == null -> "El servidor todavía no informó la fecha de la última observación."
-                    download != null -> "Es la última observación disponible. Se descargaron el ${formatApiDate(download)}."
+                    download != null -> "Es la última observación disponible. Descargados el ${formatApiDate(download)}."
                     else -> "Es la última observación disponible; no es la fecha de hoy."
                 } + if (connection.demoMode) " (Fechas de ejemplo.)" else "",
                 style = MaterialTheme.typography.bodySmall,
@@ -86,29 +91,29 @@ fun HomeScreen(
             )
         }
 
-        // 3. Tarjeta principal: qué revisar.
+        // Tarjeta principal: qué revisar
         MainActionCard(compare, input.isComplete, onOpenDecision, onRetry = viewModel::submitCompare)
 
-        // 4. Advertencias con fecha, solo las que calcula el servidor.
+        // Advertencias
         if (result != null) AlertsCard(result)
 
-        // 5. Botón principal.
+        // Botón principal de siembra
         PrimaryButton("Comparar opciones de siembra", onCompareOptions)
 
-        // 6. Los cuatro módulos.
+        // Los 4 módulos principales
         SectionCard(title = "Los 4 pasos para decidir") {
             ModuleRow("01", "Comparar formas de sembrar", "Tu rotación actual frente a las alternativas.", onOpenCompare)
             ModuleRow("02", "Ventajas y desventajas", "Qué ganás y qué resignás con cada opción.", onOpenTradeoffs)
             ModuleRow("03", "Conocer los riesgos", "Rachas secas, calor y lluvias fuertes por mes y año.", onOpenRisks)
-            ModuleRow("04", "¿Qué tan segura es esta comparación?", "Rangos, vacíos de información y preguntas para tu técnico.", onOpenUncertainty)
+            ModuleRow("04", "¿Qué tan segura es esta comparación?", "Rangos P10-P90 y preguntas para tu técnico.", onOpenUncertainty)
         }
 
-        // 7. Accesos secundarios.
+        // Accesos directos a campo y mapa
         SecondaryButton("Explorar mi zona", onOpenGeo)
         SecondaryButton("Datos de terreno", onOpenField)
 
-        // 8. Estado de conexión.
-        SectionCard(title = "Conexión", containerColor = MaterialTheme.colorScheme.surfaceContainer, border = null) {
+        // Estado de conexión
+        SectionCard(title = "Estado de conexión", containerColor = MaterialTheme.colorScheme.surfaceContainer, border = null) {
             Text(
                 text = when {
                     connection.demoMode -> "Modo demo: se muestran datos de ejemplo, sin servidor."
@@ -118,12 +123,15 @@ fun HomeScreen(
                     else -> "Comprobando la conexión…"
                 },
                 style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
             )
             (health as? UiState.Success)?.let {
                 Text("Comprobado el ${formatClock(it.fetchedAtMillis)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            SecondaryButton("Volver a comprobar", viewModel::refreshStatus)
-            SecondaryButton("Configurar conexión", onOpenConnection)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                SecondaryButton("Recomprobar", viewModel::refreshStatus, modifier = Modifier.weight(1f))
+                SecondaryButton("Configurar conexión", onOpenConnection, modifier = Modifier.weight(1f))
+            }
             SecondaryButton("Fuentes y límites", onOpenSources)
         }
 
@@ -141,12 +149,12 @@ private fun MainActionCard(
     SectionCard(
         title = "¿Qué conviene revisar antes de mi próxima siembra?",
         containerColor = MaterialTheme.colorScheme.primaryContainer,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
     ) {
         when (compare) {
             UiState.Loading -> LoadingBlock("Comparando opciones…")
             is UiState.Error -> {
-                Text(compare.failure.title, style = MaterialTheme.typography.titleMedium)
+                Text(compare.failure.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(compare.failure.message, style = MaterialTheme.typography.bodyMedium)
                 SecondaryButton("Reintentar", onRetry)
             }
@@ -156,12 +164,14 @@ private fun MainActionCard(
                     Text(
                         text = "Conviene revisar la opción «${recommended.displayName}».",
                         style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
-                    Text(recommended.sequenceText, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                    Text(recommended.sequenceText, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
                     recommended.reasons.firstOrNull()?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
-                    Text("Revisá con tu técnico antes de decidir.", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                    Text("Revisá con tu técnico antes de decidir.", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                 } else {
-                    Text("Información insuficiente para ordenar opciones", style = MaterialTheme.typography.titleLarge)
+                    Text("Información insuficiente para ordenar opciones", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     Text("El servidor no eligió una opción mejor posicionada. Mirá las razones en el resultado.", style = MaterialTheme.typography.bodyMedium)
                 }
                 SecondaryButton("Ver resultado", onOpenDecision)
@@ -197,7 +207,7 @@ fun AlertsCard(result: ComparisonResult) {
 private fun AlertItem(alert: Alert) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Level.from(alert.level)?.let { LevelBadge(it, prefix = "Atención") }
-        Text(alert.message, style = MaterialTheme.typography.bodyLarge)
+        Text(alert.message, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
         Text(
             text = "Fecha / período: ${formatApiDate(alert.date) ?: "no informado"}" + (alert.source?.let { " · Fuente: $it" } ?: ""),
             style = MaterialTheme.typography.bodySmall,
@@ -214,20 +224,42 @@ private fun ModuleRow(number: String, title: String, description: String, onClic
             .fillMaxWidth()
             .heightIn(min = 64.dp)
             .clickable(role = Role.Button, onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = RoundedCornerShape(14.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(number, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary, modifier = Modifier.width(40.dp))
+            Text(number, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.width(36.dp))
             Column(Modifier.weight(1f)) {
-                Text(title, style = MaterialTheme.typography.titleSmall)
+                Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                 Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            Text("›", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
+            Text("›", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
         }
+    }
+}
+
+@Preview(showBackground = true, name = "Pantalla de Inicio (HomeScreen)")
+@Composable
+fun HomeScreenPreview() {
+    FarmealoTuTheme {
+        HomeScreen(
+            viewModel = sampleMainViewModel(),
+            connection = ConnectionSettings(baseUrl = "http://localhost:8000/", demoMode = true),
+            onCompareOptions = {},
+            onOpenDecision = {},
+            onOpenCompare = {},
+            onOpenTradeoffs = {},
+            onOpenRisks = {},
+            onOpenUncertainty = {},
+            onOpenGeo = {},
+            onOpenField = {},
+            onOpenConnection = {},
+            onOpenSources = {},
+        )
     }
 }

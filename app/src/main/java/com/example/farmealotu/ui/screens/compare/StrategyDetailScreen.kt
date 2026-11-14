@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.farmealotu.domain.CriterionKey
@@ -26,14 +27,15 @@ import com.example.farmealotu.ui.components.ScoreBar
 import com.example.farmealotu.ui.components.SecondaryButton
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.formatApiDate
+import com.example.farmealotu.ui.components.sampleMainViewModel
 import com.example.farmealotu.ui.components.traceDetails
 import com.example.farmealotu.ui.screens.decision.ComparisonGate
 import com.example.farmealotu.ui.theme.ChartPalette
+import com.example.farmealotu.ui.theme.FarmealoTuTheme
 import com.example.farmealotu.viewmodel.MainViewModel
 
 /**
- * «¿Por qué esta opción?»: los 5 bloques del reto para una estrategia — por qué se sugiere,
- * evidencia trazable, beneficios y riesgos, información que falta y preguntas para el agrónomo.
+ * «¿Por qué esta opción?»: los 5 bloques técnicos desglosados.
  */
 @Composable
 fun StrategyDetailScreen(
@@ -62,7 +64,7 @@ fun StrategyDetailScreen(
 
             SectionCard {
                 StrategyHeader(strategy, position = null, isRecommended = result.recommended?.id == strategy.id)
-                Text(strategy.sequenceText, style = MaterialTheme.typography.titleMedium)
+                Text(strategy.sequenceText, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             }
 
             SectionCard(title = "Por qué se sugiere") {
@@ -77,7 +79,7 @@ fun StrategyDetailScreen(
                     ExplainButton(Glossary.forCriterion(key))
                 }
                 ScoreBar("Total", strategy.score, axisMax, color = color, emphasized = true)
-                Text("Puntaje relativo entre opciones, no probabilidad de éxito.", style = MaterialTheme.typography.bodySmall)
+                Text("Puntaje relativo entre opciones, no probabilidad de éxito.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             SectionCard(title = "Ventajas y riesgos") {
@@ -116,11 +118,11 @@ fun StrategyDetailScreen(
 @Composable
 fun EvidenceItem(evidence: Evidence) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(evidence.indicator, style = MaterialTheme.typography.titleSmall)
+        Text(evidence.indicator, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
         Text(
             text = evidence.valueText?.let { value -> value + (evidence.unit?.let { " $it" } ?: "") } ?: "No disponible",
             style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Bold,
         )
         ProvenanceChip(evidence.status)
         Text(
@@ -144,5 +146,20 @@ fun EvidenceItem(evidence: Evidence) {
     }
 }
 
-/** Texto de la secuencia con campañas, para listas compactas. */
+/** Texto de la secuencia con campañas */
 fun Strategy.shortLabel(): String = if (name.isBlank()) id else "$id $name"
+
+@Preview(showBackground = true, name = "¿Por qué esta opción? (StrategyDetail)")
+@Composable
+fun StrategyDetailScreenPreview() {
+    FarmealoTuTheme {
+        StrategyDetailScreen(
+            viewModel = sampleMainViewModel(withComparison = true),
+            strategyId = "E1",
+            demoMode = true,
+            onBack = {},
+            onHome = {},
+            onEditData = {},
+        )
+    }
+}

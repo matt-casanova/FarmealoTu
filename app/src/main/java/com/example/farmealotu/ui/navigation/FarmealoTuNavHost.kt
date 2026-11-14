@@ -1,13 +1,27 @@
 package com.example.farmealotu.ui.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.farmealotu.AppSettings
@@ -39,10 +53,16 @@ object Routes {
     fun strategy(id: String) = "strategy/${android.net.Uri.encode(id)}"
 }
 
+private data class BottomNavItem(
+    val route: String,
+    val label: String,
+    val iconText: String,
+    val isSelected: (String?) -> Boolean,
+    val onClick: () -> Unit,
+)
+
 /**
- * Navegación: Inicio -> 5 preguntas -> Resultado -> 01 Comparar / 02 Ventajas y desventajas /
- * 03 Riesgos / 04 Incertidumbre, con accesos a «Explorar mi zona» y «Datos de terreno».
- * El [MainViewModel] se comparte entre pantallas: respuestas y resultados se conservan al navegar.
+ * Navegación principal con barra de navegación inferior permanente (`Bottom Navigation Bar`).
  */
 @Composable
 fun FarmealoTuNavHost(
@@ -53,103 +73,204 @@ fun FarmealoTuNavHost(
     val connection by settings.state.collectAsStateWithLifecycle()
     val demoMode = connection.demoMode
 
+    val compareState by viewModel.compare.collectAsStateWithLifecycle()
+    val inputState by viewModel.input.collectAsStateWithLifecycle()
+
     val goHome: () -> Unit = { navController.popBackStack(Routes.HOME, inclusive = false) }
     val goBack: () -> Unit = { if (!navController.popBackStack()) goHome() }
     val open: (String) -> Unit = { route -> navController.navigate(route) { launchSingleTop = true } }
     val editData: () -> Unit = { open(Routes.input(summary = true)) }
     val openWhy: (String) -> Unit = { id -> open(Routes.strategy(id)) }
 
-    NavHost(navController = navController, startDestination = Routes.HOME) {
-        composable(Routes.HOME) {
-            val compare by viewModel.compare.collectAsStateWithLifecycle()
-            val input by viewModel.input.collectAsStateWithLifecycle()
-            HomeScreen(
-                viewModel = viewModel,
-                connection = connection,
-                onCompareOptions = {
-                    when {
-                        compare.dataOrNull != null -> open(Routes.DECISION)
-                        else -> open(Routes.input(summary = input.isComplete))
-                    }
-                },
-                onOpenDecision = { open(Routes.DECISION) },
-                onOpenCompare = { open(Routes.compare()) },
-                onOpenTradeoffs = { open(Routes.TRADEOFFS) },
-                onOpenRisks = { open(Routes.RISKS) },
-                onOpenUncertainty = { open(Routes.UNCERTAINTY) },
-                onOpenGeo = { open(Routes.GEO) },
-                onOpenField = { open(Routes.FIELD) },
-                onOpenConnection = { open(Routes.CONNECTION) },
-                onOpenSources = { open(Routes.SOURCES) },
-            )
-        }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
-        composable(
-            route = Routes.INPUT,
-            arguments = listOf(navArgument("summary") { type = NavType.BoolType; defaultValue = false }),
-        ) { entry ->
-            FarmerInputScreen(
-                viewModel = viewModel,
-                demoMode = demoMode,
-                startAtSummary = entry.arguments?.getBoolean("summary") ?: false,
-                onExit = goBack,
-                onHome = goHome,
-                onCompare = {
-                    // El resultado reemplaza al formulario en la pila: «volver» lleva al inicio.
-                    navController.navigate(Routes.DECISION) {
-                        popUpTo(Routes.HOME)
-                        launchSingleTop = true
-                    }
-                },
-            )
-        }
+    val navItems = listOf(
+        BottomNavItem(
+            route = Routes.HOME,
+            label = "Inicio",
+            iconText = "🏠",
+            isSelected = { route -> route == Routes.HOME },
+            onClick = {
+                navController.navigate(Routes.HOME) {
+                    popUpTo(Routes.HOME) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        ),
+        BottomNavItem(
+            route = Routes.DECISION,
+            label = "Siembra",
+            iconText = "🌾",
+            isSelected = { route ->
+                route == Routes.DECISION || route?.startsWith("input") == true ||
+                    route?.startsWith("compare") == true || route?.startsWith("strategy") == true
+            },
+            onClick = {
+                val target = if (compareState.dataOrNull != null) Routes.DECISION else Routes.input(summary = inputState.isComplete)
+                open(target)
+            }
+        ),
+        BottomNavItem(
+            route = Routes.RISKS,
+            label = "Riesgos",
+            iconText = "🌧️",
+            isSelected = { route -> route == Routes.RISKS },
+            onClick = { open(Routes.RISKS) }
+        ),
+        BottomNavItem(
+            route = Routes.GEO,
+            label = "Mi Zona",
+            iconText = "🗺️",
+            isSelected = { route -> route == Routes.GEO || route == Routes.FIELD },
+            onClick = { open(Routes.GEO) }
+        ),
+        BottomNavItem(
+            route = Routes.SOURCES,
+            label = "Más",
+            iconText = "⚙️",
+            isSelected = { route ->
+                route == Routes.SOURCES || route == Routes.CONNECTION ||
+                    route == Routes.TRADEOFFS || route == Routes.UNCERTAINTY
+            },
+            onClick = { open(Routes.SOURCES) }
+        )
+    )
 
-        composable(Routes.DECISION) {
-            DecisionScreen(
-                viewModel = viewModel,
-                demoMode = demoMode,
-                onBack = goBack,
-                onHome = goHome,
-                onEditData = editData,
-                onOpenCompare = { open(Routes.compare()) },
-                onChangePriorities = { open(Routes.compare(priorities = true)) },
-                onOpenWhy = openWhy,
-                onOpenTradeoffs = { open(Routes.TRADEOFFS) },
-                onOpenRisks = { open(Routes.RISKS) },
-                onOpenUncertainty = { open(Routes.UNCERTAINTY) },
-            )
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
+        bottomBar = {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 6.dp,
+            ) {
+                navItems.forEach { item ->
+                    val selected = item.isSelected(currentRoute)
+                    NavigationBarItem(
+                        selected = selected,
+                        onClick = item.onClick,
+                        icon = { Text(text = item.iconText, fontSize = 20.sp) },
+                        label = {
+                            Text(
+                                text = item.label,
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                            )
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    )
+                }
+            }
         }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = innerPadding.calculateBottomPadding())
+        ) {
+            NavHost(
+                navController = navController,
+                startDestination = Routes.HOME,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                composable(Routes.HOME) {
+                    val compare by viewModel.compare.collectAsStateWithLifecycle()
+                    val input by viewModel.input.collectAsStateWithLifecycle()
+                    HomeScreen(
+                        viewModel = viewModel,
+                        connection = connection,
+                        onCompareOptions = {
+                            when {
+                                compare.dataOrNull != null -> open(Routes.DECISION)
+                                else -> open(Routes.input(summary = input.isComplete))
+                            }
+                        },
+                        onOpenDecision = { open(Routes.DECISION) },
+                        onOpenCompare = { open(Routes.compare()) },
+                        onOpenTradeoffs = { open(Routes.TRADEOFFS) },
+                        onOpenRisks = { open(Routes.RISKS) },
+                        onOpenUncertainty = { open(Routes.UNCERTAINTY) },
+                        onOpenGeo = { open(Routes.GEO) },
+                        onOpenField = { open(Routes.FIELD) },
+                        onOpenConnection = { open(Routes.CONNECTION) },
+                        onOpenSources = { open(Routes.SOURCES) },
+                    )
+                }
 
-        composable(
-            route = Routes.COMPARE,
-            arguments = listOf(navArgument("priorities") { type = NavType.BoolType; defaultValue = false }),
-        ) { entry ->
-            CompareRotationsScreen(
-                viewModel = viewModel,
-                demoMode = demoMode,
-                onBack = goBack,
-                onHome = goHome,
-                onEditData = editData,
-                onOpenWhy = openWhy,
-                expandPriorities = entry.arguments?.getBoolean("priorities") ?: false,
-            )
+                composable(
+                    route = Routes.INPUT,
+                    arguments = listOf(navArgument("summary") { type = NavType.BoolType; defaultValue = false }),
+                ) { entry ->
+                    FarmerInputScreen(
+                        viewModel = viewModel,
+                        demoMode = demoMode,
+                        startAtSummary = entry.arguments?.getBoolean("summary") ?: false,
+                        onExit = goBack,
+                        onHome = goHome,
+                        onCompare = {
+                            navController.navigate(Routes.DECISION) {
+                                popUpTo(Routes.HOME)
+                                launchSingleTop = true
+                            }
+                        },
+                    )
+                }
+
+                composable(Routes.DECISION) {
+                    DecisionScreen(
+                        viewModel = viewModel,
+                        demoMode = demoMode,
+                        onBack = goBack,
+                        onHome = goHome,
+                        onEditData = editData,
+                        onOpenCompare = { open(Routes.compare()) },
+                        onChangePriorities = { open(Routes.compare(priorities = true)) },
+                        onOpenWhy = openWhy,
+                        onOpenTradeoffs = { open(Routes.TRADEOFFS) },
+                        onOpenRisks = { open(Routes.RISKS) },
+                        onOpenUncertainty = { open(Routes.UNCERTAINTY) },
+                    )
+                }
+
+                composable(
+                    route = Routes.COMPARE,
+                    arguments = listOf(navArgument("priorities") { type = NavType.BoolType; defaultValue = false }),
+                ) { entry ->
+                    CompareRotationsScreen(
+                        viewModel = viewModel,
+                        demoMode = demoMode,
+                        onBack = goBack,
+                        onHome = goHome,
+                        onEditData = editData,
+                        onOpenWhy = openWhy,
+                        expandPriorities = entry.arguments?.getBoolean("priorities") ?: false,
+                    )
+                }
+
+                composable(
+                    route = Routes.STRATEGY,
+                    arguments = listOf(navArgument("id") { type = NavType.StringType }),
+                ) { entry ->
+                    StrategyDetailScreen(
+                        viewModel = viewModel,
+                        strategyId = entry.arguments?.getString("id").orEmpty(),
+                        demoMode = demoMode,
+                        onBack = goBack,
+                        onHome = goHome,
+                        onEditData = editData,
+                    )
+                }
+
+                moduleDestinations(viewModel, demoMode, goBack, goHome, editData, openWhy, open)
+                extraDestinations(viewModel, settings, demoMode, goBack, goHome)
+            }
         }
-
-        composable(
-            route = Routes.STRATEGY,
-            arguments = listOf(navArgument("id") { type = NavType.StringType }),
-        ) { entry ->
-            StrategyDetailScreen(
-                viewModel = viewModel,
-                strategyId = entry.arguments?.getString("id").orEmpty(),
-                demoMode = demoMode,
-                onBack = goBack,
-                onHome = goHome,
-                onEditData = editData,
-            )
-        }
-
-        moduleDestinations(viewModel, demoMode, goBack, goHome, editData, openWhy, open)
-        extraDestinations(viewModel, settings, demoMode, goBack, goHome)
     }
 }

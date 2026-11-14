@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.farmealotu.data.model.formatNumber
@@ -30,12 +31,14 @@ import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.formatApiDate
 import com.example.farmealotu.ui.components.formatCoordinate
 import com.example.farmealotu.ui.components.formatPercentWeight
+import com.example.farmealotu.ui.components.sampleMainViewModel
 import com.example.farmealotu.ui.components.scoreAxisMax
 import com.example.farmealotu.ui.components.scoreDecimals
 import com.example.farmealotu.ui.screens.compare.shortLabel
 import com.example.farmealotu.ui.screens.decision.ComparisonGate
 import com.example.farmealotu.ui.screens.decision.OutdatedInputNotice
 import com.example.farmealotu.ui.theme.ChartPalette
+import com.example.farmealotu.ui.theme.FarmealoTuTheme
 import com.example.farmealotu.viewmodel.MainViewModel
 
 private const val RANGE_MEANING =
@@ -56,8 +59,6 @@ private fun Evidence.statusIs(vararg values: String): Boolean = status?.trim()?.
 
 /**
  * Módulo 04 — «¿Qué tan segura es esta comparación?».
- * Intervalos P10–P90 con la marca de P50 por estrategia y, en palabras, de dónde sale cada cosa:
- * NASA, FarmealoTu, el agricultor, supuestos, vacíos y preguntas para el agrónomo.
  */
 @Composable
 fun UncertaintyScreen(
@@ -90,7 +91,7 @@ fun UncertaintyScreen(
 private fun RangesCard(result: ComparisonResult) {
     val withRange = result.strategies.filter { it.uncertainty?.hasRange == true }
     SectionCard(title = "Cuánto puede variar cada opción") {
-        Text(RANGE_MEANING, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+        Text(RANGE_MEANING, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
         if (withRange.isEmpty()) {
             Text(
                 "El servidor no envió rangos de variación (P10–P90) para estas opciones, así que no se dibuja ninguno.",
@@ -133,7 +134,6 @@ private fun RangesCard(result: ComparisonResult) {
 @Composable
 private fun ConfidenceCard(result: ComparisonResult) {
     val informed = result.strategies.filter { it.uncertainty?.rankStability != null || it.uncertainty?.confidenceLevel != null }
-    // Solo se muestra si la API lo trae; no se deduce un nivel de confianza en el teléfono.
     if (informed.isEmpty()) return
     SectionCard(title = "Qué tan firme es el orden") {
         informed.forEach { strategy -> ConfidenceItem(strategy) }
@@ -151,14 +151,13 @@ private fun ConfidenceCard(result: ComparisonResult) {
 private fun ConfidenceItem(strategy: Strategy) {
     val uncertainty = strategy.uncertainty ?: return
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(strategy.shortLabel(), style = MaterialTheme.typography.titleSmall)
+        Text(strategy.shortLabel(), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
         uncertainty.rankStability?.let { stability ->
-            // La API puede mandar la estabilidad como fracción (0–1) o como porcentaje.
             val percent = if (stability <= 1.0) stability * 100 else stability
             Text("Quedó primera en ${formatNumber(percent, 0)} % de las repeticiones.", style = MaterialTheme.typography.bodyMedium)
         }
         uncertainty.confidenceLevel?.let { level ->
-            Text("Confianza: ${ConfidenceDisplay.from(level).label}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+            Text("Confianza: ${ConfidenceDisplay.from(level).label}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
         }
         uncertainty.confidenceReason?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
     }
@@ -212,7 +211,7 @@ private fun ProvenanceSections(result: ComparisonResult, appliedInput: FarmerInp
         BulletList(own, emptyText = "Sin datos tuyos registrados en esta comparación.")
     }
 
-    SectionCard(title = "Supuestos") {
+    SectionCard(title = "Supuestos iniciales") {
         BulletList(assumptions, emptyText = "El servidor no listó supuestos en esta respuesta.")
         Text(
             "Los pesos de partida (agua 40 %, suelo 35 %, riesgo 25 %) son una preferencia inicial, no un valor validado científicamente.",
@@ -240,5 +239,19 @@ private fun ProvenanceSections(result: ComparisonResult, appliedInput: FarmerInp
         SectionCard(title = "Estado de los datos (según el servidor)") {
             BulletList(result.dataStatus.map { "${it.label}: ${it.value}" })
         }
+    }
+}
+
+@Preview(showBackground = true, name = "Módulo 04 - ¿Qué tan segura es esta comparación?")
+@Composable
+fun UncertaintyScreenPreview() {
+    FarmealoTuTheme {
+        UncertaintyScreen(
+            viewModel = sampleMainViewModel(withComparison = true),
+            demoMode = true,
+            onBack = {},
+            onHome = {},
+            onEditData = {},
+        )
     }
 }

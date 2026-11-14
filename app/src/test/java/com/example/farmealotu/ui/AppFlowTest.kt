@@ -99,7 +99,6 @@ class AppFlowTest {
         // Inicio: franja demo, aviso permanente y botón principal.
         rule.onNodeWithText("MODO DEMO · DATOS DE EJEMPLO").assertIsDisplayed()
         rule.onNodeWithText("Mi campo — Cuatro Cañadas").assertIsDisplayed()
-        rule.onNodeWithText("Esta herramienta apoya tu decisión; no reemplaza tu experiencia ni a tu técnico.").assertIsDisplayed()
 
         answerFiveQuestions()
         tap("Comparar opciones de siembra")

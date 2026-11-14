@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.farmealotu.domain.HeatmapSeries
@@ -44,7 +45,9 @@ import com.example.farmealotu.ui.components.StateContent
 import com.example.farmealotu.ui.components.formatApiDate
 import com.example.farmealotu.ui.components.formatOrMissing
 import com.example.farmealotu.ui.components.provenanceLabel
+import com.example.farmealotu.ui.components.sampleMainViewModel
 import com.example.farmealotu.ui.components.traceDetails
+import com.example.farmealotu.ui.theme.FarmealoTuTheme
 import com.example.farmealotu.viewmodel.MainViewModel
 
 private fun IndicatorSummary.isCoverIndicator(): Boolean =
@@ -52,8 +55,6 @@ private fun IndicatorSummary.isCoverIndicator(): Boolean =
 
 /**
  * Módulo 03 — «Conocer los riesgos».
- * Tarjetas de indicadores y mapa de calor meses × años, todo desde GET /api/indicators.
- * Si el servidor no manda la grilla se dice que no hay datos: no se fabrica ninguna celda.
  */
 @Composable
 fun RisksScreen(
@@ -74,9 +75,9 @@ fun RisksScreen(
             )
             Text(
                 "Estar expuesto a lluvia intensa no equivale a predecir un desborde del río.",
-                style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold,
             )
-            ExplainButton(Glossary.regional, label = "¿De dónde salen estos datos?")
+            ExplainButton(Glossary.regional, label = "❓ ¿De dónde salen estos datos?")
         }
 
         StateContent(
@@ -87,7 +88,7 @@ fun RisksScreen(
             val result = state.data
             FreshnessNote(state, onRetry = { viewModel.loadIndicators(force = true) })
             result.lastObservationDate?.let {
-                Text("Última observación disponible: ${formatApiDate(it)}", style = MaterialTheme.typography.bodyMedium)
+                Text("📅 Última observación disponible: ${formatApiDate(it)}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
             }
             SummaryCards(result)
             HeatmapSection(result)
@@ -99,7 +100,6 @@ fun RisksScreen(
 
 @Composable
 private fun SummaryCards(result: IndicatorsResult) {
-    // «Baja cobertura» solo aparece como riesgo si hay un NDVI verificable (valor real del servidor).
     val (cover, others) = result.summaries.partition { it.isCoverIndicator() }
     if (others.isEmpty() && cover.isEmpty()) {
         SectionCard {
@@ -127,6 +127,7 @@ private fun IndicatorCard(summary: IndicatorSummary) {
         Text(
             text = summary.valueText?.let { value -> value + (summary.unit?.let { " $it" } ?: "") } ?: "No disponible",
             style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
         )
         Level.from(summary.level)?.let { LevelBadge(it, prefix = "Exposición") }
         summary.description?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
@@ -173,8 +174,8 @@ private fun HeatmapSection(result: IndicatorsResult) {
     val scale = remember(series) { HeatScale.from(series.cells.mapNotNull { it.value }) }
 
     SectionCard(title = "Riesgo por mes y año") {
-        Text("Elegí qué querés mirar:", style = MaterialTheme.typography.bodyMedium)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text("Elegí qué indicador querés mirar:", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             grids.forEach { grid ->
                 FilterChip(
                     selected = grid.id == series.id,
@@ -183,7 +184,7 @@ private fun HeatmapSection(result: IndicatorsResult) {
                         selectedYear = null
                         selectedMonth = null
                     },
-                    label = { Text(grid.name, style = MaterialTheme.typography.labelLarge) },
+                    label = { Text(grid.name, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold) },
                     modifier = Modifier.heightIn(min = 48.dp),
                 )
             }
@@ -192,10 +193,11 @@ private fun HeatmapSection(result: IndicatorsResult) {
         Text(
             text = series.name + (series.unit?.let { " ($it)" } ?: ""),
             style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
         )
         series.description?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
         Text(
-            "Cada cuadro es un mes (columnas, de enero a diciembre) de un año (filas). Tocá un cuadro para ver su valor.",
+            "Cada cuadro es un mes (columnas) de un año (filas). Tocá un cuadro para ver su valor exacto.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -217,6 +219,7 @@ private fun HeatmapSection(result: IndicatorsResult) {
                 text = if (scale.diverging) "Rangos (rojo: menos que lo habitual · azul: más que lo habitual)"
                 else "Rangos (más oscuro = valor más alto)",
                 style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold
             )
             HeatLegend(scale, series.unit)
         }
@@ -244,7 +247,7 @@ private fun CellDetail(series: HeatmapSeries, year: Int?, month: Int?) {
             return@SectionCard
         }
         val cell = series.cell(year, month)
-        Text("${MONTH_NAMES[month - 1].replaceFirstChar { it.uppercase() }} de $year", style = MaterialTheme.typography.titleMedium)
+        Text("${MONTH_NAMES[month - 1].replaceFirstChar { it.uppercase() }} de $year", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         val details = listOf(
             LabeledValue("Valor", formatOrMissing(cell?.value, 1, series.unit, missing = "sin dato para ese mes")),
             LabeledValue("Indicador", series.name),
@@ -261,5 +264,19 @@ private fun CellDetail(series: HeatmapSeries, year: Int?, month: Int?) {
             LabeledValue("Procedencia", provenanceLabel(series.status)),
         )
         details.forEach { InfoRow(it.label, it.value) }
+    }
+}
+
+@Preview(showBackground = true, name = "Módulo 03 - Conocer los Riesgos")
+@Composable
+fun RisksScreenPreview() {
+    FarmealoTuTheme {
+        RisksScreen(
+            viewModel = sampleMainViewModel(withComparison = true),
+            demoMode = true,
+            onBack = {},
+            onHome = {},
+            onEditData = {},
+        )
     }
 }

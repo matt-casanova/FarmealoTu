@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.farmealotu.data.model.formatNumber
@@ -33,6 +34,7 @@ import com.example.farmealotu.ui.components.RadarSeries
 import com.example.farmealotu.ui.components.SecondaryButton
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.SeriesLegend
+import com.example.farmealotu.ui.components.sampleMainViewModel
 import com.example.farmealotu.ui.components.scoreDecimals
 import com.example.farmealotu.ui.screens.compare.StrategyHeader
 import com.example.farmealotu.ui.screens.compare.TradeoffLine
@@ -41,11 +43,11 @@ import com.example.farmealotu.ui.screens.compare.shortLabel
 import com.example.farmealotu.ui.screens.decision.ComparisonGate
 import com.example.farmealotu.ui.screens.decision.OutdatedInputNotice
 import com.example.farmealotu.ui.theme.ChartPalette
+import com.example.farmealotu.ui.theme.FarmealoTuTheme
 import com.example.farmealotu.viewmodel.MainViewModel
 
 /**
- * Frases de lectura directa de los criterios que mandó el servidor (quién tiene el valor más alto
- * en cada uno). No se calcula ni se pondera nada: es leer el máximo de una columna.
+ * Frases de lectura directa de los criterios que mandó el servidor
  */
 fun criterionHighlights(result: ComparisonResult): List<String> = CriterionKey.entries.mapNotNull { key ->
     val scored = result.strategies.mapNotNull { strategy -> key.of(strategy.criteria)?.score?.let { strategy to it } }
@@ -62,7 +64,6 @@ fun criterionHighlights(result: ComparisonResult): List<String> = CriterionKey.e
 
 /**
  * Módulo 02 — «Ventajas y desventajas».
- * Primero frases simples (tradeoffs y criterios reales); el radar va después, plegado.
  */
 @Composable
 fun TradeoffsScreen(
@@ -81,14 +82,13 @@ fun TradeoffsScreen(
             FreshnessNote(state, onRetry = viewModel::submitCompare)
             OutdatedInputNotice(viewModel)
 
-            // 1) Conclusiones comprensibles, siempre primero.
             val highlights = criterionHighlights(result)
             if (highlights.isNotEmpty()) {
                 SectionCard(title = "En pocas palabras", containerColor = MaterialTheme.colorScheme.primaryContainer) {
                     BulletList(highlights)
                     Text(
                         "Ninguna opción gana en todo: mejorar en un criterio suele costar en otro.",
-                        style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium,
+                        style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold,
                     )
                 }
             }
@@ -96,7 +96,7 @@ fun TradeoffsScreen(
             result.strategies.forEach { strategy ->
                 SectionCard {
                     StrategyHeader(strategy, position = null, isRecommended = result.recommended?.id == strategy.id)
-                    Text(strategy.sequenceText, style = MaterialTheme.typography.bodyLarge)
+                    Text(strategy.sequenceText, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
                     if (strategy.tradeoffs.isEmpty) {
                         Text("El servidor no envió ventajas ni desventajas para esta opción.", style = MaterialTheme.typography.bodyMedium)
                     } else {
@@ -105,11 +105,10 @@ fun TradeoffsScreen(
                         TradeoffLine("Riesgo principal", strategy.tradeoffs.mainRisk)
                         if (strategy.tradeoffs.extra.isNotEmpty()) BulletList(strategy.tradeoffs.extra)
                     }
-                    SecondaryButton("¿Por qué esta opción?", { onOpenWhy(strategy.id) })
+                    SecondaryButton("❓ ¿Por qué esta opción?", { onOpenWhy(strategy.id) })
                 }
             }
 
-            // 2) Comparación técnica: plegada por defecto, nunca delante de las frases.
             TechnicalComparison(result)
 
             FooterActions(onEditData = onEditData, onHome = onHome)
@@ -148,11 +147,11 @@ private fun TechnicalComparison(result: ComparisonResult) {
                         "${strategy.shortLabel()} no tiene valor de $missing"
                     } + ". En esos casos no se dibuja ese vértice.",
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Bold,
                 )
             }
 
-            Text("Los mismos números, en tabla", style = MaterialTheme.typography.labelLarge)
+            Text("Los mismos números, en tabla", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
             CriteriaTable(result.strategies, scoreDecimals(axisMax))
             ExplainButton(Glossary.relativeScore)
             SecondaryButton("Ocultar comparación técnica", { expanded = false })
@@ -164,9 +163,9 @@ private fun TechnicalComparison(result: ComparisonResult) {
 private fun CriteriaTable(strategies: List<Strategy>, decimals: Int) {
     Column(Modifier.horizontalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row {
-            Text("Opción", style = MaterialTheme.typography.labelMedium, modifier = Modifier.width(150.dp))
+            Text("Opción", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, modifier = Modifier.width(150.dp))
             (CriterionKey.entries.map { it.label } + "Total").forEach { header ->
-                Text(header, style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.End, modifier = Modifier.width(64.dp))
+                Text(header, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.End, modifier = Modifier.width(64.dp))
             }
         }
         strategies.forEach { strategy ->
@@ -183,5 +182,20 @@ private fun CriteriaTable(strategies: List<Strategy>, decimals: Int) {
             }
         }
         Text("s/d = dato insuficiente", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}
+
+@Preview(showBackground = true, name = "Módulo 02 - Ventajas y Desventajas")
+@Composable
+fun TradeoffsScreenPreview() {
+    FarmealoTuTheme {
+        TradeoffsScreen(
+            viewModel = sampleMainViewModel(withComparison = true),
+            demoMode = true,
+            onBack = {},
+            onHome = {},
+            onEditData = {},
+            onOpenWhy = {},
+        )
     }
 }

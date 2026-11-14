@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.farmealotu.domain.ComparisonResult
@@ -26,13 +27,15 @@ import com.example.farmealotu.ui.components.ScoreBar
 import com.example.farmealotu.ui.components.SecondaryButton
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.StateContent
+import com.example.farmealotu.ui.components.sampleMainViewModel
 import com.example.farmealotu.ui.components.scoreAxisMax
 import com.example.farmealotu.ui.screens.home.AlertsCard
 import com.example.farmealotu.ui.theme.ChartPalette
+import com.example.farmealotu.ui.theme.FarmealoTuTheme
 import com.example.farmealotu.viewmodel.MainViewModel
 import com.example.farmealotu.viewmodel.UiState
 
-/** Estado común de los módulos que dependen de la comparación: sin consulta todavía, se invita a registrar el campo. */
+/** Estado común de los módulos que dependen de la comparación */
 @Composable
 fun ComparisonGate(
     state: UiState<ComparisonResult>,
@@ -57,7 +60,7 @@ fun ComparisonGate(
     )
 }
 
-/** Aviso cuando lo que está en pantalla se calculó con respuestas distintas a las actuales. */
+/** Aviso cuando lo que está en pantalla se calculó con respuestas distintas */
 @Composable
 fun OutdatedInputNotice(viewModel: MainViewModel) {
     val input by viewModel.input.collectAsStateWithLifecycle()
@@ -70,7 +73,7 @@ fun OutdatedInputNotice(viewModel: MainViewModel) {
             Text(
                 "Cambiaste tus datos después de esta comparación. Lo que ves corresponde a tus respuestas anteriores.",
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
             )
             SecondaryButton("Actualizar comparación", viewModel::submitCompare)
         }
@@ -78,8 +81,7 @@ fun OutdatedInputNotice(viewModel: MainViewModel) {
 }
 
 /**
- * Resultado principal, para entender en menos de 30 segundos: opción mejor posicionada (solo si
- * el servidor mandó un `recommended_strategy_id` válido), secuencia, razón, riesgo y confianza.
+ * Resultado principal: opción mejor posicionada, secuencia, razón, riesgo y confianza.
  */
 @Composable
 fun DecisionScreen(
@@ -112,7 +114,7 @@ fun DecisionScreen(
 
             PrimaryButton("Comparar todas", onOpenCompare)
             SecondaryButton("Cambiar mis prioridades", onChangePriorities)
-            if (recommended != null) SecondaryButton("¿Por qué?", { onOpenWhy(recommended.id) })
+            if (recommended != null) SecondaryButton("❓ ¿Por qué esta opción?", { onOpenWhy(recommended.id) })
 
             SectionCard(title = "Seguir revisando") {
                 SecondaryButton("02 · Ventajas y desventajas", onOpenTradeoffs)
@@ -133,11 +135,10 @@ private fun RecommendedCard(strategy: Strategy, result: ComparisonResult) {
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
     ) {
-        Text("Opción mejor posicionada", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onPrimaryContainer)
-        Text(strategy.displayName, style = MaterialTheme.typography.headlineSmall)
+        Text("Opción mejor posicionada", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+        Text(strategy.displayName, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
 
-        // Secuencia por campaña (verano / invierno cuando el servidor lo indica).
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (strategy.sequence.isEmpty()) {
                 Text("Secuencia no informada", style = MaterialTheme.typography.bodyLarge)
             } else {
@@ -145,37 +146,39 @@ private fun RecommendedCard(strategy: Strategy, result: ComparisonResult) {
                     Text(
                         text = "${step.seasonLabel ?: "Campaña ${index + 1}"}: ${step.cropLabel}",
                         style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
         }
 
         strategy.reasons.firstOrNull()?.let { reason ->
-            Text("Por qué", style = MaterialTheme.typography.labelLarge)
+            Text("Por qué se sugiere", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
             Text(reason, style = MaterialTheme.typography.bodyLarge)
         }
 
         val caution = strategy.tradeoffs.mainRisk ?: strategy.tradeoffs.disadvantage
         if (caution != null) {
-            Text("A tener en cuenta", style = MaterialTheme.typography.labelLarge)
+            Text("A tener en cuenta", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
             Text(caution, style = MaterialTheme.typography.bodyLarge)
         }
 
         if (strategy.score != null) {
-            ScoreBar("Puntaje", strategy.score, axisMax, color = ChartPalette.forStrategy(strategy.id, 0), emphasized = true)
+            ScoreBar("Puntaje general", strategy.score, axisMax, color = ChartPalette.forStrategy(strategy.id, 0), emphasized = true)
             Text(
                 "Puntaje relativo entre opciones, no probabilidad de éxito.",
                 style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         if (strategy.partialScore) Pill("Puntaje parcial: falta un criterio")
 
         val confidence = ConfidenceDisplay.from(strategy.uncertainty?.confidenceLevel)
-        Text("Confianza de la comparación: ${confidence.label}", style = MaterialTheme.typography.titleSmall)
+        Text("Confianza de la comparación: ${confidence.label}", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
         strategy.uncertainty?.confidenceReason?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
         ExplainButton(Glossary.confidence)
 
-        Text("Revisá con tu técnico antes de decidir.", style = MaterialTheme.typography.titleMedium)
+        Text("Revisá con tu técnico antes de decidir.", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -185,7 +188,7 @@ private fun InsufficientCard(result: ComparisonResult) {
         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.tertiary),
     ) {
-        Text("Información insuficiente para ordenar opciones", style = MaterialTheme.typography.headlineSmall)
+        Text("Información insuficiente para ordenar opciones", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
         Text(
             text = when (result.strategies.size) {
                 0 -> "El servidor no devolvió opciones para comparar."
@@ -194,8 +197,28 @@ private fun InsufficientCard(result: ComparisonResult) {
             style = MaterialTheme.typography.bodyLarge,
         )
         val reasons = (result.limitations + result.strategies.flatMap { it.missingInformation }).distinct()
-        Text("Razones informadas", style = MaterialTheme.typography.labelLarge)
+        Text("Razones informadas", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
         BulletList(reasons, emptyText = "El servidor no explicó el motivo.")
-        Text("Revisá con tu técnico: igual podés comparar las opciones una por una.", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+        Text("Revisá con tu técnico: igual podés comparar las opciones una por una.", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Preview(showBackground = true, name = "Resultado Principal (DecisionScreen)")
+@Composable
+fun DecisionScreenPreview() {
+    FarmealoTuTheme {
+        DecisionScreen(
+            viewModel = sampleMainViewModel(withComparison = true),
+            demoMode = true,
+            onBack = {},
+            onHome = {},
+            onEditData = {},
+            onOpenCompare = {},
+            onChangePriorities = {},
+            onOpenWhy = {},
+            onOpenTradeoffs = {},
+            onOpenRisks = {},
+            onOpenUncertainty = {},
+        )
     }
 }

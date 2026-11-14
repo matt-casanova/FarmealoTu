@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -70,7 +69,7 @@ import com.example.farmealotu.viewmodel.UiState
 
 /**
  * Marco común: barra superior con «volver» e «Inicio», franja de modo demo persistente
- * y aviso fijo de que la herramienta apoya, no reemplaza, la decisión del agricultor.
+ * y aviso de apoyo a la decisión del agricultor.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +83,6 @@ fun FarmScreen(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val scrollState = rememberScrollState()
-    // Cuando cambia el paso dentro de una misma pantalla, se vuelve arriba: lo nuevo no queda escondido.
     LaunchedEffect(scrollResetKey) { scrollState.scrollTo(0) }
     Scaffold(
         modifier = Modifier
@@ -99,12 +97,19 @@ fun FarmScreen(
                             Text(
                                 text = title,
                                 style = MaterialTheme.typography.titleLarge,
-                                maxLines = 2,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.semantics { heading() },
                             )
                             if (subtitle != null) {
-                                Text(subtitle, style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                Text(
+                                    text = subtitle,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
+                                )
                             }
                         }
                     },
@@ -114,7 +119,7 @@ fun FarmScreen(
                                 onClick = onBack,
                                 modifier = Modifier.semantics { contentDescription = "Volver" },
                             ) {
-                                Text("←", fontSize = 28.sp, modifier = Modifier.clearAndSetSemantics { })
+                                Text("←", fontSize = 26.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clearAndSetSemantics { })
                             }
                         }
                     },
@@ -123,7 +128,9 @@ fun FarmScreen(
                             TextButton(
                                 onClick = onHome,
                                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary),
-                            ) { Text("Inicio") }
+                            ) {
+                                Text("🏠 Inicio", fontWeight = FontWeight.SemiBold)
+                            }
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -136,7 +143,6 @@ fun FarmScreen(
                 if (demoMode) DemoBanner()
             }
         },
-        bottomBar = { DisclaimerBar() },
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -150,35 +156,18 @@ fun FarmScreen(
     }
 }
 
-/** Franja persistente: cualquier pantalla alimentada por fixtures la lleva (regla 9 del prompt). */
+/** Franja persistente de MODO DEMO */
 @Composable
 fun DemoBanner() {
     Surface(color = DemoStripe, contentColor = OnDemoStripe, modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "MODO DEMO · DATOS DE EJEMPLO",
             style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(horizontal = 12.dp, vertical = 6.dp)
-                .semantics { contentDescription = "Modo demo. Los datos de esta pantalla son de ejemplo, no son reales." },
-        )
-    }
-}
-
-@Composable
-fun DisclaimerBar() {
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(
-            text = DISCLAIMER,
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .navigationBarsPadding()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .semantics { contentDescription = "Modo demo activo con datos de ejemplo" },
         )
     }
 }
@@ -190,7 +179,7 @@ fun SectionCard(
     modifier: Modifier = Modifier,
     title: String? = null,
     containerColor: Color = MaterialTheme.colorScheme.surface,
-    border: BorderStroke? = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+    border: BorderStroke? = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f)),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
@@ -198,10 +187,17 @@ fun SectionCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = containerColor, contentColor = MaterialTheme.colorScheme.onSurface),
         border = border,
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (title != null) {
-                Text(title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
+                Text(
+                    title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.semantics { heading() }
+                )
             }
             content()
         }
@@ -215,11 +211,16 @@ fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 54.dp),
         shape = RoundedCornerShape(14.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
     ) {
-        Text(text, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
+        Text(text, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
     }
 }
 
@@ -230,20 +231,24 @@ fun SecondaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modi
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 52.dp),
+            .heightIn(min = 50.dp),
         shape = RoundedCornerShape(14.dp),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.primary
+        ),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
     ) {
-        Text(text, style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center)
+        Text(text, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
     }
 }
 
-/** Pie común de los módulos: desde cualquier pantalla se puede editar los datos o volver al inicio. */
+/** Pie común de los módulos */
 @Composable
 fun FooterActions(onEditData: () -> Unit, onHome: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SecondaryButton("Editar mis datos", onEditData)
-        SecondaryButton("Volver al inicio", onHome)
+        SecondaryButton("✏️ Editar mis datos", onEditData)
+        SecondaryButton("🏠 Volver al inicio", onHome)
     }
 }
 
@@ -258,16 +263,17 @@ fun Pill(
         Text(
             text = text,
             style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
         )
     }
 }
 
-/** Etiqueta de procedencia en lenguaje sencillo (PDF sección 0: evidence_status). */
+/** Etiqueta de procedencia en lenguaje sencillo */
 fun provenanceLabel(status: String?): String = when (status?.trim()?.lowercase()) {
     "documented", "observed" -> "Documentado / observado"
     "derived" -> "Calculado por FarmealoTu"
-    "assumption" -> "Supuesto"
+    "assumption" -> "Supuesto inicial"
     "farmer_provided" -> "Dato tuyo"
     "unavailable" -> "No disponible"
     "simulated" -> "Simulado"
@@ -305,7 +311,7 @@ enum class Level(val text: String, val color: Color) {
     }
 }
 
-/** Semáforo de tres niveles: forma + texto, nunca solo color. */
+/** Semáforo de tres niveles: forma + texto */
 @Composable
 fun LevelBadge(level: Level, modifier: Modifier = Modifier, prefix: String = "Nivel") {
     Row(
@@ -328,7 +334,7 @@ fun LevelBadge(level: Level, modifier: Modifier = Modifier, prefix: String = "Ni
                 Level.HIGH -> drawRect(level.color, Offset.Zero, Size(size.width, size.height))
             }
         }
-        Text("$prefix: ${level.text}", style = MaterialTheme.typography.labelLarge)
+        Text("$prefix: ${level.text}", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -344,7 +350,7 @@ fun InfoRow(label: String, value: String?, modifier: Modifier = Modifier) {
         Text(
             text = value ?: "no disponible",
             style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.weight(0.58f),
         )
     }
@@ -366,7 +372,7 @@ fun BulletList(items: List<String>, emptyText: String? = null) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         items.forEach { item ->
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("•", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.clearAndSetSemantics { })
+                Text("•", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, modifier = Modifier.clearAndSetSemantics { })
                 Text(item, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
             }
         }
@@ -375,23 +381,23 @@ fun BulletList(items: List<String>, emptyText: String? = null) {
 
 // ---------------------------------------------------------------- «¿Qué significa?»
 
-/** Botón que abre la explicación de un indicador: qué es, fuente, fecha, unidad, escala y límite. */
+/** Botón que abre la explicación de un indicador */
 @Composable
 fun ExplainButton(
     entry: GlossaryEntry,
     modifier: Modifier = Modifier,
     details: List<LabeledValue> = emptyList(),
-    label: String = "¿Qué significa?",
+    label: String = "❓ ¿Qué significa?",
 ) {
     var open by rememberSaveable(entry.title) { mutableStateOf(false) }
     TextButton(onClick = { open = true }, modifier = modifier.heightIn(min = 48.dp)) {
-        Text(label, style = MaterialTheme.typography.labelLarge)
+        Text(label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
     }
     if (open) {
         AlertDialog(
             onDismissRequest = { open = false },
-            confirmButton = { TextButton(onClick = { open = false }) { Text("Entendido") } },
-            title = { Text(entry.title) },
+            confirmButton = { TextButton(onClick = { open = false }) { Text("Entendido", fontWeight = FontWeight.Bold) } },
+            title = { Text(entry.title, fontWeight = FontWeight.Bold) },
             text = {
                 Column(
                     modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -403,7 +409,7 @@ fun ExplainButton(
                         Text(
                             text = "Límite: ${entry.limitation}",
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium,
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
@@ -412,7 +418,7 @@ fun ExplainButton(
     }
 }
 
-/** Fuente, fecha, unidad y escala de un dato, listas para el diálogo «¿Qué significa?». */
+/** Fuente, fecha, unidad y escala de un dato */
 fun traceDetails(source: String?, date: String?, unit: String?, scale: String?, status: String? = null): List<LabeledValue> =
     listOf(
         LabeledValue("Fuente", source ?: "no informada"),
@@ -424,7 +430,7 @@ fun traceDetails(source: String?, date: String?, unit: String?, scale: String?, 
 // ---------------------------------------------------------------- estados
 
 @Composable
-fun LoadingBlock(text: String = "Cargando…") {
+fun LoadingBlock(text: String = "Cargando datos…") {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -432,8 +438,8 @@ fun LoadingBlock(text: String = "Cargando…") {
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 3.dp)
-        Text(text, style = MaterialTheme.typography.bodyLarge)
+        CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 3.dp, color = MaterialTheme.colorScheme.primary)
+        Text(text, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
     }
 }
 
@@ -449,7 +455,7 @@ fun ErrorBlock(
         containerColor = MaterialTheme.colorScheme.errorContainer,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
     ) {
-        Text(failure.title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onErrorContainer)
+        Text(failure.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onErrorContainer)
         Text(failure.message, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onErrorContainer)
         if (onRetry != null) PrimaryButton("Reintentar", onRetry)
         extra?.invoke(this)
@@ -459,13 +465,13 @@ fun ErrorBlock(
 @Composable
 fun EmptyBlock(title: String, message: String, modifier: Modifier = Modifier, action: (@Composable () -> Unit)? = null) {
     SectionCard(modifier = modifier, containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-        Text(title, style = MaterialTheme.typography.titleMedium)
+        Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         Text(message, style = MaterialTheme.typography.bodyMedium)
         action?.invoke()
     }
 }
 
-/** Fecha en que la app consultó el dato + aviso si no se pudo actualizar (dato obsoleto). */
+/** Fecha en que la app consultó el dato */
 @Composable
 fun <T> FreshnessNote(state: UiState.Success<T>, onRetry: (() -> Unit)?) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -482,9 +488,9 @@ fun <T> FreshnessNote(state: UiState.Success<T>, onRetry: (() -> Unit)?) {
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary),
             ) {
                 Text(
-                    "No se pudo actualizar. Estás viendo lo último que se consultó, que puede estar desactualizado.",
+                    "No se pudo actualizar. Estás viendo lo último consultado.",
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Bold,
                 )
                 Text("${error.title}. ${error.message}", style = MaterialTheme.typography.bodySmall)
                 if (onRetry != null) SecondaryButton("Reintentar", onRetry)
@@ -493,7 +499,7 @@ fun <T> FreshnessNote(state: UiState.Success<T>, onRetry: (() -> Unit)?) {
     }
 }
 
-/** Dibuja carga / error / vacío y delega el contenido cuando hay datos. Nunca deja la pantalla en blanco. */
+/** Dibuja carga / error / vacío y delega el contenido */
 @Composable
 fun <T> StateContent(
     state: UiState<T>,
@@ -520,7 +526,7 @@ fun LegendSwatch(color: Color, label: String, modifier: Modifier = Modifier) {
                 .size(14.dp)
                 .background(color, RoundedCornerShape(3.dp))
         )
-        Text(label, style = MaterialTheme.typography.bodySmall)
+        Text(label, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
     }
 }
 

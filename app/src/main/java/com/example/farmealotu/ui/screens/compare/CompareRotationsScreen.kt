@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.farmealotu.domain.ComparisonResult
@@ -40,28 +41,27 @@ import com.example.farmealotu.ui.components.ScoreBar
 import com.example.farmealotu.ui.components.SecondaryButton
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.formatPercentWeight
+import com.example.farmealotu.ui.components.sampleMainViewModel
 import com.example.farmealotu.ui.components.scoreAxisMax
 import com.example.farmealotu.ui.screens.decision.ComparisonGate
 import com.example.farmealotu.ui.screens.decision.OutdatedInputNotice
 import com.example.farmealotu.ui.theme.ChartPalette
+import com.example.farmealotu.ui.theme.FarmealoTuTheme
 import com.example.farmealotu.viewmodel.MainViewModel
 
-/** Eje común de puntajes para todas las tarjetas (mismo eje = barras comparables entre sí). */
+/** Eje común de puntajes para todas las tarjetas */
 fun comparisonAxisMax(result: ComparisonResult): Double = scoreAxisMax(
     result.strategies.flatMap { strategy ->
         listOf(strategy.score, strategy.criteria.water?.score, strategy.criteria.soil?.score, strategy.criteria.risk?.score)
     }
 )
 
-/** Orden de presentación: por el puntaje que mandó el servidor (los sin puntaje, al final). La app no recalcula nada. */
+/** Orden de presentación */
 fun rankedStrategies(result: ComparisonResult): List<Strategy> =
     result.strategies.sortedWith(compareByDescending<Strategy> { it.score != null }.thenByDescending { it.score ?: 0.0 })
 
 /**
  * Módulo 01 — «Comparar formas de sembrar».
- * Muestra E0–E3 cuando existen, con barras de agua, suelo, riesgo y total SOLO si son válidas.
- * Cambiar las prioridades pide una nueva comparación al servidor; el orden cambia solo si
- * cambian los cálculos del backend.
  */
 @Composable
 fun CompareRotationsScreen(
@@ -85,7 +85,7 @@ fun CompareRotationsScreen(
             OutdatedInputNotice(viewModel)
 
             SectionCard(containerColor = MaterialTheme.colorScheme.surfaceContainer, border = null) {
-                Text("Puntaje relativo entre opciones, no probabilidad de éxito.", style = MaterialTheme.typography.titleSmall)
+                Text("Puntaje relativo entre opciones, no probabilidad de éxito.", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                 Text(
                     "Las barras sirven para comparar una opción con otra. No dicen cuánto vas a cosechar ni cuánto vas a ganar.",
                     style = MaterialTheme.typography.bodyMedium,
@@ -106,7 +106,7 @@ fun CompareRotationsScreen(
                 SectionCard(containerColor = MaterialTheme.colorScheme.tertiaryContainer, border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary)) {
                     Text(
                         "El servidor devolvió menos de tres opciones defendibles. No se inventan las que faltan.",
-                        style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium,
+                        style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold,
                     )
                     BulletList(result.limitations, emptyText = "El servidor no explicó el motivo.")
                 }
@@ -144,8 +144,8 @@ private fun StrategyCard(
     ) {
         StrategyHeader(strategy, position, isRecommended)
 
-        Text("Qué se siembra", style = MaterialTheme.typography.labelLarge)
-        Text(strategy.sequenceText, style = MaterialTheme.typography.titleMedium)
+        Text("Qué se siembra", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+        Text(strategy.sequenceText, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             CriterionKey.entries.forEach { key ->
@@ -172,7 +172,7 @@ private fun StrategyCard(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun StrategyHeader(strategy: Strategy, position: Int?, isRecommended: Boolean) {
-    Text(strategy.displayName, style = MaterialTheme.typography.titleLarge)
+    Text(strategy.displayName, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (position != null) Pill("Puesto $position")
         if (isRecommended) {
@@ -185,7 +185,7 @@ fun StrategyHeader(strategy: Strategy, position: Int?, isRecommended: Boolean) {
 @Composable
 fun TradeoffLine(label: String, text: String?) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(label, style = MaterialTheme.typography.labelLarge)
+        Text(label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
         Text(
             text = text ?: "El servidor no lo informó.",
             style = MaterialTheme.typography.bodyMedium,
@@ -194,10 +194,6 @@ fun TradeoffLine(label: String, text: String?) {
     }
 }
 
-/**
- * Controles de prioridades. Los tres pesos se normalizan para sumar 100 % y se envían al
- * MISMO endpoint; se usa un botón (no envío automático) para no saturar al servidor.
- */
 @Composable
 private fun PrioritiesEditor(
     priorities: Priorities,
@@ -215,6 +211,7 @@ private fun PrioritiesEditor(
             Text(
                 text = "Agua ${formatPercentWeight(applied.water)} · Suelo ${formatPercentWeight(applied.soil)} · Riesgo ${formatPercentWeight(applied.risk)}",
                 style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
             )
         }
         if (!expanded) {
@@ -227,7 +224,7 @@ private fun PrioritiesEditor(
         PrioritySlider("Suelo", priorities.soil, normalized?.soil) { onChange(priorities.copy(soil = it)) }
         PrioritySlider("Riesgo", priorities.risk, normalized?.risk) { onChange(priorities.copy(risk = it)) }
         if (normalized == null) {
-            Text("Dejá al menos una prioridad mayor que cero.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+            Text("Dejá al menos una prioridad mayor que cero.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
         }
         if (applied != null && pending) {
             Text(
@@ -255,11 +252,10 @@ private fun PrioritySlider(label: String, raw: Double, share: Double?, onChange:
     val shareText = share?.let { formatPercentWeight(it) } ?: "—"
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(label, style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
-            Text(shareText, style = MaterialTheme.typography.titleMedium, modifier = Modifier.width(64.dp))
+            Text(label, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+            Text(shareText, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, modifier = Modifier.width(64.dp))
         }
         Slider(
-            // Los pesos guardados van de 0 a 1; el control trabaja en pasos de 0.05.
             value = raw.toFloat().coerceIn(0f, 1f),
             onValueChange = { onChange((Math.round(it * 20f) / 20.0)) },
             valueRange = 0f..1f,
@@ -267,6 +263,22 @@ private fun PrioritySlider(label: String, raw: Double, share: Double?, onChange:
             modifier = Modifier
                 .fillMaxWidth()
                 .semantics { contentDescription = "Prioridad de $label: $shareText" },
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Módulo 01 - Comparar Formas de Sembrar")
+@Composable
+fun CompareRotationsScreenPreview() {
+    FarmealoTuTheme {
+        CompareRotationsScreen(
+            viewModel = sampleMainViewModel(withComparison = true),
+            demoMode = true,
+            onBack = {},
+            onHome = {},
+            onEditData = {},
+            onOpenWhy = {},
+            expandPriorities = false,
         )
     }
 }
