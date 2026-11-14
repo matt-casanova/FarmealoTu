@@ -1,0 +1,53 @@
+{
+  "source": "NASA POWER Hourly API",
+  "lat": -17.2374,
+  "lon": -62.2427,
+  "time_standard": "LST",
+  "units": {
+    "T2M_C": "C",
+    "RH2M_pct": "%",
+    "WS2M_m_s": "m/s",
+    "PRECTOTCORR_mm_h": "mm/hour",
+    "ALLSKY_SFC_SW_DWN_MJ_m2_h": "MJ/hr",
+    "PS_kPa": "kPa",
+    "T2MDEW_C": "C",
+    "ALLSKY_SFC_SW_DWN_W_m2": "W/m^2 (derivado)",
+    "ALLSKY_SFC_SW_DWN_daily_MJ_m2_day": "MJ/m^2/day (POWER diario)"
+  },
+  "scenarios": {
+    "S1": {
+      "file": "hardware/simulation/forcing/power_hourly_S1.csv",
+      "rows": 336,
+      "missing_values": 336,
+      "hourly_radiation_hours": 0,
+      "description": "línea base reciente",
+      "start": "2026-10-29",
+      "end": "2026-11-11",
+      "rule": "últimos 14 días con las 24 h y todas las variables meteorológicas válidas (radiación horaria: ver aviso)"
+    },
+    "S2": {
+      "file": "hardware/simulation/forcing/power_hourly_S2.csv",
+      "rows": 1080,
+      "missing_values": 0,
+      "hourly_radiation_hours": 1080,
+      "description": "sequía dic-2025 → ene-2026",
+      "start": "2025-12-17",
+      "end": "2026-01-30",
+      "rule": "ventana de 45 días con menor lluvia total entre 2025-12-01 y 2026-01-31",
+      "precip_daily_total_mm": 167.9,
+      "precip_same_dates_mean_2015_2024_mm": 247.8
+    },
+    "S3": {
+      "file": "hardware/simulation/forcing/power_hourly_S3.csv",
+      "rows": 1080,
+      "missing_values": 0,
+      "hourly_radiation_hours": 1080,
+      "description": "exceso de lluvia feb–mar-2026",
+      "start": "2026-02-12",
+      "end": "2026-03-28",
+      "rule": "ventana de 45 días con mayor lluvia total entre 2026-02-01 y 2026-03-31",
+      "precip_daily_total_mm": 406.8,
+      "precip_same_dates_mean_2015_2024_mm": 172.9
+    }
+  }
+}
