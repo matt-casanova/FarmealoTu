@@ -14,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.farmealotu.domain.ComparisonResult
 import com.example.farmealotu.domain.ConfidenceDisplay
 import com.example.farmealotu.domain.Strategy
+import com.example.farmealotu.ui.components.FarmIcons
 import com.example.farmealotu.ui.components.BulletList
 import com.example.farmealotu.ui.components.EmptyBlock
 import com.example.farmealotu.ui.components.ExplainButton
@@ -30,6 +31,7 @@ import com.example.farmealotu.ui.components.StateContent
 import com.example.farmealotu.ui.components.sampleMainViewModel
 import com.example.farmealotu.ui.components.scoreAxisMax
 import com.example.farmealotu.ui.screens.home.AlertsCard
+import com.example.farmealotu.ui.screens.home.ModuleRow
 import com.example.farmealotu.ui.theme.ChartPalette
 import com.example.farmealotu.ui.theme.FarmealoTuTheme
 import com.example.farmealotu.viewmodel.MainViewModel
@@ -114,12 +116,13 @@ fun DecisionScreen(
 
             PrimaryButton("Comparar todas", onOpenCompare)
             SecondaryButton("Cambiar mis prioridades", onChangePriorities)
-            if (recommended != null) SecondaryButton("❓ ¿Por qué esta opción?", { onOpenWhy(recommended.id) })
+            if (recommended != null) SecondaryButton("¿Por qué esta opción?", { onOpenWhy(recommended.id) }, icon = FarmIcons.Help)
 
+            // Mismas filas de módulo que en el Inicio: un mismo tipo de acción, un mismo aspecto.
             SectionCard(title = "Seguir revisando") {
-                SecondaryButton("02 · Ventajas y desventajas", onOpenTradeoffs)
-                SecondaryButton("03 · Conocer los riesgos", onOpenRisks)
-                SecondaryButton("04 · ¿Qué tan segura es esta comparación?", onOpenUncertainty)
+                ModuleRow("02", "Ventajas y desventajas", "Qué ganás y qué resignás con cada opción.", onOpenTradeoffs)
+                ModuleRow("03", "Conocer los riesgos", "Rachas secas, calor y lluvias fuertes por mes y año.", onOpenRisks)
+                ModuleRow("04", "¿Qué tan segura es esta comparación?", "Rangos P10-P90 y preguntas para tu técnico.", onOpenUncertainty)
             }
 
             AlertsCard(result)

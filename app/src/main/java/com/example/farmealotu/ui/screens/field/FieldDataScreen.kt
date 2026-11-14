@@ -120,7 +120,7 @@ fun FieldDataScreen(
                 "Muestran cómo varía un campo de un punto a otro: algo que el satélite, que mira zonas de kilómetros, promedia.",
                 style = MaterialTheme.typography.bodyMedium,
             )
-            ExplainButton(Glossary.satelliteVsGround, label = "❓ Satélite y sensor: ¿en qué se diferencian?")
+            ExplainButton(Glossary.satelliteVsGround, label = "Satélite y sensor: ¿en qué se diferencian?")
         }
 
         when (val state = readings) {
@@ -139,7 +139,7 @@ fun FieldDataScreen(
             is UiState.Success -> {
                 FreshnessNote(state, onRetry = viewModel::refresh)
                 ReadingsContent(state.data, status.dataOrNull)
-                SecondaryButton("🔄 Actualizar ahora", viewModel::refresh)
+                SecondaryButton("Actualizar ahora", viewModel::refresh)
             }
         }
     }
@@ -295,7 +295,7 @@ private fun Charts(readings: List<NodeReading>, source: NodeSource) {
         SelectedReadout(selected) { reading, id -> formatOrMissing(reading.zone(id)?.soilTempC, 1, "°C") }
     }
 
-    SecondaryButton(if (showTable) "Ocultar tabla de lecturas" else "📋 Ver lecturas como tabla", { showTable = !showTable })
+    SecondaryButton(if (showTable) "Ocultar tabla de lecturas" else "Ver lecturas como tabla", { showTable = !showTable })
     if (showTable) ReadingsTable(timed.takeLast(20).reversed())
 }
 

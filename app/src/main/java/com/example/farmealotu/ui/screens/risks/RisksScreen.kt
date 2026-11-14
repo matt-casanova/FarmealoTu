@@ -77,7 +77,7 @@ fun RisksScreen(
                 "Estar expuesto a lluvia intensa no equivale a predecir un desborde del río.",
                 style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold,
             )
-            ExplainButton(Glossary.regional, label = "❓ ¿De dónde salen estos datos?")
+            ExplainButton(Glossary.regional, label = "¿De dónde salen estos datos?")
         }
 
         StateContent(
@@ -88,7 +88,7 @@ fun RisksScreen(
             val result = state.data
             FreshnessNote(state, onRetry = { viewModel.loadIndicators(force = true) })
             result.lastObservationDate?.let {
-                Text("📅 Última observación disponible: ${formatApiDate(it)}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                Text("Última observación disponible: ${formatApiDate(it)}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
             }
             SummaryCards(result)
             HeatmapSection(result)

@@ -3,6 +3,7 @@ package com.example.farmealotu.ui.navigation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -12,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.farmealotu.ui.components.FarmIcons
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,7 +59,7 @@ object Routes {
 private data class BottomNavItem(
     val route: String,
     val label: String,
-    val iconText: String,
+    val icon: ImageVector,
     val isSelected: (String?) -> Boolean,
     val onClick: () -> Unit,
 )
@@ -89,7 +92,7 @@ fun FarmealoTuNavHost(
         BottomNavItem(
             route = Routes.HOME,
             label = "Inicio",
-            iconText = "🏠",
+            icon = FarmIcons.Home,
             isSelected = { route -> route == Routes.HOME },
             onClick = {
                 navController.navigate(Routes.HOME) {
@@ -101,10 +104,13 @@ fun FarmealoTuNavHost(
         BottomNavItem(
             route = Routes.DECISION,
             label = "Siembra",
-            iconText = "🌾",
+            icon = FarmIcons.Leaf,
+            // El recorrido de siembra completo: preguntas, resultado y los módulos 01, 02 y 04
+            // (el 03 tiene su propia pestaña «Riesgos»).
             isSelected = { route ->
                 route == Routes.DECISION || route?.startsWith("input") == true ||
-                    route?.startsWith("compare") == true || route?.startsWith("strategy") == true
+                    route?.startsWith("compare") == true || route?.startsWith("strategy") == true ||
+                    route == Routes.TRADEOFFS || route == Routes.UNCERTAINTY
             },
             onClick = {
                 val target = if (compareState.dataOrNull != null) Routes.DECISION else Routes.input(summary = inputState.isComplete)
@@ -114,25 +120,22 @@ fun FarmealoTuNavHost(
         BottomNavItem(
             route = Routes.RISKS,
             label = "Riesgos",
-            iconText = "🌧️",
+            icon = FarmIcons.Cloud,
             isSelected = { route -> route == Routes.RISKS },
             onClick = { open(Routes.RISKS) }
         ),
         BottomNavItem(
             route = Routes.GEO,
             label = "Mi Zona",
-            iconText = "🗺️",
+            icon = FarmIcons.Map,
             isSelected = { route -> route == Routes.GEO || route == Routes.FIELD },
             onClick = { open(Routes.GEO) }
         ),
         BottomNavItem(
             route = Routes.SOURCES,
             label = "Más",
-            iconText = "⚙️",
-            isSelected = { route ->
-                route == Routes.SOURCES || route == Routes.CONNECTION ||
-                    route == Routes.TRADEOFFS || route == Routes.UNCERTAINTY
-            },
+            icon = FarmIcons.More,
+            isSelected = { route -> route == Routes.SOURCES || route == Routes.CONNECTION },
             onClick = { open(Routes.SOURCES) }
         )
     )
@@ -150,12 +153,15 @@ fun FarmealoTuNavHost(
                     NavigationBarItem(
                         selected = selected,
                         onClick = item.onClick,
-                        icon = { Text(text = item.iconText, fontSize = 20.sp) },
+                        // El ícono es decorativo: la etiqueta ya nombra el destino para TalkBack.
+                        icon = { Icon(item.icon, contentDescription = null) },
                         label = {
                             Text(
                                 text = item.label,
-                                style = MaterialTheme.typography.labelMedium,
+                                style = MaterialTheme.typography.labelSmall,
                                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                                maxLines = 1,
+                                softWrap = false,
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.farmealotu.ConnectionSettings
 import com.example.farmealotu.domain.Alert
 import com.example.farmealotu.domain.ComparisonResult
+import com.example.farmealotu.ui.components.FarmIcons
 import com.example.farmealotu.ui.components.FarmScreen
 import com.example.farmealotu.ui.components.Level
 import com.example.farmealotu.ui.components.LevelBadge
@@ -34,6 +36,8 @@ import com.example.farmealotu.ui.components.NASA_ROLE
 import com.example.farmealotu.ui.components.PrimaryButton
 import com.example.farmealotu.ui.components.ProvenanceChip
 import com.example.farmealotu.ui.components.SecondaryButton
+import com.example.farmealotu.ui.components.QuietAction
+import com.example.farmealotu.ui.components.DecisionDisclaimer
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.formatApiDate
 import com.example.farmealotu.ui.components.formatClock
@@ -128,13 +132,15 @@ fun HomeScreen(
             (health as? UiState.Success)?.let {
                 Text("Comprobado el ${formatClock(it.fetchedAtMillis)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
+            // Acciones de mantenimiento: discretas, para no competir con la acción principal del Inicio.
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                SecondaryButton("Recomprobar", viewModel::refreshStatus, modifier = Modifier.weight(1f))
-                SecondaryButton("Configurar conexión", onOpenConnection, modifier = Modifier.weight(1f))
+                QuietAction("Recomprobar", null, viewModel::refreshStatus, Modifier.weight(1f))
+                QuietAction("Configurar conexión", null, onOpenConnection, Modifier.weight(1f))
             }
-            SecondaryButton("Fuentes y límites", onOpenSources)
+            QuietAction("Fuentes y límites", FarmIcons.ChevronRight, onOpenSources)
         }
 
+        DecisionDisclaimer()
         Text(NASA_ROLE, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
@@ -174,7 +180,8 @@ private fun MainActionCard(
                     Text("Información insuficiente para ordenar opciones", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     Text("El servidor no eligió una opción mejor posicionada. Mirá las razones en el resultado.", style = MaterialTheme.typography.bodyMedium)
                 }
-                SecondaryButton("Ver resultado", onOpenDecision)
+                // Enlace discreto: la acción principal («Comparar opciones de siembra») lleva al mismo resultado.
+                QuietAction("Ver el resultado completo", FarmIcons.ChevronRight, onOpenDecision)
             }
             else -> {
                 Text(
@@ -218,7 +225,7 @@ private fun AlertItem(alert: Alert) {
 }
 
 @Composable
-private fun ModuleRow(number: String, title: String, description: String, onClick: () -> Unit) {
+fun ModuleRow(number: String, title: String, description: String, onClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -238,7 +245,7 @@ private fun ModuleRow(number: String, title: String, description: String, onClic
                 Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                 Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            Text("›", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Icon(FarmIcons.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
         }
     }
 }

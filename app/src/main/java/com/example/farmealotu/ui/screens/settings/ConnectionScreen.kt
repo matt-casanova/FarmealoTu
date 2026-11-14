@@ -59,8 +59,8 @@ fun ConnectionScreen(
         SectionCard(title = "Estado actual") {
             Text(
                 text = when (val state = health) {
-                    is UiState.Success -> if (connection.demoMode) "⚡ Modo demo activo: no se consulta ningún servidor."
-                    else if (state.data.ok) "✅ Conectado. El servidor respondió bien." else "⚠️ El servidor respondió, pero avisa que no está listo."
+                    is UiState.Success -> if (connection.demoMode) "Modo demo activo: no se consulta ningún servidor."
+                    else if (state.data.ok) "Conectado. El servidor respondió bien." else "El servidor respondió, pero avisa que no está listo."
                     is UiState.Error -> "❌ ${state.failure.title}. ${state.failure.message}"
                     else -> "⏳ Comprobando estado…"
                 },
@@ -71,7 +71,7 @@ fun ConnectionScreen(
                 state.data.detail?.let { Text("Respuesta: $it", style = MaterialTheme.typography.bodySmall) }
                 Text("Comprobado el ${formatClock(state.fetchedAtMillis)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            SecondaryButton("🔄 Probar conexión", viewModel::refreshStatus)
+            SecondaryButton("Probar conexión", viewModel::refreshStatus)
         }
 
         SectionCard(title = "Dirección del servidor") {
@@ -87,7 +87,7 @@ fun ConnectionScreen(
             message?.let {
                 Text(it, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary)
             }
-            PrimaryButton("💾 Guardar dirección", {
+            PrimaryButton("Guardar dirección", {
                 val trimmed = urlText.trim()
                 when {
                     !BuildConfig.DEBUG && trimmed.startsWith("http://") -> {

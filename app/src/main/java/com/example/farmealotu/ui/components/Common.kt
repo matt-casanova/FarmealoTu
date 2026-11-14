@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
@@ -27,6 +30,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +53,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -62,6 +67,7 @@ import com.example.farmealotu.data.remote.ApiFailure
 import com.example.farmealotu.domain.LabeledValue
 import com.example.farmealotu.ui.theme.ChartPalette
 import com.example.farmealotu.ui.theme.DemoStripe
+import com.example.farmealotu.ui.theme.LocalFarmDarkTheme
 import com.example.farmealotu.ui.theme.OnDemoStripe
 import com.example.farmealotu.viewmodel.UiState
 
@@ -89,57 +95,12 @@ fun FarmScreen(
             .fillMaxSize()
             .imePadding(),
         containerColor = MaterialTheme.colorScheme.background,
+        // La barra de navegación inferior (Scaffold externo) ya consume el inset del sistema;
+        // si este Scaffold lo vuelve a aplicar queda una franja vacía sobre la barra.
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             Column {
-                TopAppBar(
-                    title = {
-                        Column {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.semantics { heading() },
-                            )
-                            if (subtitle != null) {
-                                Text(
-                                    text = subtitle,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
-                                )
-                            }
-                        }
-                    },
-                    navigationIcon = {
-                        if (onBack != null) {
-                            IconButton(
-                                onClick = onBack,
-                                modifier = Modifier.semantics { contentDescription = "Volver" },
-                            ) {
-                                Text("←", fontSize = 26.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clearAndSetSemantics { })
-                            }
-                        }
-                    },
-                    actions = {
-                        if (onHome != null) {
-                            TextButton(
-                                onClick = onHome,
-                                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary),
-                            ) {
-                                Text("🏠 Inicio", fontWeight = FontWeight.SemiBold)
-                            }
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                        actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                    ),
-                )
+                FarmTopBar(title = title, subtitle = subtitle, onBack = onBack, onHome = onHome)
                 if (demoMode) DemoBanner()
             }
         },
@@ -154,6 +115,62 @@ fun FarmScreen(
             content = content,
         )
     }
+}
+
+/**
+ * Barra superior: el título obligatorio de cada módulo se lee completo (hasta 3 líneas, también con
+ * letra grande). «Volver» e «Inicio» son íconos de 48 dp para no quitarle ancho al título.
+ */
+@Composable
+private fun FarmTopBar(title: String, subtitle: String?, onBack: (() -> Unit)?, onHome: (() -> Unit)?) {
+    val colors = farmTopBarColors()
+    Surface(color = colors.first, contentColor = colors.second, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .windowInsetsPadding(WindowInsets.statusBars)
+                .heightIn(min = 64.dp)
+                .padding(start = if (onBack == null) 16.dp else 4.dp, end = if (onHome == null) 16.dp else 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (onBack != null) {
+                IconButton(onClick = onBack) { Icon(FarmIcons.ArrowBack, contentDescription = "Volver") }
+            }
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = if (onBack != null) 4.dp else 0.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.semantics { heading() },
+                )
+                if (subtitle != null) {
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        color = colors.second.copy(alpha = 0.88f),
+                    )
+                }
+            }
+            if (onHome != null) {
+                IconButton(onClick = onHome) { Icon(FarmIcons.Home, contentDescription = "Ir al inicio") }
+            }
+        }
+    }
+}
+
+/** Verde de cultivo en tema claro; verde hondo en tema oscuro (un verde claro de fondo encandilaría). */
+@Composable
+private fun farmTopBarColors(): Pair<Color, Color> {
+    val scheme = MaterialTheme.colorScheme
+    return if (LocalFarmDarkTheme.current) scheme.primaryContainer to scheme.onPrimaryContainer
+    else scheme.primary to scheme.onPrimary
 }
 
 /** Franja persistente de MODO DEMO */
@@ -205,7 +222,13 @@ fun SectionCard(
 }
 
 @Composable
-fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
+fun PrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    icon: ImageVector? = null,
+) {
     Button(
         onClick = onClick,
         enabled = enabled,
@@ -220,12 +243,19 @@ fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
     ) {
+        ButtonIcon(icon)
         Text(text, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
     }
 }
 
 @Composable
-fun SecondaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
+fun SecondaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    icon: ImageVector? = null,
+) {
     OutlinedButton(
         onClick = onClick,
         enabled = enabled,
@@ -239,17 +269,56 @@ fun SecondaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modi
         ),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
     ) {
+        ButtonIcon(icon)
         Text(text, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
     }
 }
 
-/** Pie común de los módulos */
+/** Ícono decorativo antes del texto de un botón: el texto ya nombra la acción para TalkBack. */
+@Composable
+private fun ButtonIcon(icon: ImageVector?) {
+    if (icon == null) return
+    Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp))
+    Spacer(Modifier.width(8.dp))
+}
+
+/**
+ * Pie común de los módulos: acciones de salida, más discretas que la acción principal de la pantalla.
+ * Lleva el aviso del plan (§6) de que la decisión es del agricultor.
+ */
 @Composable
 fun FooterActions(onEditData: () -> Unit, onHome: () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SecondaryButton("✏️ Editar mis datos", onEditData)
-        SecondaryButton("🏠 Volver al inicio", onHome)
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        DecisionDisclaimer()
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            QuietAction("Editar mis datos", FarmIcons.Edit, onEditData, Modifier.weight(1f))
+            QuietAction("Volver al inicio", FarmIcons.Home, onHome, Modifier.weight(1f))
+        }
     }
+}
+
+/** Acción secundaria de bajo peso visual (botón de texto con ícono, ≥ 48 dp). */
+@Composable
+fun QuietAction(text: String, icon: ImageVector?, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    TextButton(
+        onClick = onClick,
+        modifier = modifier.heightIn(min = 48.dp),
+        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+    ) {
+        ButtonIcon(icon)
+        Text(text, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+    }
+}
+
+/** Aviso obligatorio del plan (§6), con el texto exacto. */
+@Composable
+fun DecisionDisclaimer(modifier: Modifier = Modifier) {
+    Text(
+        text = "Esta herramienta apoya tu decisión; no reemplaza tu experiencia ni a tu técnico.",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = modifier.padding(vertical = 4.dp),
+    )
 }
 
 @Composable
@@ -387,11 +456,18 @@ fun ExplainButton(
     entry: GlossaryEntry,
     modifier: Modifier = Modifier,
     details: List<LabeledValue> = emptyList(),
-    label: String = "❓ ¿Qué significa?",
+    label: String = "¿Qué significa?",
 ) {
     var open by rememberSaveable(entry.title) { mutableStateOf(false) }
-    TextButton(onClick = { open = true }, modifier = modifier.heightIn(min = 48.dp)) {
-        Text(label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+    // Alineado al borde del texto de la tarjeta (sin la sangría de 12 dp del TextButton).
+    TextButton(
+        onClick = { open = true },
+        modifier = modifier.heightIn(min = 48.dp),
+        contentPadding = PaddingValues(start = 0.dp, end = 12.dp, top = 8.dp, bottom = 8.dp),
+        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+    ) {
+        ButtonIcon(FarmIcons.Help)
+        Text(label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
     }
     if (open) {
         AlertDialog(

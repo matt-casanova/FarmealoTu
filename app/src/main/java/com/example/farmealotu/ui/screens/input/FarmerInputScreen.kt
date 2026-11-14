@@ -49,6 +49,7 @@ import com.example.farmealotu.domain.FarmerInput
 import com.example.farmealotu.domain.Irrigation
 import com.example.farmealotu.domain.PilotArea
 import com.example.farmealotu.domain.Priorities
+import com.example.farmealotu.ui.components.FarmIcons
 import com.example.farmealotu.ui.components.FarmScreen
 import com.example.farmealotu.ui.components.InfoRow
 import com.example.farmealotu.ui.components.PrimaryButton
@@ -436,7 +437,7 @@ private fun LocationCard(input: FarmerInput, onSetLocation: (Double, Double) -> 
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         if (!editing) {
-            SecondaryButton("✏️ Cambiar ubicación", { editing = true })
+            SecondaryButton("Cambiar ubicación", { editing = true }, icon = FarmIcons.Edit)
         } else {
             OutlinedTextField(
                 value = latText, onValueChange = { latText = it; error = null },

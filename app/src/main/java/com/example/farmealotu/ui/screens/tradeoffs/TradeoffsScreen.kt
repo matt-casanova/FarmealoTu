@@ -1,11 +1,13 @@
 package com.example.farmealotu.ui.screens.tradeoffs
 
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import com.example.farmealotu.ui.components.FarmIcons
+import com.example.farmealotu.ui.components.LegendSwatch
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -105,7 +107,7 @@ fun TradeoffsScreen(
                         TradeoffLine("Riesgo principal", strategy.tradeoffs.mainRisk)
                         if (strategy.tradeoffs.extra.isNotEmpty()) BulletList(strategy.tradeoffs.extra)
                     }
-                    SecondaryButton("❓ ¿Por qué esta opción?", { onOpenWhy(strategy.id) })
+                    SecondaryButton("¿Por qué esta opción?", { onOpenWhy(strategy.id) }, icon = FarmIcons.Help)
                 }
             }
 
@@ -133,7 +135,9 @@ private fun TechnicalComparison(result: ComparisonResult) {
                 )
             }
             Text(
-                "Cada punta es un criterio: más lejos del centro, mejor puntaje relativo. No es probabilidad de éxito.",
+                "Cada punta es un criterio: más lejos del centro, mejor puntaje relativo. " +
+                    "Cada anillo suma un cuarto de la escala (0 en el centro, ${formatNumber(axisMax, scoreDecimals(axisMax))} en el borde). " +
+                    "No es probabilidad de éxito.",
                 style = MaterialTheme.typography.bodyMedium,
             )
             SeriesLegend(series.map { it.color to it.name })
@@ -159,25 +163,49 @@ private fun TechnicalComparison(result: ComparisonResult) {
     }
 }
 
+/**
+ * Tabla de criterios que entra en el ancho del teléfono (también con letra grande): el nombre de la
+ * opción va en su propia línea y debajo sus cuatro valores, alineados con el encabezado.
+ * Antes eran 150 dp + 4 × 64 dp con scroll lateral y la columna «Riesgo» quedaba fuera de pantalla.
+ */
 @Composable
 private fun CriteriaTable(strategies: List<Strategy>, decimals: Int) {
-    Column(Modifier.horizontalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Row {
-            Text("Opción", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, modifier = Modifier.width(150.dp))
-            (CriterionKey.entries.map { it.label } + "Total").forEach { header ->
-                Text(header, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.End, modifier = Modifier.width(64.dp))
+    val headers = CriterionKey.entries.map { it.label } + "Total"
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(Modifier.fillMaxWidth().clearAndSetSemantics { }) {
+            headers.forEach { header ->
+                Text(
+                    header,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.weight(1f),
+                )
             }
         }
-        strategies.forEach { strategy ->
-            Row {
-                Text(strategy.shortLabel(), style = MaterialTheme.typography.bodySmall, modifier = Modifier.width(150.dp))
-                (CriterionKey.entries.map { it.of(strategy.criteria)?.score } + strategy.score).forEach { value ->
-                    Text(
-                        text = value?.let { formatNumber(it, decimals) } ?: "s/d",
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier.width(64.dp),
-                    )
+        strategies.forEachIndexed { index, strategy ->
+            val values = CriterionKey.entries.map { it.of(strategy.criteria)?.score } + strategy.score
+            val texts = values.map { value -> value?.let { formatNumber(it, decimals) } ?: "s/d" }
+            val spoken = strategy.shortLabel() + ": " + headers.zip(texts).joinToString(", ") { (header, text) ->
+                "$header ${if (text == "s/d") "dato insuficiente" else text}"
+            }
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .clearAndSetSemantics { contentDescription = spoken },
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                LegendSwatch(ChartPalette.forStrategy(strategy.id, index), strategy.shortLabel())
+                Row(Modifier.fillMaxWidth()) {
+                    texts.forEachIndexed { column, text ->
+                        Text(
+                            text = text,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = if (column == texts.lastIndex) FontWeight.Bold else FontWeight.Normal,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
                 }
             }
         }
