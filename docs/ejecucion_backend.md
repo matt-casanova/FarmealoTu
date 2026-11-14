@@ -7,10 +7,13 @@ cd backend
 python -m venv .venv                      # solo la primera vez
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt           # solo la primera vez
-# Mientras no exista el main.py de Matías, usar la app temporal de Alvin:
-uvicorn app.dev_main:app --host 0.0.0.0 --port 8000
-# Cuando exista main.py:  uvicorn app.main:app --host 0.0.0.0 --port 8000
+uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
+
+> Rama `alvin/main-esqueleto`: `main.py` es un **esqueleto de Alvin** hasta que Matías tome el control. `/api/rotations/compare` es
+> **provisional**: devuelve solo E0 con evidencia NASA real, sin puntajes ni ranking. El nodo (`/api/field-node/*`) ya es real
+> (SQLite en `backend/data/field_node.sqlite`, no versionado). El esquema del nodo se regenera con
+> `python -m tools.export_sensor_schema` → `shared/sensor_reading.schema.json`.
 
 - Documentación interactiva: http://localhost:8000/docs
 - Pruebas: `python -m pytest -q`. Ninguna llama a NASA: todas usan la caché versionada.

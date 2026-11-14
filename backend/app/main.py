@@ -1,0 +1,42 @@
+"""API FarmealoTu (FastAPI) — ESQUELETO de Alvin para destrabar al equipo mientras Matías no puede trabajar.
+
+Matías es el dueño de este archivo: puede conservarlo, cambiarlo o reemplazarlo.
+
+    cd backend; .\\.venv\\Scripts\\Activate.ps1
+    uvicorn app.main:app --host 0.0.0.0 --port 8000        →  http://localhost:8000/docs
+
+Estado de cada parte:
+- /api/health, /api/nasa/status, /api/indicators, /api/map/layers*  → reales (Alvin)   (*pendiente paso 8)
+- /api/field-node/*                                                → real y simple (SQLite), contrato v1
+- /api/context/cuatro-canadas, /api/sources                        → información documentada del plan
+- /api/rotations/compare                                           → PROVISIONAL: solo E0 + evidencia NASA real,
+                                                                     sin puntajes ni ranking (motor de Matías pendiente)
+"""
+from datetime import datetime, timezone
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+
+from app.routers import context, field_node, nasa, rotations_stub
+
+app = FastAPI(
+    title="FarmealoTu API",
+    version="0.2.0-esqueleto",
+    description="Apoyo a la decisión de rotación de cultivos en Cuatro Cañadas con datos NASA. "
+                "Apoya, no reemplaza, el criterio del agricultor y del agrónomo. "
+                "NASA provee datos; FarmealoTu los interpreta con su propio motor.",
+)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "POST"], allow_headers=["*"])
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+app.include_router(nasa.router)
+app.include_router(field_node.router)
+app.include_router(context.router)
+app.include_router(rotations_stub.router)  # Matías: reemplazar por el router del motor real
+
+
+@app.get("/api/health", tags=["sistema"])
+def health():
+    return {"status": "ok", "version": app.version, "engine": "pending",
+            "time": datetime.now(timezone.utc).replace(microsecond=0).isoformat()}

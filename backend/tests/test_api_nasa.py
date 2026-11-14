@@ -4,7 +4,7 @@ import time
 import pytest
 from fastapi.testclient import TestClient
 
-from app.dev_main import app
+from app.main import app
 from pipeline import power as P
 
 client = TestClient(app)
