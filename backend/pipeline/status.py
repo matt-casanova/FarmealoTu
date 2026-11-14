@@ -72,6 +72,19 @@ def _hourly_entry(caches: list[dict]) -> dict:
     return entry
 
 
+def _gibs_entry() -> dict:
+    from pipeline import gibs as G
+    v = G.load_verified()
+    base = {"id": "gibs", "name": "NASA GIBS (teselas del visor)"}
+    if not v:
+        return {**base, "status": "unavailable", "reason": "capas no verificadas (python -m pipeline.gibs verify)"}
+    ok = [L for L in v["layers"] if L.get("verified")]
+    return {**base, "status": "available" if ok else "unavailable", "last_successful_download": v["verified_at"],
+            "verified_layers": [{"id": L["id"], "gibs_layer": L["gibs_id"], "date": L.get("date")} for L in ok],
+            "from_cache": True, "evidence_status": "documented",
+            "notes": ["Identificadores verificados en GetCapabilities EPSG:3857 + tesela de prueba sobre Cuatro Cañadas"]}
+
+
 def build_nasa_status() -> dict:
     caches = [c for c in P.list_cache() if "error" not in c]
     daily = _power_daily_entry(caches)
@@ -84,8 +97,7 @@ def build_nasa_status() -> dict:
             daily,
             _gwetroot_entry(caches),
             _hourly_entry(caches),
-            {"id": "gibs", "name": "NASA GIBS (teselas del visor)", "status": "unavailable",
-             "reason": "capas pendientes de verificación en GetCapabilities (paso 8)"},
+            _gibs_entry(),
             {"id": "smap_l4", "name": "SMAP L4 SPL4SMGP v8", "status": "unavailable",
              "reason": "P2: sin archivos descargados (requiere Earthdata Login)"},
             {"id": "gpm_imerg", "name": "GPM IMERG", "status": "unavailable",

@@ -176,6 +176,36 @@ monthly_inputs(df) -> pd.DataFrame                    # por mes: P, Pef, ET0 (si
 
 ---
 
-## `GET /api/map/layers` (Paso 8, pendiente)
+## `GET /api/map/layers` (implementado, paso 8)
 
-Se definirá tras verificar el GetCapabilities de GIBS. Forma prevista: una entrada por capa (`rain`, `soil_moisture`, `heat`, `vegetation`, `water`) con `status` (`available | regional | unavailable`), `source`, `date`, `scale`, `legend` y `tile_url_template` **solo si está verificada** (si no, `null`).
+Lee `backend/data/cache/gibs_layers.json`, que genera `python -m pipeline.gibs verify`. **No llama a NASA en la petición.** Una capa se publica solo si:
+1. su identificador está en el GetCapabilities oficial **EPSG:3857** de GIBS;
+2. una **tesela real sobre Cuatro Cañadas** respondió con un PNG válido.
+
+| `id` | Capa GIBS (verificada 14-nov-2026) | Fecha | Zoom máx. | Leyenda oficial |
+|---|---|---|---|---|
+| `rain` | `IMERG_Precipitation_Rate` | 2026-11-13 | 6 | mm/h |
+| `soil_moisture` | `SMAP_L4_Analyzed_Root_Zone_Soil_Moisture` | 2026-11-10 | 6 | m³/m³ |
+| `heat` | `VIIRS_NOAA20_Land_Surface_Temp_Day` | 2026-11-13 (el 14 no tenía dato en el punto) | 7 | °C (convertido de K) |
+| `vegetation` | `VIIRS_NOAA20_NDVI_8Day` | 2026-11-13 | 8 | NDVI |
+| `water` | — balance derivado | — | — | `unavailable` hasta tener la ET0 |
+
+```json
+{"verified_at": "2026-11-14T…", "attribution": "Imagery: NASA GIBS …", "layers": [
+  {"id": "vegetation", "name": "Vegetación", "status": "available", "evidence_status": "documented",
+   "source": "NASA GIBS · VIIRS NOAA-20 — NDVI (8 días móviles)", "gibs_layer": "VIIRS_NOAA20_NDVI_8Day",
+   "date": "2026-11-13", "resolution": "~500 m", "scale": "regional (~500 m)",
+   "legend": [{"label": "0.2", "color": "#B19883"}, {"label": "0.8", "color": "#056400"}],
+   "legend_title": "Vegetation Indices", "unit": null, "legend_url": "https://gibs.earthdata.nasa.gov/legends/MODIS_NDVI_H.svg",
+   "interpretation": "…", "explanation": "…",
+   "tile_url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_NOAA20_NDVI_8Day/default/2026-11-13/GoogleMapsCompatible_Level8/{TileMatrix}/{TileRow}/{TileCol}.png",
+   "tile_url_zxy": "…/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png",
+   "projection": "EPSG:3857 (GoogleMapsCompatible)", "min_zoom": 0, "max_zoom": 8,
+   "attribution": "Imagery: NASA GIBS …", "at_point": {"has_data": true, "note": null}},
+  {"id": "water", "status": "unavailable", "reason": "Requiere la ET0 FAO-56 …", "tile_url": null}
+]}
+```
+
+- **Orden de las teselas en GIBS: `{TileMatrix}/{TileRow}/{TileCol}` = `z/y/x`** (fila antes que columna). `tile_url_zxy` ya viene en ese orden.
+- **No pedir zoom mayor que `max_zoom`.** Por encima, GIBS no tiene teselas: el mapa debe escalar la última.
+- `at_point.has_data = false` significa que el punto de referencia no tiene color ese día. En la lluvia eso indica que no llovió; en las demás capas, nubes o falta de pasada. `note` lo explica en español.

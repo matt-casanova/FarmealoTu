@@ -1,0 +1,291 @@
+{
+  "verified_at": "2026-11-14T18:19:56+00:00",
+  "capabilities_url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml",
+  "point": {
+    "lat": -17.2374,
+    "lon": -62.2427
+  },
+  "layers": [
+    {
+      "id": "rain",
+      "name": "Lluvia",
+      "gibs_id": "IMERG_Precipitation_Rate",
+      "product": "GPM IMERG — tasa de precipitación diaria",
+      "resolution": "~10 km (0.1°)",
+      "interpretation": "Dónde llovió ese día en la región. Colores más intensos = más lluvia.",
+      "explanation": "Estimación satelital (GPM IMERG). Muestra el patrón regional de la lluvia, no la lluvia exacta de tu parcela.",
+      "verified": true,
+      "gibs_title": "Precipitation Rate (IMERG)",
+      "tile_matrix_set": "GoogleMapsCompatible_Level6",
+      "format": "png",
+      "date": "2026-11-13",
+      "available_time_ranges_tail": [
+        "2026-02-12/2026-05-24/P1D",
+        "2026-05-27/2026-11-13/P1D"
+      ],
+      "max_zoom": 6,
+      "tile_url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/IMERG_Precipitation_Rate/default/2026-11-13/GoogleMapsCompatible_Level6/{TileMatrix}/{TileRow}/{TileCol}.png",
+      "legend_url": "https://gibs.earthdata.nasa.gov/legends/GPM_Precipitation_Rate_H.svg",
+      "legend": [
+        {
+          "label": "0.2",
+          "color": "#009424"
+        },
+        {
+          "label": "0.5",
+          "color": "#45C000"
+        },
+        {
+          "label": "1.0",
+          "color": "#C3E400"
+        },
+        {
+          "label": "2.0",
+          "color": "#FFB006"
+        },
+        {
+          "label": "5.0",
+          "color": "#FF4730"
+        },
+        {
+          "label": "10.0",
+          "color": "#E70000"
+        },
+        {
+          "label": "20.0",
+          "color": "#9C0000"
+        }
+      ],
+      "units": "mm/hr",
+      "legend_title": "Rain Rate",
+      "legend_source": "https://gibs.earthdata.nasa.gov/colormaps/v1.3/GPM_Precipitation_Rate.xml",
+      "test_tile": {
+        "z": 6,
+        "x": 20,
+        "y": 35,
+        "url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/IMERG_Precipitation_Rate/default/2026-11-13/GoogleMapsCompatible_Level6/6/35/20.png",
+        "http_status": 200,
+        "content_type": "image/png",
+        "bytes": 2788,
+        "ok": true,
+        "pixel_at_point": {
+          "x": 239,
+          "y": 28,
+          "rgba": [
+            191,
+            191,
+            191,
+            0
+          ],
+          "has_data": false
+        },
+        "tile_coverage_pct": 20.2
+      }
+    },
+    {
+      "id": "soil_moisture",
+      "name": "Humedad del suelo",
+      "gibs_id": "SMAP_L4_Analyzed_Root_Zone_Soil_Moisture",
+      "product": "SMAP L4 — humedad de la zona radicular (0–100 cm), 12z",
+      "resolution": "~9 km",
+      "interpretation": "Cuánta agua hay en la zona de raíces de la región. Más color = suelo más húmedo.",
+      "explanation": "Estimación de modelo con datos satelitales asimilados (SMAP L4), a ~9 km. No es un sensor enterrado en tu campo.",
+      "verified": true,
+      "gibs_title": "Root Zone Soil Moisture (L4, 12z Instantaneous, Model Value-Added, SMAP)",
+      "tile_matrix_set": "GoogleMapsCompatible_Level6",
+      "format": "png",
+      "date": "2026-11-10",
+      "available_time_ranges_tail": [
+        "2026-09-01/2026-11-06/P1D",
+        "2026-11-08/2026-11-10/P1D"
+      ],
+      "max_zoom": 6,
+      "tile_url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/SMAP_L4_Analyzed_Root_Zone_Soil_Moisture/default/2026-11-10/GoogleMapsCompatible_Level6/{TileMatrix}/{TileRow}/{TileCol}.png",
+      "legend_url": "https://gibs.earthdata.nasa.gov/legends/SMAP_Analyzed_Soil_Moisture_H.svg",
+      "legend": [
+        {
+          "label": "0.175",
+          "color": "#82C100"
+        },
+        {
+          "label": "0.350",
+          "color": "#00FEFF"
+        },
+        {
+          "label": "0.525",
+          "color": "#0000BB"
+        }
+      ],
+      "units": "m³/m³",
+      "legend_title": "Soil Moisture",
+      "legend_source": "https://gibs.earthdata.nasa.gov/colormaps/v1.3/SMAP_Analyzed_Soil_Moisture.xml",
+      "test_tile": {
+        "z": 6,
+        "x": 20,
+        "y": 35,
+        "url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/SMAP_L4_Analyzed_Root_Zone_Soil_Moisture/default/2026-11-10/GoogleMapsCompatible_Level6/6/35/20.png",
+        "http_status": 200,
+        "content_type": "image/png",
+        "bytes": 7654,
+        "ok": true,
+        "pixel_at_point": {
+          "x": 239,
+          "y": 28,
+          "rgba": [
+            255,
+            246,
+            0,
+            255
+          ],
+          "has_data": true
+        },
+        "tile_coverage_pct": 100.0
+      }
+    },
+    {
+      "id": "heat",
+      "name": "Calor",
+      "gibs_id": "VIIRS_NOAA20_Land_Surface_Temp_Day",
+      "search_back_days": 10,
+      "product": "VIIRS NOAA-20 — temperatura de la superficie (día)",
+      "resolution": "~1 km",
+      "interpretation": "Qué tan caliente estaba la superficie del suelo de día. Puede haber huecos por nubes.",
+      "explanation": "Temperatura de la superficie vista por satélite (no la del aire). Un día nublado deja huecos sin dato.",
+      "verified": true,
+      "dates_tried": [
+        {
+          "date": "2026-11-14",
+          "http": 200,
+          "has_data_at_point": false
+        },
+        {
+          "date": "2026-11-13",
+          "http": 200,
+          "has_data_at_point": true
+        }
+      ],
+      "gibs_title": "Land Surface Temperature (Day, VIIRS, NOAA-20)",
+      "tile_matrix_set": "GoogleMapsCompatible_Level7",
+      "format": "png",
+      "date": "2026-11-13",
+      "available_time_ranges_tail": [
+        "2018-02-24/2023-09-29/P1D",
+        "2023-10-01/2026-11-14/P1D"
+      ],
+      "max_zoom": 7,
+      "tile_url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_NOAA20_Land_Surface_Temp_Day/default/2026-11-13/GoogleMapsCompatible_Level7/{TileMatrix}/{TileRow}/{TileCol}.png",
+      "legend_url": "https://gibs.earthdata.nasa.gov/legends/MODIS_Land_Surface_Temp_H.svg",
+      "legend": [
+        {
+          "label": "230.0",
+          "color": "#000AFF"
+        },
+        {
+          "label": "260.0",
+          "color": "#0BFFE6"
+        },
+        {
+          "label": "290.0",
+          "color": "#C5FF00"
+        },
+        {
+          "label": "320.0",
+          "color": "#FF9700"
+        }
+      ],
+      "units": "K",
+      "legend_title": "Land Surface Temperature",
+      "legend_source": "https://gibs.earthdata.nasa.gov/colormaps/v1.3/MODIS_Land_Surface_Temp.xml",
+      "test_tile": {
+        "z": 6,
+        "x": 20,
+        "y": 35,
+        "url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_NOAA20_Land_Surface_Temp_Day/default/2026-11-13/GoogleMapsCompatible_Level7/6/35/20.png",
+        "http_status": 200,
+        "content_type": "image/png",
+        "bytes": 38504,
+        "ok": true,
+        "pixel_at_point": {
+          "x": 239,
+          "y": 28,
+          "rgba": [
+            255,
+            229,
+            0,
+            255
+          ],
+          "has_data": true
+        },
+        "tile_coverage_pct": 71.2
+      }
+    },
+    {
+      "id": "vegetation",
+      "name": "Vegetación",
+      "gibs_id": "VIIRS_NOAA20_NDVI_8Day",
+      "product": "VIIRS NOAA-20 — NDVI (8 días móviles)",
+      "resolution": "~500 m",
+      "interpretation": "Qué tan verde está la vegetación. Verde más intenso = más cobertura vegetal.",
+      "explanation": "Índice de verdor (NDVI). Un NDVI bajo sugiere poca cobertura, pero por sí solo no demuestra que un campo esté en barbecho.",
+      "verified": true,
+      "gibs_title": "Normalized Difference Vegetation Index (rolling 8-Day, VIIRS, NOAA-20)",
+      "tile_matrix_set": "GoogleMapsCompatible_Level8",
+      "format": "png",
+      "date": "2026-11-13",
+      "available_time_ranges_tail": [
+        "2025-09-22/2025-11-15/P1D",
+        "2025-11-17/2026-11-13/P1D"
+      ],
+      "max_zoom": 8,
+      "tile_url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_NOAA20_NDVI_8Day/default/2026-11-13/GoogleMapsCompatible_Level8/{TileMatrix}/{TileRow}/{TileCol}.png",
+      "legend_url": "https://gibs.earthdata.nasa.gov/legends/MODIS_NDVI_H.svg",
+      "legend": [
+        {
+          "label": "0.2",
+          "color": "#B19883"
+        },
+        {
+          "label": "0.3",
+          "color": "#BFDE77"
+        },
+        {
+          "label": "0.4",
+          "color": "#8FB716"
+        },
+        {
+          "label": "0.6",
+          "color": "#398700"
+        },
+        {
+          "label": "0.8",
+          "color": "#056400"
+        }
+      ],
+      "units": null,
+      "legend_title": "Vegetation Indices",
+      "legend_source": "https://gibs.earthdata.nasa.gov/colormaps/v1.3/MODIS_NDVI.xml",
+      "test_tile": {
+        "z": 6,
+        "x": 20,
+        "y": 35,
+        "url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_NOAA20_NDVI_8Day/default/2026-11-13/GoogleMapsCompatible_Level8/6/35/20.png",
+        "http_status": 200,
+        "content_type": "image/png",
+        "bytes": 57375,
+        "ok": true,
+        "pixel_at_point": {
+          "x": 239,
+          "y": 28,
+          "rgba": [
+            10,
+            105,
+            0,
+            255
+          ],
+          "has_data": true
+        },
+        "tile_coverage_pct": 99.2
+      }
+    }
+  ]
+}
