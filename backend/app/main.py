@@ -18,7 +18,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-from app.routers import context, field_node, nasa, rotations_stub
+from app.routers import context, field_node, monitor, nasa, rotations_stub
 
 app = FastAPI(
     title="FarmealoTu API",
@@ -34,6 +34,7 @@ app.include_router(nasa.router)
 app.include_router(field_node.router)
 app.include_router(context.router)
 app.include_router(rotations_stub.router)  # Matías: reemplazar por el router del motor real
+app.include_router(monitor.router)         # /monitor: página de desarrollo para ver la API y el nodo en vivo
 
 
 @app.get("/api/health", tags=["sistema"])

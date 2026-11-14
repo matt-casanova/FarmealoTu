@@ -116,6 +116,19 @@ def test_context_and_sources(client):
     assert any(s["id"] == "nasa_power" for s in src)
 
 
+def test_monitor_page(client):
+    r = client.get("/monitor")
+    assert r.status_code == 200 and "text/html" in r.headers["content-type"]
+    assert "/api/field-node/readings" in r.text and "/api/nasa/status" in r.text
+
+
+def test_demo_sender_reading_is_valid_and_labeled():
+    from tools.demo_sender import NODE_ID, reading
+    rd = reading(3)
+    jsonschema.validate(rd, SCHEMA)
+    assert rd["node_id"] == NODE_ID and rd["source"] == "simulated" and "prueba_manual" in rd["quality_flags"]
+
+
 def test_openapi_lists_all_endpoints(client):
     paths = client.get("/openapi.json").json()["paths"]
     for p in ("/api/health", "/api/indicators", "/api/nasa/status", "/api/rotations/compare",
