@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SOLO DEBUG: permite HTTP sin cifrar para hablar con FastAPI en el PC
+     (emulador 10.0.2.2 o IP LAN del PC). No se empaqueta en release. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
