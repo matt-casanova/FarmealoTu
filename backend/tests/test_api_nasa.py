@@ -64,8 +64,33 @@ def test_nasa_status():
     assert src["power_daily"]["coverage"]["start"] == "2015-01-01"
     assert src["power_gwetroot"]["status"] == "available"
     assert src["power_hourly"]["status"] in ("available", "partial")
-    for opt in ("gibs", "smap_l4", "gpm_imerg", "ndvi"):
+    for opt in ("smap_l4", "gpm_imerg", "ndvi"):
         assert src[opt]["status"] == "unavailable" and src[opt]["reason"]
+    assert src["gibs"]["status"] == "available" and len(src["gibs"]["verified_layers"]) == 4
+
+
+def test_map_layers_only_verified():
+    body = client.get("/api/map/layers").json()
+    layers = {L["id"]: L for L in body["layers"]}
+    assert set(layers) == {"rain", "soil_moisture", "heat", "vegetation", "water"}
+    for lid in ("rain", "soil_moisture", "heat", "vegetation"):
+        L = layers[lid]
+        assert L["status"] == "available" and L["evidence_status"] == "documented"
+        assert L["tile_url"].startswith("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/")
+        assert "{TileMatrix}/{TileRow}/{TileCol}" in L["tile_url"] and "{z}/{y}/{x}" in L["tile_url_zxy"]
+        assert L["gibs_layer"] in L["tile_url"] and L["date"] in L["tile_url"]
+        assert L["legend"] and all(e["color"].startswith("#") and e["label"] for e in L["legend"])
+        assert L["max_zoom"] >= 6 and "NASA GIBS" in L["attribution"]
+    assert "°C" in layers["heat"]["legend"][0]["label"]                  # K → °C para el agricultor
+    assert layers["water"]["status"] == "unavailable" and layers["water"]["tile_url"] is None
+    assert "inundación" in layers["water"]["explanation"]
+
+
+def test_gibs_tile_math():
+    from pipeline.gibs import _pixel_in_tile, _tile_xy
+    assert _tile_xy(-17.2374, -62.2427, 6) == (20, 35)    # tesela z6 que se verificó sobre Cuatro Cañadas
+    x, y = _pixel_in_tile(-17.2374, -62.2427, 6)
+    assert 0 <= x < 256 and 0 <= y < 256
 
 
 def test_power_context_for_field_data():

@@ -14,6 +14,7 @@ from functools import lru_cache
 from fastapi import APIRouter, HTTPException, Query
 
 from analytics import indicators as I
+from pipeline import gibs as G
 from pipeline import power as P
 from pipeline import status as S
 
@@ -73,3 +74,8 @@ def get_indicators(
 @router.get("/nasa/status", summary="Disponibilidad y frescura de cada fuente NASA")
 def get_nasa_status():
     return S.build_nasa_status()
+
+
+@router.get("/map/layers", summary="Capas del visor (NASA GIBS verificadas + balance hídrico)")
+def get_map_layers():
+    return G.build_map_layers()
