@@ -2,10 +2,16 @@ package com.example.farmealotu.ui.screens.geo
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -26,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.LocalDensity
@@ -177,72 +184,87 @@ private fun LayerStackCard(layers: List<MapLayer>, selected: LayerKind, onSelect
  */
 @Composable
 private fun IsometricLayerStack(layers: List<MapLayer>, selected: LayerKind, onSelect: (LayerKind) -> Unit) {
-    val measurer = rememberTextMeasurer()
-    // Escala tipográfica del tema (sigue la letra del teléfono); el color es la tinta de los gráficos.
-    val titleStyle = MaterialTheme.typography.titleSmall.copy(color = ChartPalette.ink)
-    val statusStyle = MaterialTheme.typography.bodySmall.copy(color = ChartPalette.inkSecondary)
-    // Con letra grande las etiquetas ocupan más líneas: la pila crece en vez de recortarlas.
-    val fontScale = LocalDensity.current.fontScale.coerceAtLeast(1f)
     val description = "Pila de 5 capas: " + layers.joinToString(", ") { "${it.kind.title} (${it.availability.label})" } +
-        ". Seleccionada: ${selected.title}."
+        ". Seleccionada: ${selected.title}. Elegí la capa con los botones de abajo."
 
-    Canvas(
+    // Los rombos van en Canvas; las etiquetas son Text de Compose en franjas iguales a la derecha.
+    // Así el alto de la pila lo decide el texto (letra grande, tema oscuro con margen) y nunca se pisan.
+    Row(
         Modifier
             .chartSurface()
             .fillMaxWidth()
-            .height(300.dp * fontScale)
-            .semantics { contentDescription = description }
-            .pointerInput(layers) {
-                detectTapGestures { tap ->
-                    val geometry = StackGeometry(size.width.toFloat(), size.height.toFloat(), layers.size)
-                    // De arriba hacia abajo: la capa superior tapa a las de abajo.
-                    val hit = layers.indices.firstOrNull { geometry.contains(it, tap) }
-                        ?: layers.indices.minByOrNull { abs(geometry.centerY(it) - tap.y) }
-                    hit?.let { onSelect(layers[it].kind) }
+            .heightIn(min = 300.dp)
+            .height(IntrinsicSize.Min)
+            .clearAndSetSemantics { contentDescription = description },
+    ) {
+        Canvas(
+            Modifier
+                .weight(0.55f)
+                .fillMaxHeight()
+                .pointerInput(layers) {
+                    detectTapGestures { tap ->
+                        val geometry = StackGeometry(size.width.toFloat(), size.height.toFloat(), layers.size)
+                        // De arriba hacia abajo: la capa superior tapa a las de abajo.
+                        val hit = layers.indices.firstOrNull { geometry.contains(it, tap) }
+                            ?: layers.indices.minByOrNull { abs(geometry.centerY(it) - tap.y) }
+                        hit?.let { onSelect(layers[it].kind) }
+                    }
+                }
+        ) {
+            val geometry = StackGeometry(size.width, size.height, layers.size)
+            // Se dibuja de abajo hacia arriba para que cada capa se apoye sobre la anterior.
+            for (index in layers.indices.reversed()) {
+                val layer = layers[index]
+                val isSelected = layer.kind == selected
+                val lift = if (isSelected) -6.dp.toPx() else 0f
+                val center = Offset(geometry.centerX, geometry.centerY(index) + lift)
+                val shadow = geometry.rhombus(center + Offset(0f, 7.dp.toPx()))
+                val shape = geometry.rhombus(center)
+                drawPath(shadow, Color(0x33000000))
+                drawPath(shape, availabilityColor(layer.availability))
+                drawPath(
+                    shape,
+                    color = if (isSelected) ChartPalette.ink else ChartPalette.axis,
+                    style = Stroke(if (isSelected) 3.dp.toPx() else 1.dp.toPx()),
+                )
+                if (isSelected) {
+                    // Línea hasta la etiqueta de la capa elegida.
+                    drawLine(ChartPalette.ink, Offset(geometry.centerX + geometry.halfWidth, center.y), Offset(size.width, center.y), 2.dp.toPx())
                 }
             }
-    ) {
-        val geometry = StackGeometry(size.width, size.height, layers.size)
-        // Se dibuja de abajo hacia arriba para que cada capa se apoye sobre la anterior.
-        for (index in layers.indices.reversed()) {
-            val layer = layers[index]
-            val isSelected = layer.kind == selected
-            val lift = if (isSelected) -6.dp.toPx() else 0f
-            val center = Offset(geometry.centerX, geometry.centerY(index) + lift)
-            val shadow = geometry.rhombus(center + Offset(0f, 7.dp.toPx()))
-            val shape = geometry.rhombus(center)
-            drawPath(shadow, Color(0x33000000))
-            drawPath(shape, availabilityColor(layer.availability))
-            drawPath(
-                shape,
-                color = if (isSelected) ChartPalette.ink else ChartPalette.axis,
-                style = Stroke(if (isSelected) 3.dp.toPx() else 1.dp.toPx()),
-            )
-            // Etiqueta a la derecha: nombre + estado en texto (no depende del color).
-            val labelX = geometry.centerX + geometry.halfWidth + 10.dp.toPx()
-            // El texto parte línea dentro del ancho que queda: antes se cortaba («Información regiona»).
-            val labelWidth = Constraints(maxWidth = (size.width - labelX).toInt().coerceAtLeast(1))
-            val title = measurer.measure("${index + 1} · ${layer.kind.title}", titleStyle, constraints = labelWidth)
-            val status = measurer.measure(layer.availability.label, statusStyle, constraints = labelWidth)
-            val top = center.y - (title.size.height + status.size.height) / 2f
-            drawText(title, topLeft = Offset(labelX, top))
-            drawText(status, topLeft = Offset(labelX, top + title.size.height))
-            if (isSelected) {
-                drawLine(ChartPalette.ink, Offset(geometry.centerX + geometry.halfWidth, center.y), Offset(labelX - 3.dp.toPx(), center.y), 2.dp.toPx())
+        }
+        Column(Modifier.weight(0.45f).fillMaxHeight()) {
+            layers.forEachIndexed { index, layer ->
+                // Etiqueta: nombre + estado en texto (no depende del color).
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .clickable { onSelect(layer.kind) }
+                        .padding(start = 6.dp, top = 4.dp, bottom = 4.dp),
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        "${index + 1} · ${layer.kind.title}",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = if (layer.kind == selected) FontWeight.Bold else FontWeight.SemiBold,
+                        color = ChartPalette.ink,
+                    )
+                    Text(layer.availability.label, style = MaterialTheme.typography.bodySmall, color = ChartPalette.inkSecondary)
+                }
             }
         }
     }
 }
 
-/** Geometría de la pila: rombos centrados a la izquierda, etiquetas a la derecha. */
+/** Geometría de la pila: un rombo por franja de igual alto, alineado con su etiqueta. */
 private class StackGeometry(width: Float, height: Float, private val count: Int) {
-    val halfWidth = width * 0.26f
-    val halfHeight = halfWidth * 0.36f
-    val centerX = halfWidth + width * 0.03f
-    private val top = halfHeight + height * 0.04f
-    private val spacing = if (count > 1) (height - 2 * top - height * 0.04f) / (count - 1) else 0f
+    private val slot = height / count.coerceAtLeast(1)
+    val halfWidth = width * 0.44f
+    val halfHeight = minOf(halfWidth * 0.36f, slot * 0.62f)
+    val centerX = width * 0.48f
 
-    fun centerY(index: Int): Float = top + spacing * index
+    fun centerY(index: Int): Float = slot * (index + 0.5f)
 
     fun rhombus(center: Offset): Path = Path().apply {
         moveTo(center.x, center.y - halfHeight)

@@ -181,7 +181,7 @@ private fun MainActionCard(
                     Text("El servidor no eligió una opción mejor posicionada. Mirá las razones en el resultado.", style = MaterialTheme.typography.bodyMedium)
                 }
                 // Enlace discreto: la acción principal («Comparar opciones de siembra») lleva al mismo resultado.
-                QuietAction("Ver el resultado completo", FarmIcons.ChevronRight, onOpenDecision)
+                QuietAction("Ver resultado", FarmIcons.ChevronRight, onOpenDecision)
             }
             else -> {
                 Text(
