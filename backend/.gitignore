@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+data/field_node.sqlite
+# La caché de NASA POWER (data/cache/*.json) SÍ se versiona: la demo no debe depender de la red.
