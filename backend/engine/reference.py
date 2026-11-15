@@ -118,15 +118,27 @@ def validate_rules(doc: dict) -> list[str]:
     return problems
 
 
+def validate_params(doc: dict) -> list[str]:
+    problems: list[str] = []
+    for k, prm in doc.get("params", {}).items():
+        if not is_param(prm):
+            problems.append(f"engine_params.{k}: no tiene la forma {{value, source, …}}")
+            continue
+        _walk(f"engine_params.{k}", prm, problems)
+        if prm.get("evidence_status") != "assumption":
+            problems.append(f"engine_params.{k}: los parámetros de diseño deben rotularse 'assumption'")
+    return problems
+
+
 def _read(name: str) -> dict:
     return json.loads((REFERENCE_DIR / name).read_text(encoding="utf-8"))
 
 
 @lru_cache(maxsize=1)
 def load_reference() -> dict:
-    """Devuelve {"crops": {code: crop}, "campaigns": {...}, "rules": {id: rule}} o lanza ReferenceDataError."""
-    crops_doc, rules_doc = _read("crops.json"), _read("rotation_rules.json")
-    problems = validate_crops(crops_doc) + validate_rules(rules_doc)
+    """Devuelve {"crops", "campaigns", "rules", "params"} o lanza ReferenceDataError."""
+    crops_doc, rules_doc, params_doc = _read("crops.json"), _read("rotation_rules.json"), _read("engine_params.json")
+    problems = validate_crops(crops_doc) + validate_rules(rules_doc) + validate_params(params_doc)
     if problems:
         raise ReferenceDataError(problems)
     return {
@@ -134,7 +146,13 @@ def load_reference() -> dict:
         "campaigns": crops_doc["campaigns"],
         "rules": {r["id"]: r for r in rules_doc["rules"]},
         "rules_source": {k: rules_doc[k] for k in ("source", "url", "year")},
+        "params": params_doc["params"],
     }
+
+
+def param(name: str) -> Any:
+    """Valor de un parámetro de diseño de engine_params.json."""
+    return load_reference()["params"][name]["value"]
 
 
 def value(crop: dict, field: str) -> Any:

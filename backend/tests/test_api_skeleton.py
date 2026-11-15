@@ -78,20 +78,18 @@ def test_field_status_with_power_context(client):
     assert "regional" in st["power_context"]["scale"]
 
 
-def test_compare_is_honest_stub(client):
+def test_compare_uses_real_engine(client):
+    """Reemplaza a test_compare_is_honest_stub: el router ya no es el stub (las pruebas B–E están en
+    test_api_compare.py y test_engine.py)."""
     req = {"site": {"lat": -17.2374, "lon": -62.2427}, "current_rotation": ["soy", "sorghum"],
            "priorities": {"water": 0.55, "soil": 0.25, "risk": 0.2},
            "constraints": {"irrigation": "rainfed", "excluded_crops": []}, "notes": "poca agua"}
     body = client.post("/api/rotations/compare", json=req).json()
     for k in ("site", "data_status", "alerts", "strategies", "recommended_strategy_id", "limitations"):
         assert k in body
-    assert body["recommended_strategy_id"] is None                     # no se ordena nada
-    assert [s["id"] for s in body["strategies"]] == ["E0"]             # no se inventan E1–E3
-    e0 = body["strategies"][0]
-    assert e0["score"] is None and all(v is None for v in e0["criteria"].values())
-    assert any(ev["source"].startswith("NASA POWER") and ev["evidence_status"] == "derived" for ev in e0["evidence"])
-    assert "MOTOR PENDIENTE" in body["limitations"][0] and body["alerts"][0]["date"]
-    assert body["data_status"]["engine"] == "pending"
+    assert body["strategies"][0]["id"] == "E0" and len(body["strategies"]) >= 3
+    assert body["data_status"]["engine"] in ("partial", "ready")
+    assert all(a["date"] for a in body["alerts"])
 
 
 @pytest.mark.parametrize("req", [

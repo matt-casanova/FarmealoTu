@@ -9,8 +9,8 @@ Estado de cada parte:
 - /api/health, /api/nasa/status, /api/indicators, /api/map/layers*  → reales (Alvin)   (*pendiente paso 8)
 - /api/field-node/*                                                → real y simple (SQLite), contrato v1
 - /api/context/cuatro-canadas, /api/sources                        → información documentada del plan
-- /api/rotations/compare                                           → PROVISIONAL: solo E0 + evidencia NASA real,
-                                                                     sin puntajes ni ranking (motor de Matías pendiente)
+- /api/rotations/compare                                           → motor real (Matías): E0–E3 con suelo y riesgo;
+                                                                     agua pendiente de la ET0, incertidumbre en curso
 """
 from datetime import datetime, timezone
 
@@ -18,7 +18,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-from app.routers import context, field_node, monitor, nasa, rotations_stub
+from app.routers import context, field_node, monitor, nasa, rotations
 
 app = FastAPI(
     title="FarmealoTu API",
@@ -33,11 +33,11 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.include_router(nasa.router)
 app.include_router(field_node.router)
 app.include_router(context.router)
-app.include_router(rotations_stub.router)  # Matías: reemplazar por el router del motor real
+app.include_router(rotations.router)       # motor real (rotations_stub.py queda en el repo; Alvin decide)
 app.include_router(monitor.router)         # /monitor: página de desarrollo para ver la API y el nodo en vivo
 
 
 @app.get("/api/health", tags=["sistema"])
 def health():
-    return {"status": "ok", "version": app.version, "engine": "pending",
+    return {"status": "ok", "version": app.version, "engine": "partial",
             "time": datetime.now(timezone.utc).replace(microsecond=0).isoformat()}
