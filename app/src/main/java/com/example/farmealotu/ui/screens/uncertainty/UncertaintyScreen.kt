@@ -27,6 +27,7 @@ import com.example.farmealotu.ui.components.Glossary
 import com.example.farmealotu.ui.components.LegendSwatch
 import com.example.farmealotu.ui.components.RangeBar
 import com.example.farmealotu.ui.components.SectionCard
+import com.example.farmealotu.ui.components.FoldCard
 import com.example.farmealotu.ui.components.formatApiDate
 import com.example.farmealotu.ui.components.formatCoordinate
 import com.example.farmealotu.ui.components.formatPercentWeight
@@ -139,7 +140,7 @@ private fun RangesCard(result: ComparisonResult) {
 private fun ConfidenceCard(result: ComparisonResult) {
     val informed = result.strategies.filter { it.uncertainty?.rankStability != null || it.uncertainty?.confidenceLevel != null }
     if (informed.isEmpty()) return
-    SectionCard(title = "Qué tan firme es el orden") {
+    FoldCard(title = "Qué tan firme es el orden") {
         informed.forEach { strategy -> ConfidenceItem(strategy) }
         Text(
             "Con datos de la zona, la confianza nunca es alta.",
@@ -176,16 +177,16 @@ private fun ProvenanceSections(result: ComparisonResult, appliedInput: FarmerInp
     val farmerEvidence = evidenceWith(result) { it.statusIs("farmer_provided") }
     val unavailable = evidenceWith(result) { it.statusIs("unavailable") }
 
-    SectionCard(title = "Qué viene de NASA") {
+    FoldCard(title = "Qué viene de NASA") {
         BulletList(fromNasa, emptyText = "Sin datos marcados de NASA.")
         ExplainButton(Glossary.regional)
     }
 
     if (documentedOther.isNotEmpty()) {
-        SectionCard(title = "Otros datos documentados") { BulletList(documentedOther) }
+        FoldCard(title = "Otros datos documentados") { BulletList(documentedOther) }
     }
 
-    SectionCard(title = "Qué calculó FarmealoTu") {
+    FoldCard(title = "Qué calculó FarmealoTu") {
         BulletList(derived, emptyText = "Sin datos calculados.")
         Text(
             "FarmealoTu calcula el orden con reglas y tus prioridades.",
@@ -193,7 +194,7 @@ private fun ProvenanceSections(result: ComparisonResult, appliedInput: FarmerInp
         )
     }
 
-    SectionCard(title = "Qué indicaste vos") {
+    FoldCard(title = "Qué indicaste vos") {
         val own = buildList {
             if (appliedInput != null) {
                 add("Sembrás ahora: ${appliedInput.currentCrop?.label ?: "sin dato"}")
@@ -214,7 +215,7 @@ private fun ProvenanceSections(result: ComparisonResult, appliedInput: FarmerInp
         BulletList(own, emptyText = "Sin datos tuyos.")
     }
 
-    SectionCard(title = "Supuestos iniciales") {
+    FoldCard(title = "Supuestos iniciales") {
         BulletList(assumptions, emptyText = "Sin supuestos.")
         Text(
             "Pesos iniciales (agua 40 %, suelo 35 %, riesgo 25 %): una preferencia, no un valor científico.",
@@ -222,24 +223,24 @@ private fun ProvenanceSections(result: ComparisonResult, appliedInput: FarmerInp
         )
     }
 
-    SectionCard(title = "Información que falta", containerColor = MaterialTheme.colorScheme.tertiaryContainer) {
+    FoldCard(title = "Información que falta", containerColor = MaterialTheme.colorScheme.tertiaryContainer) {
         val missing = (result.strategies.flatMap { it.missingInformation } + unavailable).distinct()
         BulletList(missing, emptyText = "El servidor no informó vacíos.")
     }
 
-    SectionCard(title = "Preguntas para tu agrónomo", containerColor = MaterialTheme.colorScheme.secondaryContainer) {
+    FoldCard(title = "Preguntas para tu agrónomo", containerColor = MaterialTheme.colorScheme.secondaryContainer) {
         BulletList(
             result.strategies.flatMap { it.agronomistQuestions }.distinct(),
             emptyText = "Revisala con tu técnico.",
         )
     }
 
-    SectionCard(title = "Límites de esta herramienta") {
+    FoldCard(title = "Límites de esta herramienta") {
         BulletList((result.limitations + FIXED_LIMITATIONS).distinct())
     }
 
     if (result.dataStatus.isNotEmpty()) {
-        SectionCard(title = "Estado de los datos (según el servidor)") {
+        FoldCard(title = "Estado de los datos (según el servidor)") {
             BulletList(result.dataStatus.map { "${it.label}: ${it.value}" })
         }
     }

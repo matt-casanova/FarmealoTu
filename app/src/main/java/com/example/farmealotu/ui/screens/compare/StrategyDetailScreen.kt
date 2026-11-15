@@ -25,6 +25,7 @@ import com.example.farmealotu.ui.components.ProvenanceChip
 import com.example.farmealotu.ui.components.ScoreBar
 import com.example.farmealotu.ui.components.SecondaryButton
 import com.example.farmealotu.ui.components.SectionCard
+import com.example.farmealotu.ui.components.FoldCard
 import com.example.farmealotu.ui.components.formatApiDate
 import com.example.farmealotu.ui.components.sampleMainViewModel
 import com.example.farmealotu.ui.components.traceDetails
@@ -70,7 +71,7 @@ fun StrategyDetailScreen(
                 BulletList(strategy.reasons, emptyText = "Sin explicación.")
             }
 
-            SectionCard(title = "Cómo le fue en cada criterio") {
+            FoldCard(title = "Cómo le fue en cada criterio") {
                 CriterionKey.entries.forEach { key ->
                     val criterion = key.of(strategy.criteria)
                     ScoreBar(key.label, criterion?.score, axisMax, color = color)
@@ -88,7 +89,7 @@ fun StrategyDetailScreen(
                 if (strategy.tradeoffs.extra.isNotEmpty()) BulletList(strategy.tradeoffs.extra)
             }
 
-            SectionCard(title = "Evidencia") {
+            FoldCard(title = "Evidencia") {
                 if (strategy.evidence.isEmpty()) {
                     Text("Sin evidencia.", style = MaterialTheme.typography.bodyMedium)
                 } else {
@@ -99,11 +100,11 @@ fun StrategyDetailScreen(
                 }
             }
 
-            SectionCard(title = "Información que falta") {
+            FoldCard(title = "Información que falta") {
                 BulletList(strategy.missingInformation, emptyText = "Nada pendiente.")
             }
 
-            SectionCard(title = "Preguntas para tu agrónomo", containerColor = MaterialTheme.colorScheme.secondaryContainer) {
+            FoldCard(title = "Preguntas para tu agrónomo", containerColor = MaterialTheme.colorScheme.secondaryContainer) {
                 BulletList(strategy.agronomistQuestions, emptyText = "Revisala con tu técnico.")
             }
 

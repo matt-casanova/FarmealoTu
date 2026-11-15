@@ -56,6 +56,7 @@ import com.example.farmealotu.ui.components.LineSeries
 import com.example.farmealotu.ui.components.LoadingBlock
 import com.example.farmealotu.ui.components.SecondaryButton
 import com.example.farmealotu.ui.components.SectionCard
+import com.example.farmealotu.ui.components.FoldCard
 import com.example.farmealotu.ui.components.SeriesLegend
 import com.example.farmealotu.ui.components.TimeSeriesChart
 import com.example.farmealotu.ui.components.formatApiDate
@@ -202,7 +203,7 @@ private fun ReadingsContent(data: FieldReadings, status: NodeStatus?) {
         }
     }
 
-    SectionCard(title = "Calibración") {
+    FoldCard(title = "Calibración") {
         Text(calibrationLabel(latest.calibrationMethod, latest.qualityFlags + latest.zones.flatMap { it.flags }), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
         InfoRow("Fecha de calibración", formatApiDate(latest.calibrationDate) ?: "no informada")
         InfoRow("Profundidad de sensores", formatOrMissing(latest.depthCm, 0, "cm", missing = "no informada"))
@@ -222,7 +223,7 @@ private fun ReadingsContent(data: FieldReadings, status: NodeStatus?) {
 
     val flags = sameSource.flatMap { reading -> reading.qualityFlags + reading.zones.flatMap { it.flags } }.distinct()
     if (flags.isNotEmpty() || data.skipped > 0) {
-        SectionCard(title = "Avisos de calidad") {
+        FoldCard(title = "Avisos de calidad") {
             BulletList(flags.map { "Bandera del nodo: $it" })
             if (data.skipped > 0) {
                 Text("${data.skipped} lectura(s) llegaron con formato inválido.", style = MaterialTheme.typography.bodyMedium)
@@ -378,7 +379,7 @@ private fun SelectedReadout(selected: NodeReading?, clock: (Long) -> String, val
 @Composable
 private fun ReadingsTable(readings: List<NodeReading>, moistureKind: MoistureKind?, simulatedClock: Boolean, clock: (Long) -> String) {
     val moistureColumn = moistureKind?.labels()?.column ?: "hum."
-    SectionCard(title = "Últimas ${readings.size} lecturas") {
+    FoldCard(title = "Últimas ${readings.size} lecturas") {
         Column(Modifier.horizontalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row {
                 Text(if (simulatedClock) "Hora simulada" else "Hora", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, modifier = Modifier.width(140.dp))
@@ -447,7 +448,7 @@ private fun RegionalBand(status: NodeStatus?) {
 
 @Composable
 private fun StatusCard(status: NodeStatus?, latest: NodeReading?) {
-    SectionCard(title = "Estado del nodo") {
+    FoldCard(title = "Estado del nodo") {
         InfoRow("Último contacto", formatApiDate(status?.lastContact ?: latest?.timestamp) ?: "sin registro")
         InfoRow("Nodo", status?.nodeId ?: latest?.nodeId ?: "no informado")
         InfoRow("Origen", status?.source?.badge ?: "no informado")

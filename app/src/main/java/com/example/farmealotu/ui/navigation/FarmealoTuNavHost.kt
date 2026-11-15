@@ -12,6 +12,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.farmealotu.ui.components.FarmIcons
@@ -79,6 +82,11 @@ fun FarmealoTuNavHost(
     val compareState by viewModel.compare.collectAsStateWithLifecycle()
     val inputState by viewModel.input.collectAsStateWithLifecycle()
 
+    // Primer uso: solo las preguntas, sin el menú de abajo. El menú aparece al terminar de responder
+    // (o si ya había respuestas / un resultado guardado). Se conserva al rotar la pantalla.
+    var onboarded by rememberSaveable { mutableStateOf(inputState.isComplete || compareState.dataOrNull != null) }
+    val startRoute = rememberSaveable { if (onboarded) Routes.HOME else Routes.INPUT }
+
     val goHome: () -> Unit = { navController.popBackStack(Routes.HOME, inclusive = false) }
     val goBack: () -> Unit = { if (!navController.popBackStack()) goHome() }
     val open: (String) -> Unit = { route -> navController.navigate(route) { launchSingleTop = true } }
@@ -144,7 +152,7 @@ fun FarmealoTuNavHost(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            NavigationBar(
+            if (onboarded) NavigationBar(
                 containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 6.dp,
             ) {
@@ -183,7 +191,7 @@ fun FarmealoTuNavHost(
         ) {
             NavHost(
                 navController = navController,
-                startDestination = Routes.HOME,
+                startDestination = startRoute,
                 modifier = Modifier.fillMaxSize()
             ) {
                 composable(Routes.HOME) {
@@ -221,10 +229,14 @@ fun FarmealoTuNavHost(
                         onExit = goBack,
                         onHome = goHome,
                         onCompare = {
-                            navController.navigate(Routes.DECISION) {
-                                popUpTo(Routes.HOME)
+                            // Terminó las preguntas: aparece el menú y queda Inicio → Resultado en la pila
+                            // (en el primer uso Inicio todavía no existía en la pila).
+                            onboarded = true
+                            navController.navigate(Routes.HOME) {
+                                popUpTo(navController.graph.id) { inclusive = true }
                                 launchSingleTop = true
                             }
+                            navController.navigate(Routes.DECISION) { launchSingleTop = true }
                         },
                     )
                 }

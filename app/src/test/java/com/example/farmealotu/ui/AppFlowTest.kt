@@ -65,8 +65,8 @@ class AppFlowTest {
         rule.waitForIdle()
     }
 
+    /** La app arranca directo en la pregunta 1 (primer uso, sin menú de abajo). */
     private fun answerFiveQuestions() {
-        tap("Comparar opciones de siembra")
         rule.onNodeWithText("¿Qué sembrás actualmente?").assertIsDisplayed()
         rule.onNodeWithText("Pregunta 1 de 5").assertIsDisplayed()
         // Texto libre con sinónimo: «soja» se reconoce como Soya.
@@ -96,13 +96,16 @@ class AppFlowTest {
     @Test
     fun recorridoCompletoEnModoDemo() {
         settle()
-        // Inicio: franja demo, aviso permanente y botón principal.
+        // Primer uso: solo las preguntas (con la franja demo) y sin el menú de abajo.
         rule.onNodeWithText("MODO DEMO · DATOS DE EJEMPLO").assertIsDisplayed()
-        rule.onNodeWithText("Mi campo — Cuatro Cañadas").assertIsDisplayed()
+        rule.onNodeWithText("Mi Zona").assertDoesNotExist()
 
         answerFiveQuestions()
         tap("Comparar opciones de siembra")
         settle()
+
+        // Al terminar las preguntas aparece el menú de abajo.
+        rule.onNodeWithText("Mi Zona").assertExists()
 
         // Resultado principal.
         rule.onNodeWithText("Opción mejor posicionada").assertExists()
@@ -202,20 +205,16 @@ class AppFlowTest {
     }
 
     @Test
-    fun sinConsultaLosModulosInvitanARegistrarElCampo() {
+    fun alIniciarSoloAparecenLasPreguntasSinMenu() {
         settle()
-        tap("Comparar formas de sembrar")
-        rule.onNodeWithText("Primero contanos de tu campo").assertExists()
-        rule.onNodeWithText("Responder las 5 preguntas").assertExists()
-        goHome()
-        tap("¿Qué tan segura es esta comparación?")
-        rule.onNodeWithText("Primero contanos de tu campo").assertExists()
+        rule.onNodeWithText("¿Qué sembrás actualmente?").assertIsDisplayed()
+        rule.onNodeWithText("Pregunta 1 de 5").assertIsDisplayed()
+        listOf("Inicio", "Siembra", "Riesgos", "Mi Zona", "Más").forEach { rule.onNodeWithText(it).assertDoesNotExist() }
     }
 
     @Test
     fun cultivoNoReconocidoPideElegirDeLaLista() {
         settle()
-        tap("Comparar opciones de siembra")
         rule.onNode(hasSetTextAction()).performTextInput("quinua")
         tap("Siguiente")
         // El aviso queda a la vista (junto al botón) y no se avanza de pregunta.

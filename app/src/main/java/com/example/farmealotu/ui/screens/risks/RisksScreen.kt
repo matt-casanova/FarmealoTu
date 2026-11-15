@@ -41,6 +41,7 @@ import com.example.farmealotu.ui.components.MonthYearHeatmap
 import com.example.farmealotu.ui.components.ProvenanceChip
 import com.example.farmealotu.ui.components.SecondaryButton
 import com.example.farmealotu.ui.components.SectionCard
+import com.example.farmealotu.ui.components.FoldCard
 import com.example.farmealotu.ui.components.StateContent
 import com.example.farmealotu.ui.components.formatApiDate
 import com.example.farmealotu.ui.components.formatOrMissing
@@ -110,7 +111,7 @@ private fun SummaryCards(result: IndicatorsResult) {
     val verifiedCover = cover.filter { it.valueText != null && it.status?.lowercase() != "unavailable" }
     verifiedCover.forEach { IndicatorCard(it) }
     if (verifiedCover.isEmpty()) {
-        SectionCard(title = "Baja cobertura del suelo", containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+        FoldCard(title = "Baja cobertura del suelo", containerColor = MaterialTheme.colorScheme.surfaceContainer) {
             ProvenanceChip("unavailable")
             Text(
                 "Sin datos de vegetación (NDVI) para este punto.",

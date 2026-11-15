@@ -25,6 +25,7 @@ import com.example.farmealotu.ui.components.LabeledValueList
 import com.example.farmealotu.ui.components.groupThousands
 import com.example.farmealotu.ui.components.NASA_ROLE
 import com.example.farmealotu.ui.components.SectionCard
+import com.example.farmealotu.ui.components.FoldCard
 import com.example.farmealotu.ui.components.StateContent
 import com.example.farmealotu.ui.components.sampleMainViewModel
 import com.example.farmealotu.ui.theme.FarmealoTuTheme
@@ -49,7 +50,7 @@ fun SourcesScreen(
             Text("NASA no recomienda cultivos ni rotaciones. La comparación la arma FarmealoTu; la decisión es tuya y de tu técnico.", style = MaterialTheme.typography.bodyMedium)
         }
 
-        SectionCard(title = "Límites de esta herramienta") { BulletList(FIXED_LIMITATIONS) }
+        FoldCard(title = "Límites de esta herramienta") { BulletList(FIXED_LIMITATIONS) }
 
         Text("Fuentes de los datos", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         StateContent(

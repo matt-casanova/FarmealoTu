@@ -37,6 +37,7 @@ import com.example.farmealotu.ui.components.ProvenanceChip
 import com.example.farmealotu.ui.components.SecondaryButton
 import com.example.farmealotu.ui.components.QuietAction
 import com.example.farmealotu.ui.components.SectionCard
+import com.example.farmealotu.ui.components.FoldCard
 import com.example.farmealotu.ui.components.formatApiDate
 import com.example.farmealotu.ui.components.formatClock
 import com.example.farmealotu.ui.components.sampleMainViewModel
@@ -191,7 +192,7 @@ private fun MainActionCard(
 
 @Composable
 fun AlertsCard(result: ComparisonResult) {
-    SectionCard(title = "Advertencias") {
+    FoldCard(title = "Advertencias") {
         if (result.alerts.isEmpty()) {
             Text("Sin advertencias.", style = MaterialTheme.typography.bodyMedium)
         } else {
