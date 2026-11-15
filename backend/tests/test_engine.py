@@ -9,6 +9,13 @@ from engine.rules import Sequence, farmer_sequence, feasible_sequences
 
 @pytest.fixture(scope="module")
 def climate():
+    return RC.build_climate(I.load_daily_frame())          # con la ET0 real (analytics/physics.py)
+
+
+@pytest.fixture
+def climate_no_et0(monkeypatch):
+    """Simula que la ET0 no está disponible (p. ej., NASA todavía no publicó la radiación)."""
+    monkeypatch.setattr(I, "et0_series", lambda d: (None, "sin ET0 (simulado en la prueba)"))
     return RC.build_climate(I.load_daily_frame())
 
 
@@ -93,10 +100,18 @@ def test_risk_uses_years_of_critical_stage(climate):
     assert np.nanmax(cc.dry_flag) <= 1 and np.nanmin(cc.dry_flag) >= 0
 
 
-def test_water_is_insufficient_without_et0(climate):
-    assert climate.et0 is None                                        # physics.py todavía no existe
-    ev = RC.evaluate(Sequence("soy", "sorghum"), climate)
+def test_water_is_insufficient_without_et0(climate_no_et0):
+    assert climate_no_et0.et0 is None
+    ev = RC.evaluate(Sequence("soy", "sorghum"), climate_no_et0)
     assert ev.point()["water"] is None and "ET0" in ev.reasons_missing["water"]
+
+
+def test_real_et0_gives_water_score(climate):
+    assert climate.et0 is not None and climate.et0_reason is None   # ET0 FAO-56 real desde NASA POWER
+    soy_sorghum = RC.evaluate(Sequence("soy", "sorghum"), climate).point()["water"]
+    soy_maize = RC.evaluate(Sequence("soy", "maize"), climate).point()["water"]
+    assert soy_sorghum is not None and 0 < soy_sorghum <= 100
+    assert soy_maize < soy_sorghum                                   # el maíz (Kc medio 1.20) pide más agua que el sorgo (1.05)
 
 
 def test_water_score_formula():
@@ -116,7 +131,16 @@ def test_mcda_redistributes_missing_weight():
     assert RC.mcda({"water": None, "soil": None, "risk": None}, {"water": 1, "soil": 0, "risk": 0})[0] is None
 
 
-def test_selection_distinct_and_no_water_profile_without_et0(climate):
+def test_selection_with_real_et0_includes_water_profile(climate):
+    e0 = RC.evaluate(Sequence("soy", "sorghum"), climate)
+    cands = [RC.evaluate(s, climate) for s in feasible_sequences([], "rainfed").feasible]
+    chosen, _ = RC.select(e0, cands)
+    keys = [ev.seq.key for ev in chosen.values()]
+    assert len(keys) == len(set(keys)) and "E2" in chosen          # con ET0 se elige «Cuidar agua»
+
+
+def test_selection_distinct_and_no_water_profile_without_et0(climate_no_et0):
+    climate = climate_no_et0
     e0 = RC.evaluate(Sequence("soy", "sorghum"), climate)
     cands = [RC.evaluate(s, climate) for s in feasible_sequences([], "rainfed").feasible]
     chosen, notes = RC.select(e0, cands)

@@ -71,8 +71,32 @@ def test_C_more_water_weight_recalculates_reproducibly(client):
     assert e0_a["criteria"] == e0_s["criteria"]                       # los subpuntajes no dependen de los pesos
 
 
-def test_D_missing_data_declared_and_no_ranking_without_et0(client):
+def test_D_missing_data_declared_with_real_et0(client):
     body = post(client).json()
+    ids = [s["id"] for s in body["strategies"]]
+    assert "E2" in ids and body["recommended_strategy_id"] in ids     # con ET0 real: «Cuidar agua» y ranking
+    assert body["data_status"]["engine"] == "ready"
+    for s in body["strategies"]:
+        assert s["criteria"]["water"]["status"] == "ok" and s["partial_score"] is False
+        text = " ".join(s["missing_information"])
+        assert "análisis de suelo" in text and "SMAP" in text and "NDVI" in text   # los vacíos se siguen declarando
+
+
+def _body_without_et0(monkeypatch):
+    """Respuesta del motor con la ET0 ausente (simulada), sin tocar la caché del servidor."""
+    from analytics import indicators as I
+    from app.schemas import CompareRequest
+    from engine.recommendation import build_climate
+    from engine.response import build_compare_response
+    monkeypatch.setattr(I, "et0_series", lambda d: (None, "sin ET0 (simulado en la prueba)"))
+    df = I.load_daily_frame()
+    ind = I.build_indicators_response("recent", None, df=df)
+    return build_compare_response(CompareRequest(**BASE), df, ind,
+                                  {"last_observation_date": "x", "last_download": "y"}, build_climate(df))
+
+
+def test_D_missing_data_declared_and_no_ranking_without_et0(monkeypatch):
+    body = _body_without_et0(monkeypatch)
     assert body["recommended_strategy_id"] is None                     # sin S_agua para todas: sin ranking
     for s in body["strategies"]:
         assert s["partial_score"] is True and s["criteria"]["water"]["status"] == "insufficient"

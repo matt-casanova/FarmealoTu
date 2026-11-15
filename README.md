@@ -30,9 +30,10 @@ El plan completo está en [`FarmealoTu_Plan_de_Proyecto.pdf`](FarmealoTu_Plan_de
 | Base agrícola con fuente por dato (`crops.json`, `rotation_rules.json`, `engine_params.json`) y parser de sinónimos | ✅ Real (Matías). Kc, etapas y raíz de FAO-56 cotejados contra el texto de FAO salvo el Kc inicial; falta el cotejo de una persona (`verified_at`) | `backend/reference/`, `backend/engine/parser.py` |
 | Motor de recomendación: factibilidad, S_suelo, S_riesgo, MCDA con política de faltantes, E0–E3 | ✅ Real (Matías) | `backend/engine/` |
 | Incertidumbre: bootstrap de 200 años agrícolas remuestreados (seed 42), P10/P50/P90, estabilidad del ranking | ✅ Real (Matías) | `backend/analytics/uncertainty.py` |
-| `POST /api/rotations/compare` | ✅ Real, pero **parcial**: sin ET0 no hay puntaje de agua, por eso no aparece E2 («Cuidar agua») y `recommended_strategy_id = null` | `backend/app/routers/rotations.py` |
-| ET0 FAO-56 Penman–Monteith (`physics.py`) | ⏳ Pendiente (Christian), junto con el prototipo. Es lo único que falta para S_agua, E2 y el ranking | — |
-| App Android (Kotlin + Jetpack Compose) | ✅ UI pulida + integración con la API real (Kendra y Matías). 66 pruebas unitarias | `app/` |
+| `POST /api/rotations/compare` | ✅ Completo: E0–E3 con agua, suelo y riesgo, P10–P90 y recomendación según los pesos del agricultor | `backend/app/routers/rotations.py` |
+| ET0 FAO-56 Penman–Monteith diaria desde NASA POWER | ✅ Real. Validada con el ejemplo 18 de FAO-56 (3.9 mm/día) y día por día contra `pyet` (diferencia 0.0). Rs/Rso acotado a 0.3–1 (ASCE-EWRI); los pocos días sin radiación publicada se estiman con FAO-56 ec. 50 y quedan listados | `backend/analytics/physics.py` |
+| Nodo de campo físico (ESP32: humedad capacitiva, DS18B20, DHT11, LDR) y gemelo digital (simulación) | ✅ Enviando a la API en vivo; la app los muestra con su insignia FÍSICO / SIMULADO | `hardware/` |
+| App Android (Kotlin + Jetpack Compose) | ✅ UI pulida + integración con la API real (Kendra y Matías). 72 pruebas unitarias | `app/` |
 | Gemelo digital, firmware ESP32 / Wokwi, prototipo físico | ⏳ En desarrollo (Christian, Mateo, Vanesa) | `hardware/` |
 
 ### Ramas
@@ -50,14 +51,14 @@ El plan completo está en [`FarmealoTu_Plan_de_Proyecto.pdf`](FarmealoTu_Plan_de
 
 ```
 NASA POWER (diario/horario) ─┐
-NASA GIBS (WMTS EPSG:3857) ──┼─▶ pipeline/ (descarga, validación, caché) ─▶ analytics/ (indicadores, ET0*)
+NASA GIBS (WMTS EPSG:3857) ──┼─▶ pipeline/ (descarga, validación, caché) ─▶ analytics/ (indicadores, ET0)
 Base agrícola local* ────────┘                                                     │
                                                                                    ▼
 App Android (Compose) ◀── HTTPS ── FastAPI /api/* ◀── engine/* (reglas + MCDA) + analytics/uncertainty.py (bootstrap)
         ▲                                  ▲
         └─ «Datos de terreno» ◀────────────┴── POST /api/field-node/readings ◀── gemelo digital · Wokwi · ESP32
 ```
-`*` = pendiente: ET0 (`physics.py`). Reglas que no se negocian:
+Reglas que no se negocian:
 - La app **nunca** llama a NASA; la API **nunca** llama a NASA durante una petición, porque todo sale de la caché.
 - Todo valor lleva fuente, fecha, unidad, escala y `evidence_status` (`documented | derived | assumption | farmer_provided | unavailable`).
 - Nada se inventa: lo que falta es `null` con su motivo.
@@ -116,7 +117,7 @@ que se reinicia el túnel.**
 | `GET /api/map/layers` | ✅ |
 | `POST /api/field-node/readings` · `GET /api/field-node/readings` · `GET /api/field-node/status` | ✅ |
 | `GET /api/context/cuatro-canadas` · `GET /api/sources` | ✅ |
-| `POST /api/rotations/compare` | ✅ motor real; 🟡 parcial hasta que llegue la ET0 (ver arriba). Fuera de ±0.25° → 422. Ejemplo real: [`docs/ejemplos/compare_punto_piloto.json`](docs/ejemplos/compare_punto_piloto.json) |
+| `POST /api/rotations/compare` | ✅ motor completo (E0–E3, agua/suelo/riesgo, P10–P90, recomendación). Fuera de ±0.25° → 422. Ejemplo real: [`docs/ejemplos/compare_punto_piloto.json`](docs/ejemplos/compare_punto_piloto.json) |
 
 Contratos JSON: [`docs/contratos.md`](docs/contratos.md) (API) y [`docs/UI_BACKEND_CONTRACT.md`](docs/UI_BACKEND_CONTRACT.md)
 (lo que espera la app). Contrato del nodo: [`shared/sensor_reading.schema.json`](shared/sensor_reading.schema.json).
@@ -159,8 +160,9 @@ con enlaces está en `GET /api/sources`.
 - P10–P90 es la variabilidad del modelo bajo remuestreo histórico, no una garantía ni un pronóstico. Con datos solo
   regionales, la confianza máxima es «media».
 - Los parámetros de cultivo vienen de tablas genéricas de FAO-56 (sin ajuste climático local) y la siembra se supone
-  al inicio de cada campaña. Sin ET0, soya→sorgo y soya→maíz tienen el mismo puntaje de suelo y riesgo, porque
-  FAO-56 les asigna las mismas etapas: solo el agua (Kc) las distingue.
+  al inicio de cada campaña. Soya→sorgo y soya→maíz tienen el mismo puntaje de suelo y riesgo, porque FAO-56 les
+  asigna las mismas etapas: solo el agua (Kc × ET0) las distingue.
+- La ET0 se calcula con datos regionales de NASA POWER (~50 km), no con mediciones del campo.
 - No se predicen rendimientos ni precios. No se sustituyen el análisis de suelo ni la visita técnica.
 - El nodo de campo es un prototipo de laboratorio: no valida estadísticamente al satélite y no alimenta el motor.
 

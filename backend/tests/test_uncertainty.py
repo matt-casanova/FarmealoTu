@@ -80,8 +80,16 @@ def test_E_api_ranges_reproducible_and_fast(client):
     assert again.json()["strategies"] == body["strategies"]                  # reproducible
 
 
-def test_without_et0_confidence_is_low(client):
-    body = client.post("/api/rotations/compare", json=BASE).json()
+def test_without_et0_confidence_is_low(monkeypatch):
+    from tests.test_api_compare import _body_without_et0
+    body = _body_without_et0(monkeypatch)
     for s in body["strategies"]:
         assert s["uncertainty"]["confidence_level"] == "low"
         assert "agua" in s["uncertainty"]["confidence_reason"]
+
+
+def test_with_real_et0_water_is_not_a_missing_criterion(client):
+    body = client.post("/api/rotations/compare", json=BASE).json()
+    for s in body["strategies"]:
+        assert "falta el criterio de agua" not in s["uncertainty"]["confidence_reason"]
+        assert s["uncertainty"]["confidence_level"] in ("low", "medium")       # nunca «high» con datos regionales

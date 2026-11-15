@@ -8,7 +8,7 @@ Estado de cada parte:
 - /api/field-node/*                                                → real y simple (SQLite), contrato v1
 - /api/context/cuatro-canadas, /api/sources                        → información documentada del plan
 - /api/rotations/compare                                           → motor real (Matías): reglas + MCDA + bootstrap;
-                                                                     el agua queda insuficiente hasta integrar la ET0
+                                                                     agua con ET0 FAO-56 (analytics/physics.py)
 """
 import importlib.util
 import logging
