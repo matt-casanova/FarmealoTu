@@ -27,7 +27,8 @@ interface FarmealoTuRepository {
     suspend fun compare(input: FarmerInput, priorities: Priorities): ApiResult<ComparisonResult>
     suspend fun indicators(lat: Double, lon: Double, period: String? = null): ApiResult<IndicatorsResult>
     suspend fun mapLayers(): ApiResult<List<MapLayer>>
-    suspend fun fieldReadings(nodeId: String? = null, source: String? = null, since: String? = null): ApiResult<FieldReadings>
+    /** [limit]: máximo de lecturas, las más recientes (null = lo que decida el servidor). */
+    suspend fun fieldReadings(nodeId: String? = null, source: String? = null, since: String? = null, limit: Int? = null): ApiResult<FieldReadings>
     suspend fun fieldStatus(): ApiResult<NodeStatus>
     suspend fun sources(): ApiResult<List<SourceRef>>
     suspend fun context(): ApiResult<List<InfoSection>>
