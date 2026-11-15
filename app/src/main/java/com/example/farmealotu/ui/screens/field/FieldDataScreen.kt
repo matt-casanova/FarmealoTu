@@ -94,8 +94,9 @@ fun calibrationLabel(method: String?, flags: List<String>): String = when {
 
 /** Texto principal de humedad de una zona, por prioridad: VWC → índice del sensor → lectura cruda → sin dato. */
 internal fun moistureHeadline(zone: ZoneReading): String = when (zone.moistureKind) {
-    MoistureKind.VWC -> "Humedad del suelo: " + formatOrMissing(zone.moisturePct, 1, "%")
-    MoistureKind.INDEX -> "Índice de humedad del sensor: " + formatOrMissing(zone.moistureIndexPct, 0, "%") + " (relativo, sin calibrar)"
+    // Espacio duro (U+00A0) entre número y «%»: el salto de línea nunca deja el «%» solo en otra línea.
+    MoistureKind.VWC -> "Humedad del suelo: " + formatOrMissing(zone.moisturePct, 1, " %").replace("  ", " ")
+    MoistureKind.INDEX -> "Índice de humedad del sensor: " + formatOrMissing(zone.moistureIndexPct, 0, " %").replace("  ", " ") + " (relativo, sin calibrar)"
     MoistureKind.RAW -> "Lectura cruda del sensor: " + formatOrMissing(zone.moistureRaw, 0) + " (sin calibrar)"
     null -> "Humedad del suelo: sin dato"
 }

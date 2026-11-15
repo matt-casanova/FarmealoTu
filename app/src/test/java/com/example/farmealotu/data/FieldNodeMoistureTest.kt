@@ -51,6 +51,7 @@ class FieldNodeMoistureTest {
         val text = moistureHeadline(read(physical).zone("A")!!)
         assertTrue(text, text.startsWith("Índice de humedad del sensor: "))
         assertTrue(text, text.contains("relativo, sin calibrar"))
+        assertTrue(text, text.contains("40 %"))                          // 39.5 → «40 %», sin cortar el «%»
         assertFalse(text, text.startsWith("Humedad del suelo"))
     }
 
@@ -65,7 +66,7 @@ class FieldNodeMoistureTest {
         assertNull(zone.moistureIndexPct)
         assertNull(zone.moistureRaw)
         assertEquals(MoistureKind.VWC, zone.moistureKind)
-        assertEquals("Humedad del suelo: 29,2 %", moistureHeadline(zone).replace('.', ','))
+        assertEquals("Humedad del suelo: 29,2 %", moistureHeadline(zone).replace('.', ','))
         assertEquals("2026-11-14T10:20:00Z", reading.simTime)
         assertEquals("14-nov 10:20", formatSimClock(reading.simEpochMillis!!))   // hora tal como la escribe la simulación
         assertEquals(reading.simEpochMillis, reading.chartMillis)                // el gráfico usa la hora simulada
