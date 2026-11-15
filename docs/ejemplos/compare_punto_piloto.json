@@ -1,5 +1,5 @@
 {
-  "_nota": "Respuesta REAL de POST /api/rotations/compare (rama matias/motor) para el punto piloto, generada el 14-nov-2026 con la caché NASA POWER versionada. Sin ET0: agua insuficiente y sin ranking.",
+  "_nota": "Respuesta REAL de POST /api/rotations/compare (rama matias/motor) para el punto piloto, generada el 14-nov-2026 con la caché NASA POWER versionada. Sin ET0: agua insuficiente y sin ranking. Regenerado tras corregir las etapas del trigo (FAO-56 Tabla 11).",
   "request": {
     "site": {
       "lat": -17.2374,
@@ -856,8 +856,8 @@
             "crop": "wheat"
           }
         ],
-        "score": 70.6,
-        "score_point": 70.6,
+        "score": 73.6,
+        "score_point": 73.6,
         "partial_score": true,
         "weights_used": {
           "soil": 0.5556,
@@ -871,22 +871,22 @@
             "status": "insufficient"
           },
           "soil": {
-            "score": 73.3,
-            "detail": "Suelo cubierto 9.8 de 12 meses (cultivo o rastrojo); residuo: soya bajo, trigo medio; 2 familias de cultivos.",
+            "score": 72.8,
+            "detail": "Suelo cubierto 9.7 de 12 meses (cultivo o rastrojo); residuo: soya bajo, trigo medio; 2 familias de cultivos.",
             "unit": "puntos (0–100)",
             "status": "ok"
           },
           "risk": {
-            "score": 67.3,
-            "detail": "Más alto = menos exposición histórica. trigo: racha seca de más de 15 días en la floración (junio a agosto) en 10 de 11 años; soya: racha seca de más de 15 días en la floración (diciembre a enero) en 0 de 11 años.",
+            "score": 74.5,
+            "detail": "Más alto = menos exposición histórica. trigo: racha seca de más de 15 días en la floración (junio a julio) en 8 de 11 años; soya: racha seca de más de 15 días en la floración (diciembre a enero) en 0 de 11 años.",
             "unit": "puntos (0–100)",
             "status": "ok"
           }
         },
         "uncertainty": {
-          "p10": 68.9,
-          "p50": 70.6,
-          "p90": 72.6,
+          "p10": 71.6,
+          "p50": 73.6,
+          "p90": 75.7,
           "rank_stability": 0.0,
           "rank_basis": "puntaje parcial (suelo y riesgo)",
           "prob_better_than_current": 0.0,
@@ -897,23 +897,23 @@
           "note": "P10–P90 es la variabilidad del modelo bajo remuestreo histórico; no es una garantía de rendimiento ni un pronóstico."
         },
         "tradeoffs": {
-          "advantage": "Protege el suelo: queda cubierto 9.8 de 12 meses.",
-          "disadvantage": "Su punto más débil es el riesgo: la floración de trigo (junio a agosto) cae en la época de rachas secas largas.",
-          "main_risk": "Trigo en floración (junio a agosto): en 10 de 11 años hubo más de 15 días seguidos sin lluvia útil (NASA POWER, contexto regional). Lluvia intensa en la cosecha (agosto a septiembre) en 3 de 11 años (exposición, no pronóstico de inundación)."
+          "advantage": "Menor exposición histórica a rachas secas, calor y lluvia intensa en las etapas sensibles.",
+          "disadvantage": "El suelo queda sin cultivo ni rastrojo unos 2.3 meses al año.",
+          "main_risk": "Trigo en floración (junio a julio): en 8 de 11 años hubo más de 15 días seguidos sin lluvia útil (NASA POWER, contexto regional). Lluvia intensa en la cosecha (julio a agosto) en 1 de 11 años (exposición, no pronóstico de inundación)."
         },
         "reasons": [
           "Es la opción más pareja entre las que quedan (sin repetir tu rotación ni las ya propuestas): su criterio más bajo es el más alto. No es la mejor en nada, pero tampoco es débil en ningún criterio.",
           "Secuencia: soya (verano) → trigo (invierno).",
           "Peor en suelo (73 vs 81 de tu rotación) porque deja menos rastrojo (residuo: soya bajo, trigo medio; tu rotación: soya bajo, sorgo alto).",
-          "Peor en riesgo (67 vs 71 de tu rotación) porque su etapa más expuesta es la floración de trigo (junio a agosto), con rachas secas largas en 10 de 11 años (tu rotación: sorgo, 9 de 11)."
+          "Mejor en riesgo (75 vs 71 de tu rotación) porque su etapa más expuesta es la floración de trigo (junio a julio), con rachas secas largas en 8 de 11 años (tu rotación: sorgo, 9 de 11)."
         ],
         "evidence": [
           {
             "period": "2015-16 → 2025-26 (11 años agrícolas)",
             "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
             "indicator": "dry_spell_critical_wheat",
-            "name": "Años con racha seca > 15 días en la floración de trigo (junio a agosto)",
-            "value": 90.9,
+            "name": "Años con racha seca > 15 días en la floración de trigo (junio a julio)",
+            "value": 72.7,
             "unit": "% de años",
             "source": "NASA POWER PRECTOTCORR",
             "evidence_status": "derived"
@@ -923,7 +923,7 @@
             "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
             "indicator": "dry_spell_mean_wheat",
             "name": "Racha seca máxima media en la floración de trigo",
-            "value": 26.9,
+            "value": 21.4,
             "unit": "días",
             "source": "NASA POWER PRECTOTCORR",
             "evidence_status": "derived"
@@ -933,7 +933,7 @@
             "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
             "indicator": "heat_days_critical_wheat",
             "name": "Días de calor en la floración de trigo (umbral genérico P90)",
-            "value": 8.3,
+            "value": 9.5,
             "unit": "% de días",
             "source": "NASA POWER T2M_MAX",
             "evidence_status": "derived"
@@ -942,8 +942,8 @@
             "period": "2015-16 → 2025-26 (11 años agrícolas)",
             "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
             "indicator": "heavy_rain_harvest_wheat",
-            "name": "Años con lluvia intensa (> P95) en la cosecha de trigo (agosto a septiembre)",
-            "value": 27.3,
+            "name": "Años con lluvia intensa (> P95) en la cosecha de trigo (julio a agosto)",
+            "value": 9.1,
             "unit": "% de años",
             "source": "NASA POWER PRECTOTCORR",
             "evidence_status": "derived"

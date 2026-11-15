@@ -688,26 +688,26 @@
       },
       "stage_days": {
         "value": {
-          "ini": 20,
+          "ini": 15,
           "dev": 25,
-          "mid": 60,
+          "mid": 50,
           "late": 30
         },
         "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
-        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "url": "https://www.fao.org/4/x0490e/x0490e0b.htm",
         "year": 1998,
         "evidence_status": "documented",
-        "note": "FAO-56 Tabla 11, fila «Wheat (spring) · November · India central». La elección de la fila es un SUPUESTO (la más parecida en región/fecha). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "note": "FAO-56 Tabla 11, fila «Barley/Oats/Wheat · November · Central India» (15/25/50/30, total 120). La elección de la fila es un SUPUESTO (siembra de invierno seco en latitud tropical). CORREGIDO el 14-nov-2026: la versión anterior (20/25/60/30 = 135) correspondía a la fila «March/Apr · 35-45 °L»; se cotejó contra el texto de la página de FAO citada en url. verified_at = null hasta que una persona lo coteje.",
         "verified_at": null,
         "unit": "días"
       },
       "cycle_days": {
-        "value": 135,
+        "value": 120,
         "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
-        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "url": "https://www.fao.org/4/x0490e/x0490e0b.htm",
         "year": 1998,
         "evidence_status": "derived",
-        "note": "Suma de las cuatro etapas de la Tabla 11. Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "note": "Suma de las cuatro etapas de la Tabla 11 (fila «Barley/Oats/Wheat · November · Central India»; la tabla imprime 120). CORREGIDO el 14-nov-2026 (antes 135, de otra fila). verified_at = null hasta que una persona lo coteje.",
         "verified_at": null,
         "unit": "días"
       },
