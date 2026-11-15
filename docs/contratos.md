@@ -319,8 +319,9 @@ NASA (filas, última fecha, fecha de descarga), no por reloj; la respuesta se ca
 
 - **Christian / Alvin:** `analytics/physics.py` con `et0_fao56_daily(df, elevation_m)`. Con eso, sin cambiar el motor, se activan S_agua,
   E2, el ranking y `engine: "ready"` (probado con una ET0 sintética en `tests/test_engine.py::test_engine_ready_when_et0_arrives`).
-- **Kendra:** la evidencia del motor es `derived` (calculada por FarmealoTu con datos NASA POWER), igual que en `indicators.py`. El módulo
-  04 («Qué viene de NASA») filtra `documented`, así que **quedará vacío**; no se cambiaron las etiquetas. Habría que mostrar también
-  `derived` con fuente NASA.
+- **Kendra (sin cambios necesarios):** la evidencia del motor es `derived` (calculada por FarmealoTu con datos NASA POWER), igual que en
+  `indicators.py`, y no se reetiquetó. En el módulo 04 de la app, «Qué viene de NASA» (filtra `documented`) dice que no hay
+  observaciones NASA marcadas, y la sección «Qué calculó FarmealoTu» lista esa evidencia con fuente, período y escala. Verificado en un
+  teléfono Android contra el motor real el 14-nov-2026.
 - **Alvin:** la fuente GRIN (familias botánicas) de `crops.json` no está en `/api/sources` (`context.py`); no se tocó ese archivo.
 - **Quien presente:** cotejar los valores de FAO-56 de `crops.json` y completar `verified_at`.
