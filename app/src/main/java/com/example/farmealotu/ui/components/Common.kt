@@ -285,12 +285,11 @@ private fun ButtonIcon(icon: ImageVector?) {
 
 /**
  * Pie común de los módulos: acciones de salida, más discretas que la acción principal de la pantalla.
- * Lleva el aviso del plan (§6) de que la decisión es del agricultor.
+ * (El aviso de que la decisión es del agricultor vive una sola vez en «Fuentes y límites».)
  */
 @Composable
 fun FooterActions(onEditData: () -> Unit, onHome: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        DecisionDisclaimer()
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             QuietAction("Editar mis datos", FarmIcons.Edit, onEditData, Modifier.weight(1f))
             QuietAction("Volver al inicio", FarmIcons.Home, onHome, Modifier.weight(1f))

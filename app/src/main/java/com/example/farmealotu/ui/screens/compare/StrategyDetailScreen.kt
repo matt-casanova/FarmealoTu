@@ -21,7 +21,6 @@ import com.example.farmealotu.ui.components.FarmScreen
 import com.example.farmealotu.ui.components.FooterActions
 import com.example.farmealotu.ui.components.Glossary
 import com.example.farmealotu.ui.components.GlossaryEntry
-import com.example.farmealotu.ui.components.NASA_ROLE
 import com.example.farmealotu.ui.components.ProvenanceChip
 import com.example.farmealotu.ui.components.ScoreBar
 import com.example.farmealotu.ui.components.SecondaryButton
@@ -98,7 +97,6 @@ fun StrategyDetailScreen(
                         EvidenceItem(evidence)
                     }
                 }
-                Text(NASA_ROLE, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             SectionCard(title = "Información que falta") {

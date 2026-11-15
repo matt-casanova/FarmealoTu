@@ -32,12 +32,10 @@ import com.example.farmealotu.ui.components.FarmScreen
 import com.example.farmealotu.ui.components.Level
 import com.example.farmealotu.ui.components.LevelBadge
 import com.example.farmealotu.ui.components.LoadingBlock
-import com.example.farmealotu.ui.components.NASA_ROLE
 import com.example.farmealotu.ui.components.PrimaryButton
 import com.example.farmealotu.ui.components.ProvenanceChip
 import com.example.farmealotu.ui.components.SecondaryButton
 import com.example.farmealotu.ui.components.QuietAction
-import com.example.farmealotu.ui.components.DecisionDisclaimer
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.formatApiDate
 import com.example.farmealotu.ui.components.formatClock
@@ -139,9 +137,6 @@ fun HomeScreen(
             }
             QuietAction("Fuentes y límites", FarmIcons.ChevronRight, onOpenSources)
         }
-
-        DecisionDisclaimer()
-        Text(NASA_ROLE, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

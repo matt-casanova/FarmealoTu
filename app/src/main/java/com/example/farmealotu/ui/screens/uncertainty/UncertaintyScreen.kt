@@ -25,7 +25,6 @@ import com.example.farmealotu.ui.components.FooterActions
 import com.example.farmealotu.ui.components.FreshnessNote
 import com.example.farmealotu.ui.components.Glossary
 import com.example.farmealotu.ui.components.LegendSwatch
-import com.example.farmealotu.ui.components.NASA_ROLE
 import com.example.farmealotu.ui.components.RangeBar
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.formatApiDate
@@ -179,7 +178,6 @@ private fun ProvenanceSections(result: ComparisonResult, appliedInput: FarmerInp
 
     SectionCard(title = "Qué viene de NASA") {
         BulletList(fromNasa, emptyText = "En esta respuesta el servidor no marcó ningún dato como observación de NASA.")
-        Text(NASA_ROLE, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         ExplainButton(Glossary.regional)
     }
 
