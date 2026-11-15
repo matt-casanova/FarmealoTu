@@ -385,13 +385,17 @@ object DtoMappers {
     fun toMapLayers(root: JsonElement?): List<MapLayer> {
         val items = (root.asArrayOrNull() ?: root.asObjectOrNull()?.first("layers", "items", "data").asArrayOrNull())
             .orEmpty().mapNotNull { it.asObjectOrNull() }
+        // GIBS publica la atribución una sola vez, en la raíz de la respuesta.
+        val rootAttribution = root.asObjectOrNull()?.firstText("attribution", "credit")
         val used = mutableSetOf<JsonObject>()
         return LayerKind.entries.map { kind ->
             val match = items.firstOrNull { it !in used && layerMatches(it, kind, exact = true) }
                 ?: items.firstOrNull { it !in used && layerMatches(it, kind, exact = false) }
             if (match == null) MapLayer.unavailable(kind) else {
                 used += match
-                toLayer(match, kind)
+                toLayer(match, kind).let { layer ->
+                    if (layer.attribution == null && rootAttribution != null) layer.copy(attribution = rootAttribution) else layer
+                }
             }
         }
     }
