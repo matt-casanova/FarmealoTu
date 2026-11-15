@@ -436,6 +436,7 @@ object DtoMappers {
             evidenceStatus = obj.firstText("evidence_status"),
             tileUrlTemplate = tileUrl.takeIf { availability == LayerAvailability.AVAILABLE },
             attribution = obj.firstText("attribution", "credit"),
+            maxZoom = obj["max_zoom"].asIntOrNull()?.takeIf { it in 0..24 },
         )
     }
 

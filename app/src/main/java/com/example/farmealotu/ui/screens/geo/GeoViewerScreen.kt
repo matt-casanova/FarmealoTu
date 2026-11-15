@@ -122,7 +122,7 @@ fun GeoViewerScreen(
         SectionCard(title = "Mapa de la zona") {
             OsmMap(
                 points = points,
-                tileLayer = selected.tileUrlTemplate?.let { TileLayerSpec(selected.kind.name, it) },
+                tileLayer = selected.tileUrlTemplate?.let { TileLayerSpec(selected.kind.name, it, selected.maxZoom) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(280.dp)

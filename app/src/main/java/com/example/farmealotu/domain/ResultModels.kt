@@ -244,6 +244,8 @@ data class MapLayer(
     val evidenceStatus: String?,
     val tileUrlTemplate: String?,
     val attribution: String?,
+    /** Nivel de zoom más alto con teselas publicadas (GIBS: 6 a 8 según la capa). null = no informado. */
+    val maxZoom: Int? = null,
 ) {
     companion object {
         fun unavailable(kind: LayerKind) = MapLayer(

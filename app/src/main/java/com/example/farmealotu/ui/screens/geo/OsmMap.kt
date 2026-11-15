@@ -28,7 +28,7 @@ import java.io.File
 data class MapPoint(val lat: Double, val lon: Double, val title: String, val description: String)
 
 /** Capa de teselas publicada por el backend en /api/map/layers. La app nunca arma estas URL. */
-data class TileLayerSpec(val id: String, val urlTemplate: String)
+data class TileLayerSpec(val id: String, val urlTemplate: String, val maxZoom: Int? = null)
 
 /** Permite apagar la descarga de teselas (se usa en las pruebas automáticas, que no deben salir a internet). */
 object OsmMapConfig {
@@ -48,9 +48,15 @@ private fun configureOsmdroid(context: Context) {
     config.userAgentValue = "FarmealoTu-Android/${BuildConfig.VERSION_NAME}"
 }
 
+/** Zoom máximo del mapa base (sin capa activa). */
+private const val MAP_MAX_ZOOM = 16.0
+
+/** Zoom máximo de teselas cuando el servidor no informa `max_zoom`. */
+private const val DEFAULT_TILE_MAX_ZOOM = 12
+
 /** Fuente XYZ/WMTS-REST a partir de una plantilla con {z}/{x}/{y} o {TileMatrix}/{TileCol}/{TileRow}. */
-private class TemplateTileSource(name: String, private val template: String) :
-    OnlineTileSourceBase(name, 0, 12, 256, "", arrayOf(template)) {
+private class TemplateTileSource(name: String, private val template: String, maxZoom: Int?) :
+    OnlineTileSourceBase(name, 0, maxZoom ?: DEFAULT_TILE_MAX_ZOOM, 256, "", arrayOf(template)) {
 
     override fun getTileURLString(pMapTileIndex: Long): String {
         val z = MapTileIndex.getZoom(pMapTileIndex).toString()
@@ -88,7 +94,7 @@ fun OsmMap(
             setMultiTouchControls(true)
             zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT)
             minZoomLevel = 5.0
-            maxZoomLevel = 16.0
+            maxZoomLevel = MAP_MAX_ZOOM
             controller.setZoom(9.0)
             // Dentro de una pantalla con scroll: mientras se toca el mapa, el mapa manda.
             setOnTouchListener { view, _ ->
@@ -127,13 +133,18 @@ fun OsmMap(
                 holder.tiles = if (tileLayer != null && isDrawableTileTemplate(tileLayer.urlTemplate)) {
                     val provider = MapTileProviderBasic(
                         map.context.applicationContext,
-                        TemplateTileSource(tileLayer.id, tileLayer.urlTemplate),
+                        TemplateTileSource(tileLayer.id, tileLayer.urlTemplate, tileLayer.maxZoom),
                     )
                     TilesOverlay(provider, map.context).apply { loadingBackgroundColor = Color.TRANSPARENT }
                         .also { map.overlays.add(0, it) }
                 } else {
                     null
                 }
+                // Osmdroid no pide teselas por encima del máximo de la fuente ni reescala niveles que nunca
+                // descargó: con la capa activa el zoom se limita al nivel que el servidor publicó (GIBS 6–8).
+                val layerMax = tileLayer?.takeIf { holder.tiles != null }?.let { (it.maxZoom ?: DEFAULT_TILE_MAX_ZOOM).toDouble() }
+                map.maxZoomLevel = layerMax?.coerceAtLeast(map.minZoomLevel) ?: MAP_MAX_ZOOM
+                if (map.zoomLevelDouble > map.maxZoomLevel) map.controller.setZoom(map.maxZoomLevel)
                 holder.spec = tileLayer
             }
             // Marcadores: solo se recentra cuando cambian los puntos, no en cada redibujo.

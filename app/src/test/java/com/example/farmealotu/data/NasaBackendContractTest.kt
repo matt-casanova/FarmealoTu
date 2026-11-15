@@ -80,6 +80,8 @@ class NasaBackendContractTest {
         assertNotNull(rain.tileUrlTemplate)
         assertTrue(rain.tileUrlTemplate!!.contains("{TileMatrix}/{TileRow}/{TileCol}"))
         assertEquals("2026-11-13", rain.date)
+        assertEquals("max_zoom del backend llega al visor", 6, rain.maxZoom)
+        assertNull(layers.first { it.kind == LayerKind.WATER }.maxZoom)
         assertEquals("Imagery: NASA GIBS (Global Imagery Browse Services), NASA EOSDIS", rain.attribution)
         assertEquals(LayerAvailability.UNAVAILABLE, layers.first { it.kind == LayerKind.WATER }.availability)
         assertNull(layers.first { it.kind == LayerKind.WATER }.tileUrlTemplate)
