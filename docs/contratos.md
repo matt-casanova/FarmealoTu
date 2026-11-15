@@ -209,3 +209,118 @@ Lee `backend/data/cache/gibs_layers.json`, que genera `python -m pipeline.gibs v
 - **Orden de las teselas en GIBS: `{TileMatrix}/{TileRow}/{TileCol}` = `z/y/x`** (fila antes que columna). `tile_url_zxy` ya viene en ese orden.
 - **No pedir zoom mayor que `max_zoom`.** Por encima, GIBS no tiene teselas: el mapa debe escalar la última.
 - `at_point.has_data = false` significa que el punto de referencia no tiene color ese día. En la lluvia eso indica que no llovió; en las demás capas, nubes o falta de pasada. `note` lo explica en español.
+
+---
+
+## `POST /api/rotations/compare` — motor real (Matías, rama `matias/motor`)
+
+Reemplaza al stub (`rotations_stub.py` queda en el repo; Alvin decide si se borra). El **request no cambia**
+(`app/schemas.py` → `CompareRequest`). Fuera de ±0.25° del punto piloto → **422** con `detail`, igual que el stub.
+Si el motor falla: **500** con `detail` en español; nunca se responde con datos de ejemplo.
+
+### Decisiones de contrato (sección 9 de `docs/UI_BACKEND_CONTRACT.md`)
+
+| Punto | Decisión |
+|---|---|
+| Orden de `current_rotation` | `[cultivo_actual, cultivo_anterior]`. Cada cultivo va a la campaña que tiene en `reference/crops.json` (`seasons`). Si los dos son de la misma campaña, o uno no tiene campaña con fuente, **no se adivina**: E0 vuelve con `score: null`, `sequence` como lista simple y el motivo en `reasons` y `missing_information`. Solo se usan los dos primeros elementos; el resto se avisa. |
+| `sequence` | Objetos `{"season": "summer"\|"winter", "crop": "<código>"}` (la forma preferida por la app). Solo un E0 que no se pudo ubicar en el año viene como lista simple de códigos. |
+| `score` | **P50 del bootstrap** (plan 3.8, «score mediano»), 0–100, o `null`. `score_point` (campo nuevo) es el valor de los 11 años reales, sin remuestrear. |
+| `rank_stability` | **Fracción 0–1** de las 200 iteraciones en que la estrategia queda primera. Un empate se reparte entre las empatadas. |
+| `confidence_level` | `low` o `medium`; **nunca `high`** (política 3.7: datos solo regionales). `low` si la estabilidad es < 0.5, falta un criterio o no hay análisis de suelo (hoy siempre: el request no trae análisis de suelo). |
+| `alerts[].date` | Siempre presente: la última observación válida de NASA POWER, o la fecha del día en los avisos del sistema (falta de ET0). |
+| Menos de 3 estrategias | Se devuelven las que haya. `limitations` dice qué perfil no se propone y por qué, y cuántas combinaciones descartó cada filtro. Nunca se rellena. |
+
+### Estrategias
+
+| id | Perfil | Regla de selección (entre las factibles; secuencias distintas) |
+|---|---|---|
+| E0 | Tu rotación actual | La del agricultor, evaluada con las mismas fórmulas aunque no pase los filtros (se dice por qué). |
+| E1 | Cuidar suelo | Máxima S_suelo; desempate por S_agua, luego S_riesgo, luego orden alfabético de la secuencia. |
+| E2 | Cuidar agua | Máxima S_agua; desempate por S_riesgo. **Sin ET0 no se propone.** |
+| E3 | Equilibrada | Maximin de los subpuntajes disponibles entre las que quedan. |
+
+`recommended_strategy_id`: la de mayor `score` con los pesos del agricultor. **Si S_agua falta para todas (hoy: falta la ET0) es
+`null`** y la comparación es solo cualitativa (suelo y riesgo).
+
+### Campos que agrega el motor respecto de `UI_BACKEND_CONTRACT.md` (la app ignora los que no conoce)
+
+```jsonc
+{
+  "data_status": {
+    "last_observation_date": "2026-11-09", "last_successful_download": "…", "source": "NASA POWER (caché)",
+    "engine": "partial",                       // "ready" cuando exista analytics/physics.py (ET0)
+    "engine_detail": ["S_agua pendiente: falta la ET0 FAO-56 (physics.py)"],
+    "weights_received": {"water": 0.55, "soil": 0.25, "risk": 0.2},
+    "years_used": "2015-16 → 2025-26 (11 años agrícolas)",
+    "et0": {"status": "unavailable", "reason": "physics.py (ET0 FAO-56 de Christian) todavía no integrado"},
+    "uncertainty": {"method": "bootstrap de años agrícolas completos (nov→oct) con reemplazo", "n_iterations": 200,
+                    "seed": 42, "years_per_iteration": 11, "pairwise_prob_better": {"E1>E0": 0.0}, "note": "…"},
+    "assumptions": {"soil_weight_cover": {"value": 0.4, "note": "…", "evidence_status": "assumption"}},
+    "feasibility": {"evaluated": 64, "feasible": ["soya (verano) → maíz (invierno)"],
+                    "excluded": [{"sequence": "soy>chia", "label": "…", "rule_id": "PARAMS", "reason": "…"}]}
+  },
+  "strategies": [{
+    "id": "E0", "name": "Tu rotación actual",
+    "sequence": [{"season": "summer", "crop": "soy"}, {"season": "winter", "crop": "sorghum"}],
+    "score": 76.4, "score_point": 76.4, "partial_score": true,
+    "weights_used": {"soil": 0.5556, "risk": 0.4444},   // pesos tras repartir el del criterio faltante
+    "criteria": {
+      "water": {"score": null, "detail": "Falta la ET0 …", "unit": "%", "status": "insufficient"},
+      "soil":  {"score": 80.8, "detail": "Suelo cubierto 9.8 de 12 meses …", "unit": "puntos (0–100)", "status": "ok"},
+      "risk":  {"score": 70.9, "detail": "Más alto = menos exposición histórica. …", "unit": "puntos (0–100)", "status": "ok"}
+    },
+    "uncertainty": {"p10": 74.0, "p50": 76.4, "p90": 78.8, "rank_stability": 0.5,
+                    "rank_basis": "puntaje parcial (suelo y riesgo)", "prob_better_than_current": null,
+                    "confidence_level": "low", "confidence_reason": "Confianza baja: …",
+                    "n_iterations": 200, "seed": 42, "note": "P10–P90 es la variabilidad del modelo …"},
+    "tradeoffs": {"advantage": "…", "disadvantage": "…", "main_risk": "…"},
+    "reasons": ["…"],
+    "evidence": [{"indicator": "dry_spell_critical_sorghum", "name": "…", "value": 81.8, "unit": "% de años",
+                  "source": "NASA POWER PRECTOTCORR", "period": "…", "scale": "contexto regional (~50 km, …)",
+                  "evidence_status": "derived"}],
+    "missing_information": ["…"], "agronomist_questions": ["…"],
+    "flags": [{"rule_id": "R1", "flag": "high_demand_winter_rainfed", "text": "…"}]
+  }]
+}
+```
+
+### Fórmulas (plan 3.6) y supuestos
+
+- **S_agua** = 100 · Σ min(Pef, ETc) / Σ ETc en los días con cultivo; ETc = Kc(día) · ET0, con la curva de Kc de FAO-56. Pef mensual
+  (`monthly_inputs`) × fracción del mes con cultivo (supuesto). Con riego `irrigated`, el riego **no** se suma. Sin ET0 → `insufficient`.
+  ⚠️ Como solo cuenta los meses con cultivo, una secuencia con barbecho en invierno tiende a ganar en agua. Es el comportamiento de la
+  fórmula del plan, y el suelo de esa secuencia cae (C y D bajos). Conviene revisarlo cuando llegue la ET0.
+- **S_suelo** = 100 · (0.4·C + 0.3·R + 0.3·D) − penalización. C = días cubiertos (cultivo o rastrojo) / 365; el rastrojo cubre
+  90/60/30 días según su clase alta/media/baja (supuesto); R = promedio de las clases (1 / 0.5 / 0.2); D = familias distintas − 1;
+  penalización de 10 puntos por repetir cultivo (supuesto).
+- **S_riesgo** = 100 · (1 − E) por año agrícola. E = promedio ponderado de: racha seca > 15 días en la etapa media de FAO-56
+  (floración y llenado); fracción de días > P90 del mes en esa etapa (peso 0.5: umbral genérico); ≥ 1 día > P95 en la etapa final
+  (cosecha). En una secuencia, cada componente es el promedio de sus cultivos.
+- Calendario: siembra al inicio de la ventana de campaña (1 nov / 1 may, supuesto de `CAMPAIGN_DEFINITION`) + etapas de la Tabla 11 de FAO-56.
+- Todos los supuestos están en `backend/reference/engine_params.json` y se publican en `data_status.assumptions`.
+
+### Base agrícola (`backend/reference/`)
+
+- `crops.json`: cada dato con `source`, `url`, `year`, `evidence_status`, `note` y `verified_at`. **Los valores de FAO-56 (Kc, etapas,
+  raíz) tienen `verified_at: null`: se transcribieron de memoria y hay que cotejarlos con las tablas antes de presentar.** Umbral de calor
+  y tolerancia a sequía (EcoCrop): `null` con motivo. Campañas: ANAPO (verano: soya; invierno: sorgo, maíz, girasol, trigo). Chía en
+  invierno como supuesto y fuera de candidatos (sin Kc). Cobertura fuera de candidatos (sin especie ni Kc).
+- `rotation_rules.json`: reglas R1–R7 (plan 3.5) con texto, efecto y fundamento. R7 da el texto fijo de `limitations`.
+- `engine/reference.py` rechaza al cargar cualquier número sin fuente o `null` sin motivo (`tests/test_reference.py`).
+- `engine/parser.py`: sinónimos de `crops.json`, sin tildes ni mayúsculas; término desconocido → «no reconocido», nunca se adivina.
+
+### Rendimiento
+
+Al arrancar, el servidor precalienta la climatología por año agrícola y los indicadores recientes. Se cachean por firma de la caché
+NASA (filas, última fecha, fecha de descarga), no por reloj; la respuesta se cachea por hash del request. Medido con uvicorn el
+14-nov-2026: 0.21–0.28 s por comparación.
+
+### Pendientes para el equipo
+
+- **Christian / Alvin:** `analytics/physics.py` con `et0_fao56_daily(df, elevation_m)`. Con eso, sin cambiar el motor, se activan S_agua,
+  E2, el ranking y `engine: "ready"` (probado con una ET0 sintética en `tests/test_engine.py::test_engine_ready_when_et0_arrives`).
+- **Kendra:** la evidencia del motor es `derived` (calculada por FarmealoTu con datos NASA POWER), igual que en `indicators.py`. El módulo
+  04 («Qué viene de NASA») filtra `documented`, así que **quedará vacío**; no se cambiaron las etiquetas. Habría que mostrar también
+  `derived` con fuente NASA.
+- **Alvin:** la fuente GRIN (familias botánicas) de `crops.json` no está en `/api/sources` (`context.py`); no se tocó ese archivo.
+- **Quien presente:** cotejar los valores de FAO-56 de `crops.json` y completar `verified_at`.

@@ -125,3 +125,33 @@ def test_selection_distinct_and_no_water_profile_without_et0(climate):
     assert "E2" not in chosen and any("E2" in n for n in notes)       # sin ET0 no se elige «Cuidar agua»
     soil_e1 = chosen["E1"].point()["soil"]
     assert all(soil_e1 >= ev.point()["soil"] for ev in cands if ev.seq.key != e0.seq.key)
+
+
+# ---------------------------------------------------------------- listo para la ET0 (sin cambiar código)
+def test_engine_ready_when_et0_arrives(monkeypatch):
+    """Simula que llega analytics/physics.py con una ET0 SINTÉTICA de prueba (4 mm/día, no es un dato real):
+    S_agua se calcula, aparece «Cuidar agua» (E2) y hay ranking con los pesos del agricultor."""
+    from app.schemas import CompareRequest
+    from engine.response import build_compare_response
+
+    df = I.load_daily_frame()
+    fake = (lambda d: (d["T2M"] * 0 + 4.0, None))
+    monkeypatch.setattr(I, "et0_series", fake)
+    clim = RC.build_climate(df)
+    assert clim.et0 is not None
+    ev = RC.evaluate(Sequence("soy", "sorghum"), clim)
+    w = ev.point()["water"]
+    assert w is not None and 0 < w <= 100 and "water" not in ev.reasons_missing
+    req = CompareRequest(current_rotation=["soy", "sorghum"], priorities={"water": 0.55, "soil": 0.25, "risk": 0.2})
+    ind = I.build_indicators_response("recent", None, df=df)
+    body = build_compare_response(req, df, ind, {"last_observation_date": "x", "last_download": "y"}, clim)
+    ids = [s["id"] for s in body["strategies"]]
+    assert "E2" in ids and len(set(ids)) == len(ids)
+    assert body["recommended_strategy_id"] in ids
+    assert body["data_status"]["engine"] == "ready"
+    for s in body["strategies"]:
+        assert s["criteria"]["water"]["status"] == "ok" and s["partial_score"] is False
+    e2 = next(s for s in body["strategies"] if s["id"] == "E2")
+    # E2 se elige entre las secuencias que quedan tras E0 y E1: supera en agua a las que se eligen después
+    assert all(e2["criteria"]["water"]["score"] >= s["criteria"]["water"]["score"]
+               for s in body["strategies"] if s["id"] not in ("E0", "E1", "E2"))

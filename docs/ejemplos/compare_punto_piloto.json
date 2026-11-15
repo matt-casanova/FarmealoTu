@@ -1,0 +1,1031 @@
+{
+  "_nota": "Respuesta REAL de POST /api/rotations/compare (rama matias/motor) para el punto piloto, generada el 14-nov-2026 con la caché NASA POWER versionada. Sin ET0: agua insuficiente y sin ranking.",
+  "request": {
+    "site": {
+      "lat": -17.2374,
+      "lon": -62.2427
+    },
+    "current_rotation": [
+      "soy",
+      "sorghum"
+    ],
+    "priorities": {
+      "water": 0.55,
+      "soil": 0.25,
+      "risk": 0.2
+    },
+    "constraints": {
+      "irrigation": "rainfed",
+      "excluded_crops": []
+    }
+  },
+  "status_code": 200,
+  "response": {
+    "site": {
+      "lat": -17.2374,
+      "lon": -62.2427,
+      "label": "Cuatro Cañadas (punto de referencia)"
+    },
+    "data_status": {
+      "last_observation_date": "2026-11-09",
+      "last_successful_download": "2026-11-14T17:06:17+00:00",
+      "source": "NASA POWER (caché)",
+      "engine": "partial",
+      "engine_detail": [
+        "S_agua pendiente: falta la ET0 FAO-56 (physics.py)"
+      ],
+      "weights_received": {
+        "water": 0.55,
+        "soil": 0.25,
+        "risk": 0.2
+      },
+      "years_used": "2015-16 → 2025-26 (11 años agrícolas)",
+      "uncertainty": {
+        "method": "bootstrap de años agrícolas completos (nov→oct) con reemplazo",
+        "n_iterations": 200,
+        "seed": 42,
+        "years_per_iteration": 11,
+        "pairwise_prob_better": {
+          "E0>E1": 0.0,
+          "E0>E3": 1.0,
+          "E1>E0": 0.0,
+          "E1>E3": 1.0,
+          "E3>E0": 0.0,
+          "E3>E1": 0.0
+        },
+        "note": "P10–P90 es la variabilidad del modelo bajo remuestreo histórico; no es una garantía de rendimiento ni un pronóstico."
+      },
+      "et0": {
+        "status": "unavailable",
+        "reason": "physics.py (ET0 FAO-56 de Christian) todavía no integrado"
+      },
+      "assumptions": {
+        "soil_weight_cover": {
+          "value": 0.4,
+          "note": "Subpeso de C (meses cubiertos) en S_suelo.",
+          "evidence_status": "assumption"
+        },
+        "soil_weight_residue": {
+          "value": 0.3,
+          "note": "Subpeso de R (clase de residuo) en S_suelo.",
+          "evidence_status": "assumption"
+        },
+        "soil_weight_diversity": {
+          "value": 0.3,
+          "note": "Subpeso de D (diversidad de familias) en S_suelo.",
+          "evidence_status": "assumption"
+        },
+        "residue_value": {
+          "value": {
+            "high": 1.0,
+            "medium": 0.5,
+            "low": 0.2
+          },
+          "note": "Valor de cada clase de residuo en R.",
+          "evidence_status": "assumption"
+        },
+        "repetition_penalty_points": {
+          "value": 10,
+          "note": "Puntos que se restan a S_suelo si se repite el mismo cultivo en las dos campañas (proxy de plagas, regla R4). El plan no fija el valor.",
+          "evidence_status": "assumption"
+        },
+        "residue_cover_days": {
+          "value": {
+            "high": 90,
+            "medium": 60,
+            "low": 30
+          },
+          "note": "Días que el rastrojo cubre el suelo después de la cosecha, según su clase, sin pasar la siembra siguiente. El plan cuenta «cultivo o rastrojo» pero no fija la duración.",
+          "evidence_status": "assumption"
+        },
+        "dry_spell_threshold_days": {
+          "value": 15,
+          "note": "Racha seca (P < 1 mm/día) que cuenta como evento en la etapa crítica. Configurable.",
+          "evidence_status": "assumption"
+        },
+        "generic_heat_weight": {
+          "value": 0.5,
+          "note": "Con umbral de calor genérico (P90 del mes), el componente de calor pesa la mitad en E.",
+          "evidence_status": "assumption"
+        },
+        "high_demand_kc_mid": {
+          "value": 1.15,
+          "note": "Un cultivo de invierno con Kc medio ≥ este valor se marca como «alta demanda relativa» en secano (regla R1). Se marca, no se excluye.",
+          "evidence_status": "assumption"
+        },
+        "alert_rain_anomaly_pct": {
+          "value": {
+            "medium": 15,
+            "high": 30
+          },
+          "note": "Magnitud de la anomalía de lluvia reciente (|%|) para el nivel de la alerta.",
+          "evidence_status": "assumption"
+        }
+      },
+      "feasibility": {
+        "evaluated": 64,
+        "feasible": [
+          "soya (verano) → maíz (invierno)",
+          "soya (verano) → sorgo (invierno)",
+          "soya (verano) → girasol (invierno)",
+          "soya (verano) → trigo (invierno)",
+          "soya (verano) → barbecho (invierno)"
+        ],
+        "excluded": [
+          {
+            "sequence": "soy>soy",
+            "label": "soya (verano) → soya (invierno)",
+            "rule_id": "R1",
+            "reason": "Soya no es un cultivo de invierno en Cuatro Cañadas (campañas con fuente: verano)."
+          },
+          {
+            "sequence": "soy>chia",
+            "label": "soya (verano) → chía (invierno)",
+            "rule_id": "PARAMS",
+            "reason": "Chía: faltan parámetros con fuente (Kc inicial (FAO-56), Kc medio (FAO-56), Kc final (FAO-56), duración de etapas (FAO-56), duración del ciclo, clase de residuo)."
+          },
+          {
+            "sequence": "soy>cover",
+            "label": "soya (verano) → cobertura (invierno)",
+            "rule_id": "R1",
+            "reason": "Cobertura: no hay una campaña con fuente para este cultivo."
+          },
+          {
+            "sequence": "maize>soy",
+            "label": "maíz (verano) → soya (invierno)",
+            "rule_id": "R1",
+            "reason": "Maíz no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "maize>maize",
+            "label": "maíz (verano) → maíz (invierno)",
+            "rule_id": "R1",
+            "reason": "Maíz no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "maize>sorghum",
+            "label": "maíz (verano) → sorgo (invierno)",
+            "rule_id": "R1",
+            "reason": "Maíz no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "maize>sunflower",
+            "label": "maíz (verano) → girasol (invierno)",
+            "rule_id": "R1",
+            "reason": "Maíz no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "maize>wheat",
+            "label": "maíz (verano) → trigo (invierno)",
+            "rule_id": "R1",
+            "reason": "Maíz no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "maize>chia",
+            "label": "maíz (verano) → chía (invierno)",
+            "rule_id": "R1",
+            "reason": "Maíz no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "maize>fallow",
+            "label": "maíz (verano) → barbecho (invierno)",
+            "rule_id": "R1",
+            "reason": "Maíz no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "maize>cover",
+            "label": "maíz (verano) → cobertura (invierno)",
+            "rule_id": "R1",
+            "reason": "Maíz no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sorghum>soy",
+            "label": "sorgo (verano) → soya (invierno)",
+            "rule_id": "R1",
+            "reason": "Sorgo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sorghum>maize",
+            "label": "sorgo (verano) → maíz (invierno)",
+            "rule_id": "R1",
+            "reason": "Sorgo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sorghum>sorghum",
+            "label": "sorgo (verano) → sorgo (invierno)",
+            "rule_id": "R1",
+            "reason": "Sorgo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sorghum>sunflower",
+            "label": "sorgo (verano) → girasol (invierno)",
+            "rule_id": "R1",
+            "reason": "Sorgo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sorghum>wheat",
+            "label": "sorgo (verano) → trigo (invierno)",
+            "rule_id": "R1",
+            "reason": "Sorgo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sorghum>chia",
+            "label": "sorgo (verano) → chía (invierno)",
+            "rule_id": "R1",
+            "reason": "Sorgo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sorghum>fallow",
+            "label": "sorgo (verano) → barbecho (invierno)",
+            "rule_id": "R1",
+            "reason": "Sorgo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sorghum>cover",
+            "label": "sorgo (verano) → cobertura (invierno)",
+            "rule_id": "R1",
+            "reason": "Sorgo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sunflower>soy",
+            "label": "girasol (verano) → soya (invierno)",
+            "rule_id": "R1",
+            "reason": "Girasol no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sunflower>maize",
+            "label": "girasol (verano) → maíz (invierno)",
+            "rule_id": "R1",
+            "reason": "Girasol no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sunflower>sorghum",
+            "label": "girasol (verano) → sorgo (invierno)",
+            "rule_id": "R1",
+            "reason": "Girasol no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sunflower>sunflower",
+            "label": "girasol (verano) → girasol (invierno)",
+            "rule_id": "R1",
+            "reason": "Girasol no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sunflower>wheat",
+            "label": "girasol (verano) → trigo (invierno)",
+            "rule_id": "R1",
+            "reason": "Girasol no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sunflower>chia",
+            "label": "girasol (verano) → chía (invierno)",
+            "rule_id": "R1",
+            "reason": "Girasol no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sunflower>fallow",
+            "label": "girasol (verano) → barbecho (invierno)",
+            "rule_id": "R1",
+            "reason": "Girasol no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "sunflower>cover",
+            "label": "girasol (verano) → cobertura (invierno)",
+            "rule_id": "R1",
+            "reason": "Girasol no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "wheat>soy",
+            "label": "trigo (verano) → soya (invierno)",
+            "rule_id": "R1",
+            "reason": "Trigo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "wheat>maize",
+            "label": "trigo (verano) → maíz (invierno)",
+            "rule_id": "R1",
+            "reason": "Trigo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "wheat>sorghum",
+            "label": "trigo (verano) → sorgo (invierno)",
+            "rule_id": "R1",
+            "reason": "Trigo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "wheat>sunflower",
+            "label": "trigo (verano) → girasol (invierno)",
+            "rule_id": "R1",
+            "reason": "Trigo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "wheat>wheat",
+            "label": "trigo (verano) → trigo (invierno)",
+            "rule_id": "R1",
+            "reason": "Trigo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "wheat>chia",
+            "label": "trigo (verano) → chía (invierno)",
+            "rule_id": "R1",
+            "reason": "Trigo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "wheat>fallow",
+            "label": "trigo (verano) → barbecho (invierno)",
+            "rule_id": "R1",
+            "reason": "Trigo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "wheat>cover",
+            "label": "trigo (verano) → cobertura (invierno)",
+            "rule_id": "R1",
+            "reason": "Trigo no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "chia>soy",
+            "label": "chía (verano) → soya (invierno)",
+            "rule_id": "R1",
+            "reason": "Chía no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "chia>maize",
+            "label": "chía (verano) → maíz (invierno)",
+            "rule_id": "R1",
+            "reason": "Chía no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "chia>sorghum",
+            "label": "chía (verano) → sorgo (invierno)",
+            "rule_id": "R1",
+            "reason": "Chía no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "chia>sunflower",
+            "label": "chía (verano) → girasol (invierno)",
+            "rule_id": "R1",
+            "reason": "Chía no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "chia>wheat",
+            "label": "chía (verano) → trigo (invierno)",
+            "rule_id": "R1",
+            "reason": "Chía no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "chia>chia",
+            "label": "chía (verano) → chía (invierno)",
+            "rule_id": "R1",
+            "reason": "Chía no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "chia>fallow",
+            "label": "chía (verano) → barbecho (invierno)",
+            "rule_id": "R1",
+            "reason": "Chía no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "chia>cover",
+            "label": "chía (verano) → cobertura (invierno)",
+            "rule_id": "R1",
+            "reason": "Chía no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "fallow>soy",
+            "label": "barbecho (verano) → soya (invierno)",
+            "rule_id": "R1",
+            "reason": "Barbecho no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "fallow>maize",
+            "label": "barbecho (verano) → maíz (invierno)",
+            "rule_id": "R1",
+            "reason": "Barbecho no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "fallow>sorghum",
+            "label": "barbecho (verano) → sorgo (invierno)",
+            "rule_id": "R1",
+            "reason": "Barbecho no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "fallow>sunflower",
+            "label": "barbecho (verano) → girasol (invierno)",
+            "rule_id": "R1",
+            "reason": "Barbecho no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "fallow>wheat",
+            "label": "barbecho (verano) → trigo (invierno)",
+            "rule_id": "R1",
+            "reason": "Barbecho no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "fallow>chia",
+            "label": "barbecho (verano) → chía (invierno)",
+            "rule_id": "R1",
+            "reason": "Barbecho no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "fallow>fallow",
+            "label": "barbecho (verano) → barbecho (invierno)",
+            "rule_id": "R1",
+            "reason": "Barbecho no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "fallow>cover",
+            "label": "barbecho (verano) → cobertura (invierno)",
+            "rule_id": "R1",
+            "reason": "Barbecho no es un cultivo de verano en Cuatro Cañadas (campañas con fuente: invierno)."
+          },
+          {
+            "sequence": "cover>soy",
+            "label": "cobertura (verano) → soya (invierno)",
+            "rule_id": "R1",
+            "reason": "Cobertura: no hay una campaña con fuente para este cultivo."
+          },
+          {
+            "sequence": "cover>maize",
+            "label": "cobertura (verano) → maíz (invierno)",
+            "rule_id": "R1",
+            "reason": "Cobertura: no hay una campaña con fuente para este cultivo."
+          },
+          {
+            "sequence": "cover>sorghum",
+            "label": "cobertura (verano) → sorgo (invierno)",
+            "rule_id": "R1",
+            "reason": "Cobertura: no hay una campaña con fuente para este cultivo."
+          },
+          {
+            "sequence": "cover>sunflower",
+            "label": "cobertura (verano) → girasol (invierno)",
+            "rule_id": "R1",
+            "reason": "Cobertura: no hay una campaña con fuente para este cultivo."
+          },
+          {
+            "sequence": "cover>wheat",
+            "label": "cobertura (verano) → trigo (invierno)",
+            "rule_id": "R1",
+            "reason": "Cobertura: no hay una campaña con fuente para este cultivo."
+          },
+          {
+            "sequence": "cover>chia",
+            "label": "cobertura (verano) → chía (invierno)",
+            "rule_id": "R1",
+            "reason": "Cobertura: no hay una campaña con fuente para este cultivo."
+          },
+          {
+            "sequence": "cover>fallow",
+            "label": "cobertura (verano) → barbecho (invierno)",
+            "rule_id": "R1",
+            "reason": "Cobertura: no hay una campaña con fuente para este cultivo."
+          },
+          {
+            "sequence": "cover>cover",
+            "label": "cobertura (verano) → cobertura (invierno)",
+            "rule_id": "R1",
+            "reason": "Cobertura: no hay una campaña con fuente para este cultivo."
+          }
+        ]
+      }
+    },
+    "alerts": [
+      {
+        "message": "La lluvia de este período está por encima de lo habitual (+24 %, 2026-01-01 → 2026-11-11, NASA POWER, contexto regional).",
+        "level": "medium",
+        "date": "2026-11-11",
+        "source": "NASA POWER PRECTOTCORR",
+        "evidence_status": "derived"
+      },
+      {
+        "message": "Racha seca más larga del período: 19 días (media de las mismas fechas 2015–2025: 31.9 días).",
+        "level": "low",
+        "date": "2026-11-11",
+        "source": "NASA POWER PRECTOTCORR",
+        "evidence_status": "derived"
+      },
+      {
+        "message": "Falta la evapotranspiración de referencia (ET0 FAO-56): no se puede comparar cuánta agua pide cada opción, así que no hay un orden recomendado.",
+        "level": "medium",
+        "date": "2026-11-14",
+        "source": "FarmealoTu",
+        "evidence_status": "unavailable"
+      }
+    ],
+    "strategies": [
+      {
+        "id": "E0",
+        "name": "Tu rotación actual",
+        "sequence": [
+          {
+            "season": "summer",
+            "crop": "soy"
+          },
+          {
+            "season": "winter",
+            "crop": "sorghum"
+          }
+        ],
+        "score": 76.4,
+        "score_point": 76.4,
+        "partial_score": true,
+        "weights_used": {
+          "soil": 0.5556,
+          "risk": 0.4444
+        },
+        "criteria": {
+          "water": {
+            "score": null,
+            "detail": "Falta la evapotranspiración de referencia (ET0 FAO-56): physics.py (ET0 FAO-56 de Christian) todavía no integrado. Sin ET0 no se puede calcular la demanda de agua del cultivo.",
+            "unit": "%",
+            "status": "insufficient"
+          },
+          "soil": {
+            "score": 80.8,
+            "detail": "Suelo cubierto 9.8 de 12 meses (cultivo o rastrojo); residuo: soya bajo, sorgo alto; 2 familias de cultivos.",
+            "unit": "puntos (0–100)",
+            "status": "ok"
+          },
+          "risk": {
+            "score": 70.9,
+            "detail": "Más alto = menos exposición histórica. sorgo: racha seca de más de 15 días en la floración (junio a agosto) en 9 de 11 años; soya: racha seca de más de 15 días en la floración (diciembre a enero) en 0 de 11 años.",
+            "unit": "puntos (0–100)",
+            "status": "ok"
+          }
+        },
+        "uncertainty": {
+          "p10": 74.0,
+          "p50": 76.4,
+          "p90": 78.8,
+          "rank_stability": 0.5,
+          "rank_basis": "puntaje parcial (suelo y riesgo)",
+          "prob_better_than_current": null,
+          "confidence_level": "low",
+          "confidence_reason": "Confianza baja: falta el criterio de agua; no hay análisis de suelo de tu campo.",
+          "n_iterations": 200,
+          "seed": 42,
+          "note": "P10–P90 es la variabilidad del modelo bajo remuestreo histórico; no es una garantía de rendimiento ni un pronóstico."
+        },
+        "tradeoffs": {
+          "advantage": "Protege el suelo: queda cubierto 9.8 de 12 meses.",
+          "disadvantage": "Su punto más débil es el riesgo: la floración de sorgo (junio a agosto) cae en la época de rachas secas largas.",
+          "main_risk": "Sorgo en floración (junio a agosto): en 9 de 11 años hubo más de 15 días seguidos sin lluvia útil (NASA POWER, contexto regional). Lluvia intensa en la cosecha (agosto a septiembre) en 2 de 11 años (exposición, no pronóstico de inundación)."
+        },
+        "reasons": [
+          "Es la rotación que nos contaste: soya (verano) → sorgo (invierno).",
+          "Tu rotación actual cubre el suelo 9.8 de 12 meses.",
+          "En junio a agosto (sorgo en floración) queda más expuesta a rachas secas: 9 de 11 años con más de 15 días seguidos sin lluvia útil."
+        ],
+        "evidence": [
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_critical_sorghum",
+            "name": "Años con racha seca > 15 días en la floración de sorgo (junio a agosto)",
+            "value": 81.8,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_mean_sorghum",
+            "name": "Racha seca máxima media en la floración de sorgo",
+            "value": 21.8,
+            "unit": "días",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heat_days_critical_sorghum",
+            "name": "Días de calor en la floración de sorgo (umbral genérico P90)",
+            "value": 9.3,
+            "unit": "% de días",
+            "source": "NASA POWER T2M_MAX",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heavy_rain_harvest_sorghum",
+            "name": "Años con lluvia intensa (> P95) en la cosecha de sorgo (agosto a septiembre)",
+            "value": 18.2,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_critical_soy",
+            "name": "Años con racha seca > 15 días en la floración de soya (diciembre a enero)",
+            "value": 0.0,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_mean_soy",
+            "name": "Racha seca máxima media en la floración de soya",
+            "value": 5.8,
+            "unit": "días",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heat_days_critical_soy",
+            "name": "Días de calor en la floración de soya (umbral genérico P90)",
+            "value": 9.1,
+            "unit": "% de días",
+            "source": "NASA POWER T2M_MAX",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heavy_rain_harvest_soy",
+            "name": "Años con lluvia intensa (> P95) en la cosecha de soya (enero)",
+            "value": 36.4,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          }
+        ],
+        "missing_information": [
+          "Puntaje de agua insuficiente: Falta la evapotranspiración de referencia (ET0 FAO-56): physics.py (ET0 FAO-56 de Christian) todavía no integrado. Sin ET0 no se puede calcular la demanda de agua del cultivo.",
+          "Puntaje parcial: el peso de los criterios faltantes se repartió entre los disponibles.",
+          "Sin análisis de suelo de tu campo: el puntaje de suelo usa solo la rotación (cobertura, residuo y familias).",
+          "Sin SMAP (humedad del suelo) ni NDVI (vegetación) para este período: no se usan en el puntaje; el visor los muestra solo como imagen regional.",
+          "Umbral de calor genérico (Tmáx > P90 histórico del mes): no hay un umbral del cultivo con fuente, así que el calor pesa la mitad en el riesgo y no afirma daño al cultivo.",
+          "Los parámetros de FAO-56 (Kc, etapas, raíz) todavía no fueron cotejados con las tablas (verified_at = null en crops.json).",
+          "Sin datos de precios ni costos: la economía no se evalúa. Consultá con tu técnico."
+        ],
+        "agronomist_questions": [
+          "¿Se puede dejar más rastrojo o una cobertura después de la soya?",
+          "¿Cuánto nitrógeno deja la soya en tu suelo? No le sumamos un valor fijo: hay que medirlo.",
+          "¿Qué análisis de suelo conviene hacer antes de decidir?"
+        ],
+        "flags": []
+      },
+      {
+        "id": "E1",
+        "name": "Cuidar suelo",
+        "sequence": [
+          {
+            "season": "summer",
+            "crop": "soy"
+          },
+          {
+            "season": "winter",
+            "crop": "maize"
+          }
+        ],
+        "score": 76.4,
+        "score_point": 76.4,
+        "partial_score": true,
+        "weights_used": {
+          "soil": 0.5556,
+          "risk": 0.4444
+        },
+        "criteria": {
+          "water": {
+            "score": null,
+            "detail": "Falta la evapotranspiración de referencia (ET0 FAO-56): physics.py (ET0 FAO-56 de Christian) todavía no integrado. Sin ET0 no se puede calcular la demanda de agua del cultivo.",
+            "unit": "%",
+            "status": "insufficient"
+          },
+          "soil": {
+            "score": 80.8,
+            "detail": "Suelo cubierto 9.8 de 12 meses (cultivo o rastrojo); residuo: soya bajo, maíz alto; 2 familias de cultivos.",
+            "unit": "puntos (0–100)",
+            "status": "ok"
+          },
+          "risk": {
+            "score": 70.9,
+            "detail": "Más alto = menos exposición histórica. maíz: racha seca de más de 15 días en la floración (junio a agosto) en 9 de 11 años; soya: racha seca de más de 15 días en la floración (diciembre a enero) en 0 de 11 años.",
+            "unit": "puntos (0–100)",
+            "status": "ok"
+          }
+        },
+        "uncertainty": {
+          "p10": 74.0,
+          "p50": 76.4,
+          "p90": 78.8,
+          "rank_stability": 0.5,
+          "rank_basis": "puntaje parcial (suelo y riesgo)",
+          "prob_better_than_current": 0.0,
+          "confidence_level": "low",
+          "confidence_reason": "Confianza baja: falta el criterio de agua; no hay análisis de suelo de tu campo.",
+          "n_iterations": 200,
+          "seed": 42,
+          "note": "P10–P90 es la variabilidad del modelo bajo remuestreo histórico; no es una garantía de rendimiento ni un pronóstico."
+        },
+        "tradeoffs": {
+          "advantage": "Protege el suelo: queda cubierto 9.8 de 12 meses.",
+          "disadvantage": "Su punto más débil es el riesgo: la floración de maíz (junio a agosto) cae en la época de rachas secas largas.",
+          "main_risk": "Maíz en floración (junio a agosto): en 9 de 11 años hubo más de 15 días seguidos sin lluvia útil (NASA POWER, contexto regional). Lluvia intensa en la cosecha (agosto a septiembre) en 2 de 11 años (exposición, no pronóstico de inundación)."
+        },
+        "reasons": [
+          "Es la opción factible con el puntaje de suelo más alto (sin contar tu rotación).",
+          "Secuencia: soya (verano) → maíz (invierno).",
+          "Con los datos disponibles puntúa igual que tu rotación: con los parámetros de FAO-56 que tenemos, las dos secuencias tienen el mismo ciclo, la misma clase de residuo y las mismas familias. La diferencia real hay que verla con tu técnico.",
+          "Igual que tu rotación en suelo (81 vs 81).",
+          "Igual que tu rotación en riesgo (71 vs 71)."
+        ],
+        "evidence": [
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_critical_maize",
+            "name": "Años con racha seca > 15 días en la floración de maíz (junio a agosto)",
+            "value": 81.8,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_mean_maize",
+            "name": "Racha seca máxima media en la floración de maíz",
+            "value": 21.8,
+            "unit": "días",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heat_days_critical_maize",
+            "name": "Días de calor en la floración de maíz (umbral genérico P90)",
+            "value": 9.3,
+            "unit": "% de días",
+            "source": "NASA POWER T2M_MAX",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heavy_rain_harvest_maize",
+            "name": "Años con lluvia intensa (> P95) en la cosecha de maíz (agosto a septiembre)",
+            "value": 18.2,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_critical_soy",
+            "name": "Años con racha seca > 15 días en la floración de soya (diciembre a enero)",
+            "value": 0.0,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_mean_soy",
+            "name": "Racha seca máxima media en la floración de soya",
+            "value": 5.8,
+            "unit": "días",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heat_days_critical_soy",
+            "name": "Días de calor en la floración de soya (umbral genérico P90)",
+            "value": 9.1,
+            "unit": "% de días",
+            "source": "NASA POWER T2M_MAX",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heavy_rain_harvest_soy",
+            "name": "Años con lluvia intensa (> P95) en la cosecha de soya (enero)",
+            "value": 36.4,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          }
+        ],
+        "missing_information": [
+          "Puntaje de agua insuficiente: Falta la evapotranspiración de referencia (ET0 FAO-56): physics.py (ET0 FAO-56 de Christian) todavía no integrado. Sin ET0 no se puede calcular la demanda de agua del cultivo.",
+          "Puntaje parcial: el peso de los criterios faltantes se repartió entre los disponibles.",
+          "Sin análisis de suelo de tu campo: el puntaje de suelo usa solo la rotación (cobertura, residuo y familias).",
+          "Sin SMAP (humedad del suelo) ni NDVI (vegetación) para este período: no se usan en el puntaje; el visor los muestra solo como imagen regional.",
+          "Umbral de calor genérico (Tmáx > P90 histórico del mes): no hay un umbral del cultivo con fuente, así que el calor pesa la mitad en el riesgo y no afirma daño al cultivo.",
+          "Los parámetros de FAO-56 (Kc, etapas, raíz) todavía no fueron cotejados con las tablas (verified_at = null en crops.json).",
+          "Sin datos de precios ni costos: la economía no se evalúa. Consultá con tu técnico."
+        ],
+        "agronomist_questions": [
+          "¿Alcanza el agua de invierno para el maíz sin riego en tu campo?",
+          "¿Se puede dejar más rastrojo o una cobertura después de la soya?",
+          "¿Cuánto nitrógeno deja la soya en tu suelo? No le sumamos un valor fijo: hay que medirlo."
+        ],
+        "flags": [
+          {
+            "rule_id": "R1",
+            "flag": "high_demand_winter_rainfed",
+            "text": "El maíz tiene una demanda de agua relativamente alta (Kc medio 1.2, FAO-56) y se siembra en invierno, la época seca, sin riego."
+          }
+        ]
+      },
+      {
+        "id": "E3",
+        "name": "Equilibrada",
+        "sequence": [
+          {
+            "season": "summer",
+            "crop": "soy"
+          },
+          {
+            "season": "winter",
+            "crop": "wheat"
+          }
+        ],
+        "score": 70.6,
+        "score_point": 70.6,
+        "partial_score": true,
+        "weights_used": {
+          "soil": 0.5556,
+          "risk": 0.4444
+        },
+        "criteria": {
+          "water": {
+            "score": null,
+            "detail": "Falta la evapotranspiración de referencia (ET0 FAO-56): physics.py (ET0 FAO-56 de Christian) todavía no integrado. Sin ET0 no se puede calcular la demanda de agua del cultivo.",
+            "unit": "%",
+            "status": "insufficient"
+          },
+          "soil": {
+            "score": 73.3,
+            "detail": "Suelo cubierto 9.8 de 12 meses (cultivo o rastrojo); residuo: soya bajo, trigo medio; 2 familias de cultivos.",
+            "unit": "puntos (0–100)",
+            "status": "ok"
+          },
+          "risk": {
+            "score": 67.3,
+            "detail": "Más alto = menos exposición histórica. trigo: racha seca de más de 15 días en la floración (junio a agosto) en 10 de 11 años; soya: racha seca de más de 15 días en la floración (diciembre a enero) en 0 de 11 años.",
+            "unit": "puntos (0–100)",
+            "status": "ok"
+          }
+        },
+        "uncertainty": {
+          "p10": 68.9,
+          "p50": 70.6,
+          "p90": 72.6,
+          "rank_stability": 0.0,
+          "rank_basis": "puntaje parcial (suelo y riesgo)",
+          "prob_better_than_current": 0.0,
+          "confidence_level": "low",
+          "confidence_reason": "Confianza baja: queda primera solo en el 0 % de los remuestreos (menos de la mitad); falta el criterio de agua; no hay análisis de suelo de tu campo.",
+          "n_iterations": 200,
+          "seed": 42,
+          "note": "P10–P90 es la variabilidad del modelo bajo remuestreo histórico; no es una garantía de rendimiento ni un pronóstico."
+        },
+        "tradeoffs": {
+          "advantage": "Protege el suelo: queda cubierto 9.8 de 12 meses.",
+          "disadvantage": "Su punto más débil es el riesgo: la floración de trigo (junio a agosto) cae en la época de rachas secas largas.",
+          "main_risk": "Trigo en floración (junio a agosto): en 10 de 11 años hubo más de 15 días seguidos sin lluvia útil (NASA POWER, contexto regional). Lluvia intensa en la cosecha (agosto a septiembre) en 3 de 11 años (exposición, no pronóstico de inundación)."
+        },
+        "reasons": [
+          "Es la opción más pareja entre las que quedan (sin repetir tu rotación ni las ya propuestas): su criterio más bajo es el más alto. No es la mejor en nada, pero tampoco es débil en ningún criterio.",
+          "Secuencia: soya (verano) → trigo (invierno).",
+          "Peor en suelo (73 vs 81 de tu rotación) porque deja menos rastrojo (residuo: soya bajo, trigo medio; tu rotación: soya bajo, sorgo alto).",
+          "Peor en riesgo (67 vs 71 de tu rotación) porque su etapa más expuesta es la floración de trigo (junio a agosto), con rachas secas largas en 10 de 11 años (tu rotación: sorgo, 9 de 11)."
+        ],
+        "evidence": [
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_critical_wheat",
+            "name": "Años con racha seca > 15 días en la floración de trigo (junio a agosto)",
+            "value": 90.9,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_mean_wheat",
+            "name": "Racha seca máxima media en la floración de trigo",
+            "value": 26.9,
+            "unit": "días",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heat_days_critical_wheat",
+            "name": "Días de calor en la floración de trigo (umbral genérico P90)",
+            "value": 8.3,
+            "unit": "% de días",
+            "source": "NASA POWER T2M_MAX",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heavy_rain_harvest_wheat",
+            "name": "Años con lluvia intensa (> P95) en la cosecha de trigo (agosto a septiembre)",
+            "value": 27.3,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_critical_soy",
+            "name": "Años con racha seca > 15 días en la floración de soya (diciembre a enero)",
+            "value": 0.0,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "dry_spell_mean_soy",
+            "name": "Racha seca máxima media en la floración de soya",
+            "value": 5.8,
+            "unit": "días",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heat_days_critical_soy",
+            "name": "Días de calor en la floración de soya (umbral genérico P90)",
+            "value": 9.1,
+            "unit": "% de días",
+            "source": "NASA POWER T2M_MAX",
+            "evidence_status": "derived"
+          },
+          {
+            "period": "2015-16 → 2025-26 (11 años agrícolas)",
+            "scale": "contexto regional (~50 km, celda POWER ~0.5° × 0.625°)",
+            "indicator": "heavy_rain_harvest_soy",
+            "name": "Años con lluvia intensa (> P95) en la cosecha de soya (enero)",
+            "value": 36.4,
+            "unit": "% de años",
+            "source": "NASA POWER PRECTOTCORR",
+            "evidence_status": "derived"
+          }
+        ],
+        "missing_information": [
+          "Puntaje de agua insuficiente: Falta la evapotranspiración de referencia (ET0 FAO-56): physics.py (ET0 FAO-56 de Christian) todavía no integrado. Sin ET0 no se puede calcular la demanda de agua del cultivo.",
+          "Puntaje parcial: el peso de los criterios faltantes se repartió entre los disponibles.",
+          "Sin análisis de suelo de tu campo: el puntaje de suelo usa solo la rotación (cobertura, residuo y familias).",
+          "Sin SMAP (humedad del suelo) ni NDVI (vegetación) para este período: no se usan en el puntaje; el visor los muestra solo como imagen regional.",
+          "Umbral de calor genérico (Tmáx > P90 histórico del mes): no hay un umbral del cultivo con fuente, así que el calor pesa la mitad en el riesgo y no afirma daño al cultivo.",
+          "Los parámetros de FAO-56 (Kc, etapas, raíz) todavía no fueron cotejados con las tablas (verified_at = null en crops.json).",
+          "Sin datos de precios ni costos: la economía no se evalúa. Consultá con tu técnico."
+        ],
+        "agronomist_questions": [
+          "¿Alcanza el agua de invierno para el trigo sin riego en tu campo?",
+          "¿Se puede dejar más rastrojo o una cobertura después de la soya?",
+          "¿Cuánto nitrógeno deja la soya en tu suelo? No le sumamos un valor fijo: hay que medirlo."
+        ],
+        "flags": [
+          {
+            "rule_id": "R1",
+            "flag": "high_demand_winter_rainfed",
+            "text": "El trigo tiene una demanda de agua relativamente alta (Kc medio 1.15, FAO-56) y se siembra en invierno, la época seca, sin riego."
+          }
+        ]
+      }
+    ],
+    "recommended_strategy_id": null,
+    "limitations": [
+      "Cambiar la rotación no elimina el riesgo de inundación: la lluvia intensa se muestra como exposición meteorológica, no como pronóstico de desborde.",
+      "Los puntajes son relativos entre las opciones (0–100); no son una probabilidad de éxito.",
+      "Sin puntaje de agua para ninguna opción (falta la ET0 FAO-56) no hay ranking global: las opciones se comparan solo por suelo y riesgo, de forma cualitativa.",
+      "No se propone «Cuidar agua» (E2): el puntaje de agua no se puede calcular (falta la ET0 FAO-56), así que no hay forma honesta de elegir la opción que menos agua pide.",
+      "Se evaluaron 64 combinaciones verano × invierno: 5 factibles; descartadas: 1 por parámetros sin fuente; 58 por estación o ciclo incompatible (R1).",
+      "P10–P90 es la variabilidad del modelo bajo remuestreo histórico; no es una garantía de rendimiento ni un pronóstico.",
+      "Los parámetros de FAO-56 (Kc, etapas, raíz) todavía no fueron cotejados con las tablas (verified_at = null en crops.json).",
+      "La estabilidad del ranking se calcula sobre el puntaje parcial (suelo y riesgo): sirve para ver qué tan firme es la comparación, no es un orden recomendado.",
+      "NASA POWER es una celda de ~50 km: contexto regional, no una medición de la finca.",
+      "Los días de calor usan un umbral meteorológico general salvo que se indique un umbral de cultivo con fuente.",
+      "La lluvia intensa es exposición meteorológica: no predice inundaciones fluviales.",
+      "La lluvia efectiva usa un método empírico FAO (supuesto declarado)."
+    ]
+  }
+}

@@ -10,8 +10,9 @@ pip install -r requirements.txt           # solo la primera vez
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-> Rama `alvin/main-esqueleto`: `main.py` es un **esqueleto de Alvin** hasta que Matías tome el control. `/api/rotations/compare` es
-> **provisional**: devuelve solo E0 con evidencia NASA real, sin puntajes ni ranking. El nodo (`/api/field-node/*`) ya es real
+> Rama `matias/motor`: `/api/rotations/compare` usa el **motor real** (reglas + MCDA + bootstrap; ver `docs/contratos.md`). Al
+> arrancar, el servidor precalienta la climatología (unos segundos más de arranque) para que cada comparación responda en menos
+> de 3 s. Sin `analytics/physics.py` (ET0), el agua queda insuficiente y no hay ranking. El nodo (`/api/field-node/*`) ya es real
 > (SQLite en `backend/data/field_node.sqlite`, no versionado). El esquema del nodo se regenera con
 > `python -m tools.export_sensor_schema` → `shared/sensor_reading.schema.json`.
 
