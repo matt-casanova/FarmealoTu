@@ -82,7 +82,7 @@ recomiende rotaciones.
 ## Evidence on Hand
 
 - `FarmealoTu_Plan_de_Proyecto.pdf` (plan del proyecto, 44 páginas): fuente del contrato, UX y criterios.
-- `FarmealoTu_Claude_Code_UI_Kotlin.md`: especificación funcional de cada pantalla.
+- `docs/prompts/FarmealoTu_Claude_Code_UI_Kotlin.md`: especificación funcional de cada pantalla.
 - `docs/UI_BACKEND_CONTRACT.md`: contrato UI ↔ backend y lista de conciliación.
 - **Ausencias que no se deben rellenar:** al 14-nov-2026 no había backend accesible; nada se probó contra la API
   real. Los fixtures demo no son evidencia NASA y sus capturas no se presentan como tal. El demo no trae teselas,

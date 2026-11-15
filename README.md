@@ -32,19 +32,17 @@ El plan completo está en [`FarmealoTu_Plan_de_Proyecto.pdf`](FarmealoTu_Plan_de
 | Incertidumbre: bootstrap de 200 años agrícolas remuestreados (seed 42), P10/P50/P90, estabilidad del ranking | ✅ Real (Matías) | `backend/analytics/uncertainty.py` |
 | `POST /api/rotations/compare` | ✅ Real, pero **parcial**: sin ET0 no hay puntaje de agua, por eso no aparece E2 («Cuidar agua») y `recommended_strategy_id = null` | `backend/app/routers/rotations.py` |
 | ET0 FAO-56 Penman–Monteith (`physics.py`) | ⏳ Pendiente (Christian), junto con el prototipo. Es lo único que falta para S_agua, E2 y el ranking | — |
-| App Android (Kotlin + Jetpack Compose) | ✅ UI pulida (Kendra) + ✅ integración con los endpoints NASA (Matías) | ramas `ui_kendra_pos`, `integracion_nasa` |
+| App Android (Kotlin + Jetpack Compose) | ✅ UI pulida + integración con la API real (Kendra y Matías). 66 pruebas unitarias | `app/` |
 | Gemelo digital, firmware ESP32 / Wokwi, prototipo físico | ⏳ En desarrollo (Christian, Mateo, Vanesa) | `hardware/` |
 
 ### Ramas
 
 | Rama | Contenido |
 |---|---|
-| **`master`** | **Rama principal.** Backend completo (datos NASA, API, nodo de campo, motor), documentación, forzante del gemelo digital y plan en PDF |
-| `alvin/datos-nasa`, `alvin/main-esqueleto` | Ramas de trabajo de Alvin, ya integradas en `master` (históricas) |
-| `matias/motor` | Motor de recomendación (Matías), ya integrado en `master` |
-| `ui_kendra`, `ui_kendra_pos` | App Android (Kendra); `ui_kendra_pos` es la UI pulida |
-| `integracion_nasa` | `ui_kendra_pos` + conexión de la app con los endpoints NASA (Matías): **la línea actual de la app** |
-| `backend` | Sin uso (igual que `master`) |
+| **`master`** | **Rama principal.** App Android, backend completo (datos NASA, API, nodo de campo, motor), documentación, forzante del gemelo digital y plan en PDF |
+| `alvin/datos-nasa`, `alvin/main-esqueleto`, `matias/motor` | Ramas de trabajo del backend, ya integradas en `master` (históricas) |
+| `ui_kendra`, `ui_kendra_pos`, `integracion_nasa` | Ramas de trabajo de la app, ya integradas en `master` (históricas) |
+| `backend` | Sin uso |
 
 ---
 
@@ -97,7 +95,7 @@ que se reinicia el túnel.**
 
 ### App Android
 
-1. Abrir la raíz del repo en Android Studio (rama `integracion_nasa`).
+1. Abrir la raíz del repo en Android Studio (rama `master`).
 2. En `local.properties` (no se versiona):
    ```properties
    farmealotu.apiBaseUrl=http://10.0.2.2:8000/      # emulador → backend en la PC
@@ -120,8 +118,8 @@ que se reinicia el túnel.**
 | `GET /api/context/cuatro-canadas` · `GET /api/sources` | ✅ |
 | `POST /api/rotations/compare` | ✅ motor real; 🟡 parcial hasta que llegue la ET0 (ver arriba). Fuera de ±0.25° → 422. Ejemplo real: [`docs/ejemplos/compare_punto_piloto.json`](docs/ejemplos/compare_punto_piloto.json) |
 
-Contratos JSON: [`docs/contratos.md`](docs/contratos.md) (endpoints NASA) y `docs/UI_BACKEND_CONTRACT.md` (rama de Kendra, lo que
-espera la app). Contrato del nodo: [`shared/sensor_reading.schema.json`](shared/sensor_reading.schema.json).
+Contratos JSON: [`docs/contratos.md`](docs/contratos.md) (API) y [`docs/UI_BACKEND_CONTRACT.md`](docs/UI_BACKEND_CONTRACT.md)
+(lo que espera la app). Contrato del nodo: [`shared/sensor_reading.schema.json`](shared/sensor_reading.schema.json).
 
 ---
 

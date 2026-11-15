@@ -1,6 +1,6 @@
 # Contratos de la API — endpoints de datos NASA (Alvin)
 
-> Estado: **v1 implementado** en `master` y alineado con los mappers de la app (`DtoMappers.kt`, rama `integracion_nasa`).
+> Estado: **v1 implementado** en `master` y alineado con los mappers de la app (`DtoMappers.kt`, `app/`).
 > Cambios solo por acuerdo, anotados en `docs/decisiones.md`. **Si un ejemplo de abajo choca con la sección «v1 (implementado)», manda esta última.**
 >
 > ## v1 (implementado): diferencias respecto del borrador v0
