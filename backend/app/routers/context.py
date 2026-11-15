@@ -1,7 +1,7 @@
 """Contexto agrícola de Cuatro Cañadas y catálogo de fuentes (GET /api/context/cuatro-canadas, GET /api/sources).
 
-ESQUELETO de Alvin con información DOCUMENTADA del plan (sección 2.2 y anexo D). Matías es el dueño de la base
-agrícola (reference/agricultural_context.json): cuando exista, este router debe leer de ahí.
+Información DOCUMENTADA del plan (sección 2.2 y anexo D). La base de cultivos del motor está en reference/crops.json;
+si se crea reference/agricultural_context.json, este router debe leer de ahí.
 """
 from __future__ import annotations
 

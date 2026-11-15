@@ -1,6 +1,6 @@
 # Contratos de la API — endpoints de datos NASA (Alvin)
 
-> Estado: **v1 implementado** en `alvin/datos-nasa` y alineado con los mappers de Kendra (`DtoMappers.kt`, rama `ui_kendra`).
+> Estado: **v1 implementado** en `master` y alineado con los mappers de la app (`DtoMappers.kt`, rama `integracion_nasa`).
 > Cambios solo por acuerdo, anotados en `docs/decisiones.md`. **Si un ejemplo de abajo choca con la sección «v1 (implementado)», manda esta última.**
 >
 > ## v1 (implementado): diferencias respecto del borrador v0
@@ -212,7 +212,7 @@ Lee `backend/data/cache/gibs_layers.json`, que genera `python -m pipeline.gibs v
 
 ---
 
-## `POST /api/rotations/compare` — motor real (Matías, rama `matias/motor`)
+## `POST /api/rotations/compare` — motor real (Matías)
 
 Reemplaza al stub (`rotations_stub.py` queda en el repo; Alvin decide si se borra). El **request no cambia**
 (`app/schemas.py` → `CompareRequest`). Fuera de ±0.25° del punto piloto → **422** con `detail`, igual que el stub.

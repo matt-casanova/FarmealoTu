@@ -1,16 +1,14 @@
-"""API FarmealoTu (FastAPI) — ESQUELETO de Alvin para destrabar al equipo mientras Matías no puede trabajar.
-
-Matías es el dueño de este archivo: puede conservarlo, cambiarlo o reemplazarlo.
+"""API FarmealoTu (FastAPI). Backend principal (rama master).
 
     cd backend; .\\.venv\\Scripts\\Activate.ps1
     uvicorn app.main:app --host 0.0.0.0 --port 8000        →  http://localhost:8000/docs
 
 Estado de cada parte:
-- /api/health, /api/nasa/status, /api/indicators, /api/map/layers*  → reales (Alvin)   (*pendiente paso 8)
+- /api/health, /api/nasa/status, /api/indicators, /api/map/layers   → reales (Alvin: NASA POWER + GIBS, en caché)
 - /api/field-node/*                                                → real y simple (SQLite), contrato v1
 - /api/context/cuatro-canadas, /api/sources                        → información documentada del plan
-- /api/rotations/compare                                           → motor real (Matías): E0–E3 con suelo y riesgo;
-                                                                     agua pendiente de la ET0, incertidumbre en curso
+- /api/rotations/compare                                           → motor real (Matías): reglas + MCDA + bootstrap;
+                                                                     el agua queda insuficiente hasta integrar la ET0
 """
 import importlib.util
 import logging
@@ -37,7 +35,7 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(
     lifespan=lifespan,
     title="FarmealoTu API",
-    version="0.2.0-esqueleto",
+    version="0.3.0",
     description="Apoyo a la decisión de rotación de cultivos en Cuatro Cañadas con datos NASA. "
                 "Apoya, no reemplaza, el criterio del agricultor y del agrónomo. "
                 "NASA provee datos; FarmealoTu los interpreta con su propio motor.",
@@ -48,7 +46,7 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.include_router(nasa.router)
 app.include_router(field_node.router)
 app.include_router(context.router)
-app.include_router(rotations.router)       # motor real (rotations_stub.py queda en el repo; Alvin decide)
+app.include_router(rotations.router)       # motor de recomendación (Matías)
 app.include_router(monitor.router)         # /monitor: página de desarrollo para ver la API y el nodo en vivo
 
 

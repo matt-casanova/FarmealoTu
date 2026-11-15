@@ -1,7 +1,6 @@
 """Nodo de campo (contrato v1, plan 9.2): recepción y lectura de mediciones (sim / Wokwi / físico).
 
-ESQUELETO de Alvin: implementación real y simple (SQLite). Matías es el dueño y puede reemplazarla.
-Reglas: el `source` se guarda y se devuelve siempre (la app lo muestra como insignia); los datos del nodo
+Implementación real y simple (SQLite). Reglas: el `source` se guarda y se devuelve siempre (la app lo muestra como insignia); los datos del nodo
 NO alimentan el motor de recomendación en el MVP.
 """
 from __future__ import annotations

@@ -1,6 +1,6 @@
 """POST /api/rotations/compare — motor de recomendación real (Matías).
 
-Reemplaza a rotations_stub.py (que queda en el repo). Lee la caché NASA POWER: ninguna petición llama a NASA.
+Reemplazó al stub provisional (en el historial de git). Lee la caché NASA POWER: ninguna petición llama a NASA.
 Si el motor falla, responde 500 con un detalle en español; nunca cae a datos de ejemplo.
 """
 from __future__ import annotations

@@ -1,7 +1,6 @@
 """Esquemas Pydantic de la API FarmealoTu.
 
-ESQUELETO de Alvin (rama alvin/main-esqueleto) mientras Matías no puede trabajar. Matías es el dueño:
-puede conservarlo, cambiarlo o reemplazarlo. Fuentes de las formas:
+Fuentes de las formas:
 - Nodo de campo: contrato v1, plan sección 9.2 (= shared/sensor_reading.schema.json).
 - /rotations/compare: plan 4.8 y docs/UI_BACKEND_CONTRACT.md (lo que envía la app de Kendra).
 """

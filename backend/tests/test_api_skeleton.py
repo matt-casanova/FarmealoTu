@@ -1,4 +1,4 @@
-"""Pruebas del esqueleto: nodo de campo (contrato v1), compare provisional, contexto y fuentes."""
+"""Pruebas de la API base: nodo de campo (contrato v1), compare (forma general), contexto y fuentes."""
 import json
 from pathlib import Path
 

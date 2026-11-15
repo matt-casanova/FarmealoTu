@@ -25,13 +25,13 @@ El plan completo está en [`FarmealoTu_Plan_de_Proyecto.pdf`](FarmealoTu_Plan_de
 | `GET /api/indicators`, `GET /api/nasa/status` | ✅ Real | `backend/app/routers/nasa.py` |
 | `GET /api/map/layers`: 4 capas NASA GIBS verificadas (IMERG, SMAP L4, VIIRS temperatura y NDVI) | ✅ Real | `backend/pipeline/gibs.py` |
 | Forzante horario NASA POWER para el gemelo digital (escenarios S1, S2, S3) | ✅ Real | `hardware/simulation/forcing/` |
-| Nodo de campo: `POST/GET /api/field-node/readings`, `/status` (contrato v1, SQLite) | ✅ Real (esqueleto) | rama `alvin/main-esqueleto` |
-| Contexto de Cuatro Cañadas y catálogo de fuentes | ✅ Información documentada | rama `alvin/main-esqueleto` |
+| Nodo de campo: `POST/GET /api/field-node/readings`, `/status` (contrato v1, SQLite) | ✅ Real (simple) | `backend/app/routers/field_node.py` |
+| Contexto de Cuatro Cañadas y catálogo de fuentes | ✅ Información documentada | `backend/app/routers/context.py` |
 | Base agrícola con fuente por dato (`crops.json`, `rotation_rules.json`, `engine_params.json`) y parser de sinónimos | ✅ Real (Matías). Kc, etapas y raíz de FAO-56 cotejados contra el texto de FAO salvo el Kc inicial; falta el cotejo de una persona (`verified_at`) | `backend/reference/`, `backend/engine/parser.py` |
 | Motor de recomendación: factibilidad, S_suelo, S_riesgo, MCDA con política de faltantes, E0–E3 | ✅ Real (Matías) | `backend/engine/` |
 | Incertidumbre: bootstrap de 200 años agrícolas remuestreados (seed 42), P10/P50/P90, estabilidad del ranking | ✅ Real (Matías) | `backend/analytics/uncertainty.py` |
 | `POST /api/rotations/compare` | ✅ Real, pero **parcial**: sin ET0 no hay puntaje de agua, por eso no aparece E2 («Cuidar agua») y `recommended_strategy_id = null` | `backend/app/routers/rotations.py` |
-| ET0 FAO-56 Penman–Monteith (`physics.py`) | ⏳ Pendiente (Christian). Es lo único que falta para S_agua, E2 y el ranking | — |
+| ET0 FAO-56 Penman–Monteith (`physics.py`) | ⏳ Pendiente (Christian), junto con el prototipo. Es lo único que falta para S_agua, E2 y el ranking | — |
 | App Android (Kotlin + Jetpack Compose) | ✅ UI pulida (Kendra) + ✅ integración con los endpoints NASA (Matías) | ramas `ui_kendra_pos`, `integracion_nasa` |
 | Gemelo digital, firmware ESP32 / Wokwi, prototipo físico | ⏳ En desarrollo (Christian, Mateo, Vanesa) | `hardware/` |
 
@@ -39,10 +39,9 @@ El plan completo está en [`FarmealoTu_Plan_de_Proyecto.pdf`](FarmealoTu_Plan_de
 
 | Rama | Contenido |
 |---|---|
-| `master` | Proyecto Android inicial + plan en PDF |
-| `alvin/datos-nasa` | Pipeline NASA, indicadores, capas GIBS, endpoints NASA y documentación (Alvin) |
-| `alvin/main-esqueleto` | **Backend integrado**: lo anterior + API (`main.py`, `schemas.py`, nodo de campo, contexto) + el motor de `matias/motor` |
-| `matias/motor` | Motor de recomendación, referencia agrícola e incertidumbre (Matías) |
+| **`master`** | **Rama principal.** Backend completo (datos NASA, API, nodo de campo, motor), documentación, forzante del gemelo digital y plan en PDF |
+| `alvin/datos-nasa`, `alvin/main-esqueleto` | Ramas de trabajo de Alvin, ya integradas en `master` (históricas) |
+| `matias/motor` | Motor de recomendación (Matías), ya integrado en `master` |
 | `ui_kendra`, `ui_kendra_pos` | App Android (Kendra); `ui_kendra_pos` es la UI pulida |
 | `integracion_nasa` | `ui_kendra_pos` + conexión de la app con los endpoints NASA (Matías): **la línea actual de la app** |
 | `backend` | Sin uso (igual que `master`) |
@@ -72,7 +71,7 @@ App Android (Compose) ◀── HTTPS ── FastAPI /api/* ◀── engine/* (
 ### Backend
 
 ```powershell
-git switch alvin/main-esqueleto        # backend integrado (NASA + nodo + motor)
+git switch master                      # rama principal (NASA + nodo + motor)
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
@@ -117,12 +116,12 @@ que se reinicia el túnel.**
 | `GET /api/indicators?lat&lon&period&heat_threshold_c` | ✅ `period` = `recent` · `campaign:verano-2025-26` · `AAAA-MM-DD/AAAA-MM-DD`. Puntos a más de 0.25° del piloto → 404 |
 | `GET /api/nasa/status` | ✅ |
 | `GET /api/map/layers` | ✅ |
-| `POST /api/field-node/readings` · `GET /api/field-node/readings` · `GET /api/field-node/status` | ✅ (esqueleto) |
-| `GET /api/context/cuatro-canadas` · `GET /api/sources` | ✅ (esqueleto) |
+| `POST /api/field-node/readings` · `GET /api/field-node/readings` · `GET /api/field-node/status` | ✅ |
+| `GET /api/context/cuatro-canadas` · `GET /api/sources` | ✅ |
 | `POST /api/rotations/compare` | ✅ motor real; 🟡 parcial hasta que llegue la ET0 (ver arriba). Fuera de ±0.25° → 422. Ejemplo real: [`docs/ejemplos/compare_punto_piloto.json`](docs/ejemplos/compare_punto_piloto.json) |
 
 Contratos JSON: [`docs/contratos.md`](docs/contratos.md) (endpoints NASA) y `docs/UI_BACKEND_CONTRACT.md` (rama de Kendra, lo que
-espera la app). Contrato del nodo: [`shared/sensor_reading.schema.json`](shared/sensor_reading.schema.json) (rama `alvin/main-esqueleto`).
+espera la app). Contrato del nodo: [`shared/sensor_reading.schema.json`](shared/sensor_reading.schema.json).
 
 ---
 
