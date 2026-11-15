@@ -27,10 +27,12 @@ El plan completo está en [`FarmealoTu_Plan_de_Proyecto.pdf`](FarmealoTu_Plan_de
 | Forzante horario NASA POWER para el gemelo digital (escenarios S1, S2, S3) | ✅ Real | `hardware/simulation/forcing/` |
 | Nodo de campo: `POST/GET /api/field-node/readings`, `/status` (contrato v1, SQLite) | ✅ Real (esqueleto) | rama `alvin/main-esqueleto` |
 | Contexto de Cuatro Cañadas y catálogo de fuentes | ✅ Información documentada | rama `alvin/main-esqueleto` |
-| `POST /api/rotations/compare` | 🟡 **Provisional**: solo E0 + evidencia NASA real, **sin puntajes ni ranking** | rama `alvin/main-esqueleto` |
-| Motor de recomendación (E0–E3, MCDA, bootstrap) | ⏳ Pendiente (Matías) | — |
-| ET0 FAO-56 Penman–Monteith (`physics.py`) | ⏳ Pendiente (Christian). Mientras tanto la ET0 se reporta como `unavailable` | — |
-| App Android (Kotlin + Jetpack Compose) | 🟡 En desarrollo (Kendra) | ramas `ui_kendra`, `ui_kendra_pos` |
+| Base agrícola con fuente por dato (`crops.json`, `rotation_rules.json`, `engine_params.json`) y parser de sinónimos | ✅ Real (Matías). Kc, etapas y raíz de FAO-56 cotejados contra el texto de FAO salvo el Kc inicial; falta el cotejo de una persona (`verified_at`) | `backend/reference/`, `backend/engine/parser.py` |
+| Motor de recomendación: factibilidad, S_suelo, S_riesgo, MCDA con política de faltantes, E0–E3 | ✅ Real (Matías) | `backend/engine/` |
+| Incertidumbre: bootstrap de 200 años agrícolas remuestreados (seed 42), P10/P50/P90, estabilidad del ranking | ✅ Real (Matías) | `backend/analytics/uncertainty.py` |
+| `POST /api/rotations/compare` | ✅ Real, pero **parcial**: sin ET0 no hay puntaje de agua, por eso no aparece E2 («Cuidar agua») y `recommended_strategy_id = null` | `backend/app/routers/rotations.py` |
+| ET0 FAO-56 Penman–Monteith (`physics.py`) | ⏳ Pendiente (Christian). Es lo único que falta para S_agua, E2 y el ranking | — |
+| App Android (Kotlin + Jetpack Compose) | ✅ UI pulida (Kendra) + ✅ integración con los endpoints NASA (Matías) | ramas `ui_kendra_pos`, `integracion_nasa` |
 | Gemelo digital, firmware ESP32 / Wokwi, prototipo físico | ⏳ En desarrollo (Christian, Mateo, Vanesa) | `hardware/` |
 
 ### Ramas
@@ -39,9 +41,11 @@ El plan completo está en [`FarmealoTu_Plan_de_Proyecto.pdf`](FarmealoTu_Plan_de
 |---|---|
 | `master` | Proyecto Android inicial + plan en PDF |
 | `alvin/datos-nasa` | Pipeline NASA, indicadores, capas GIBS, endpoints NASA y documentación (Alvin) |
-| `alvin/main-esqueleto` | Lo anterior + **esqueleto de API** (`main.py`, `schemas.py`, nodo de campo, contexto y `compare` provisional), para no bloquear al equipo hasta que Matías tome el backend |
-| `ui_kendra`, `ui_kendra_pos` | App Android (Kendra) |
-| `backend` | Reservada para el backend de Matías (todavía igual que `master`) |
+| `alvin/main-esqueleto` | **Backend integrado**: lo anterior + API (`main.py`, `schemas.py`, nodo de campo, contexto) + el motor de `matias/motor` |
+| `matias/motor` | Motor de recomendación, referencia agrícola e incertidumbre (Matías) |
+| `ui_kendra`, `ui_kendra_pos` | App Android (Kendra); `ui_kendra_pos` es la UI pulida |
+| `integracion_nasa` | `ui_kendra_pos` + conexión de la app con los endpoints NASA (Matías): **la línea actual de la app** |
+| `backend` | Sin uso (igual que `master`) |
 
 ---
 
@@ -52,11 +56,11 @@ NASA POWER (diario/horario) ─┐
 NASA GIBS (WMTS EPSG:3857) ──┼─▶ pipeline/ (descarga, validación, caché) ─▶ analytics/ (indicadores, ET0*)
 Base agrícola local* ────────┘                                                     │
                                                                                    ▼
-App Android (Compose) ◀── HTTPS ── FastAPI /api/* ◀── engine/* (motor de Matías, pendiente)
+App Android (Compose) ◀── HTTPS ── FastAPI /api/* ◀── engine/* (reglas + MCDA) + analytics/uncertainty.py (bootstrap)
         ▲                                  ▲
         └─ «Datos de terreno» ◀────────────┴── POST /api/field-node/readings ◀── gemelo digital · Wokwi · ESP32
 ```
-`*` = pendiente. Reglas que no se negocian:
+`*` = pendiente: ET0 (`physics.py`). Reglas que no se negocian:
 - La app **nunca** llama a NASA; la API **nunca** llama a NASA durante una petición, porque todo sale de la caché.
 - Todo valor lleva fuente, fecha, unidad, escala y `evidence_status` (`documented | derived | assumption | farmer_provided | unavailable`).
 - Nada se inventa: lo que falta es `null` con su motivo.
@@ -68,7 +72,7 @@ App Android (Compose) ◀── HTTPS ── FastAPI /api/* ◀── engine/* (
 ### Backend
 
 ```powershell
-git switch alvin/main-esqueleto        # trae la API completa (esqueleto)
+git switch alvin/main-esqueleto        # backend integrado (NASA + nodo + motor)
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
@@ -77,7 +81,8 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 - Documentación interactiva: http://localhost:8000/docs
-- Pruebas: `python -m pytest -q` (53 pruebas; ninguna llama a NASA).
+- Pruebas: `python -m pytest -q` (117 pruebas; ninguna llama a NASA).
+- Al arrancar, el servidor precalienta la climatología del motor (unos segundos). Después, cada `compare` responde en ~0.1 s.
 - Refrescar datos (solo antes de la demo, no durante):
   ```powershell
   python -m pipeline.power download --refresh   # NASA POWER diario + GWETROOT
@@ -93,7 +98,7 @@ que se reinicia el túnel.**
 
 ### App Android
 
-1. Abrir la raíz del repo en Android Studio (rama de Kendra).
+1. Abrir la raíz del repo en Android Studio (rama `integracion_nasa`).
 2. En `local.properties` (no se versiona):
    ```properties
    farmealotu.apiBaseUrl=http://10.0.2.2:8000/      # emulador → backend en la PC
@@ -114,7 +119,7 @@ que se reinicia el túnel.**
 | `GET /api/map/layers` | ✅ |
 | `POST /api/field-node/readings` · `GET /api/field-node/readings` · `GET /api/field-node/status` | ✅ (esqueleto) |
 | `GET /api/context/cuatro-canadas` · `GET /api/sources` | ✅ (esqueleto) |
-| `POST /api/rotations/compare` | 🟡 provisional |
+| `POST /api/rotations/compare` | ✅ motor real; 🟡 parcial hasta que llegue la ET0 (ver arriba). Fuera de ±0.25° → 422. Ejemplo real: [`docs/ejemplos/compare_punto_piloto.json`](docs/ejemplos/compare_punto_piloto.json) |
 
 Contratos JSON: [`docs/contratos.md`](docs/contratos.md) (endpoints NASA) y `docs/UI_BACKEND_CONTRACT.md` (rama de Kendra, lo que
 espera la app). Contrato del nodo: [`shared/sensor_reading.schema.json`](shared/sensor_reading.schema.json) (rama `alvin/main-esqueleto`).
@@ -152,13 +157,19 @@ con enlaces está en `GET /api/sources`.
   Por sí solos no afirman daño a un cultivo.
 - La lluvia intensa es exposición meteorológica: no predice inundaciones fluviales. Cambiar la rotación no elimina ese riesgo.
 - La lluvia efectiva usa un método empírico FAO (supuesto declarado).
-- Las puntuaciones (cuando exista el motor) dependen de reglas y pesos. Son relativas entre opciones, no probabilidades.
+- Las puntuaciones dependen de reglas y pesos; los pesos iniciales (0.40/0.35/0.25) y los subpesos del suelo son
+  preferencias de producto (`assumption`). Son relativas entre opciones, no probabilidades.
+- P10–P90 es la variabilidad del modelo bajo remuestreo histórico, no una garantía ni un pronóstico. Con datos solo
+  regionales, la confianza máxima es «media».
+- Los parámetros de cultivo vienen de tablas genéricas de FAO-56 (sin ajuste climático local) y la siembra se supone
+  al inicio de cada campaña. Sin ET0, soya→sorgo y soya→maíz tienen el mismo puntaje de suelo y riesgo, porque
+  FAO-56 les asigna las mismas etapas: solo el agua (Kc) las distingue.
 - No se predicen rendimientos ni precios. No se sustituyen el análisis de suelo ni la visita técnica.
 - El nodo de campo es un prototipo de laboratorio: no valida estadísticamente al satélite y no alimenta el motor.
 
 ## Uso de IA
 
 Se usó **Claude Code (Anthropic)** como asistente de programación y documentación: pipeline NASA, indicadores, API, capas
-GIBS, pruebas y este README. El equipo revisó y probó el código (pruebas automáticas y verificación contra datos reales).
-**No se usa IA ni LLM para calcular recomendaciones.** El motor es determinista y explicable. Detalle en `docs/uso_ia.md`
-(pendiente).
+GIBS, motor, pruebas, la UI Android y este README. El equipo revisó y probó el código (pruebas automáticas y verificación contra datos reales).
+**No se usa IA ni LLM para calcular recomendaciones.** El motor es determinista y explicable. Detalle en
+[`docs/uso_ia.md`](docs/uso_ia.md).
