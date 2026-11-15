@@ -12,6 +12,9 @@ Estado de cada parte:
 - /api/rotations/compare                                           → motor real (Matías): E0–E3 con suelo y riesgo;
                                                                      agua pendiente de la ET0, incertidumbre en curso
 """
+import importlib.util
+import logging
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
 from fastapi import FastAPI
@@ -20,7 +23,19 @@ from fastapi.middleware.gzip import GZipMiddleware
 
 from app.routers import context, field_node, monitor, nasa, rotations
 
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # Precalienta la climatología del motor: la primera comparación responde en menos de 3 s.
+    try:
+        rotations.warm_up()
+    except Exception:  # noqa: BLE001 — si falla, el endpoint lo informará con un 500 claro
+        logging.getLogger(__name__).exception("No se pudo precalentar el motor")
+    yield
+
+
 app = FastAPI(
+    lifespan=lifespan,
     title="FarmealoTu API",
     version="0.2.0-esqueleto",
     description="Apoyo a la decisión de rotación de cultivos en Cuatro Cañadas con datos NASA. "
@@ -39,5 +54,7 @@ app.include_router(monitor.router)         # /monitor: página de desarrollo par
 
 @app.get("/api/health", tags=["sistema"])
 def health():
-    return {"status": "ok", "version": app.version, "engine": "partial",
+    # «ready» cuando existe la ET0 FAO-56 (analytics/physics.py); sin ella S_agua queda insuficiente.
+    engine = "ready" if importlib.util.find_spec("analytics.physics") else "partial"
+    return {"status": "ok", "version": app.version, "engine": engine,
             "time": datetime.now(timezone.utc).replace(microsecond=0).isoformat()}

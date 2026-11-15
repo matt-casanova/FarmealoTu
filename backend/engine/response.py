@@ -9,6 +9,7 @@ from datetime import date
 import numpy as np
 
 from analytics import indicators as I
+from analytics import uncertainty as U
 from engine.recommendation import (CRITERIA, CRITERIA_ES, MONTHS_ES, PROFILE, Climate, Evaluation, build_climate,
                                    evaluate, mcda, select)
 from engine.reference import load_reference, param, value
@@ -312,18 +313,33 @@ def build_compare_response(req, df, ind_recent: dict, nasa_status: dict, climate
     chosen, selection_notes = select(e0, candidates)
 
     water_for_all = all(ev.point()["water"] is None for ev in [e0, *candidates])
+    boot = U.bootstrap({eid: U.StrategyInputs(ev.soil, ev.risk_years, ev.water_years) for eid, ev in chosen.items()},
+                       weights, climate.n)
     strategies, scores = [], {}
     for eid, ev in chosen.items():
-        score, partial, used = mcda(ev.point(), weights)
+        point, partial, used = mcda(ev.point(), weights)
+        b = boot["per_strategy"][eid]
+        score = b["p50"] if b["p50"] is not None else point          # plan 3.8: score mediano del bootstrap
         scores[eid] = score
         flags = feas.flags.get(ev.seq.key, [])
+        missing_es = [CRITERIA_ES[k] for k in CRITERIA if ev.point()[k] is None]
+        level, reason = U.confidence(b["rank_stability"], missing_es, soil_info=False)
+        uncertainty = None if b["p50"] is None else {
+            "p10": _r(b["p10"]), "p50": _r(b["p50"]), "p90": _r(b["p90"]),
+            "rank_stability": round(b["rank_stability"], 3),
+            "rank_basis": "puntaje parcial (" + " y ".join(CRITERIA_ES[k] for k in used) + ")" if partial
+            else "puntaje completo",
+            "prob_better_than_current": None if eid == "E0" else _r(boot["pairwise"].get(f"{eid}>E0"), 3),
+            "confidence_level": level, "confidence_reason": reason,
+            "n_iterations": boot["n_iter"], "seed": boot["seed"], "note": U.MESSAGE,
+        }
         strategies.append({
             "id": eid, "name": PROFILE[eid],
             "sequence": ev.seq.as_api() if ev.seq.complete else list(req.current_rotation),
-            "score": _r(score), "partial_score": partial,
+            "score": _r(score), "score_point": _r(point), "partial_score": partial,
             "weights_used": {k: round(v, 4) for k, v in used.items()},
             "criteria": _criteria(ev, climate, irrigation),
-            "uncertainty": None,
+            "uncertainty": uncertainty,
             "tradeoffs": _tradeoffs(ev, e0, climate),
             "reasons": _reasons(eid, ev, e0, climate, farmer_issues),
             "evidence": _evidence(ev, climate),
@@ -353,8 +369,10 @@ def build_compare_response(req, df, ind_recent: dict, nasa_status: dict, climate
     limitations += selection_notes
     limitations.append(f"Se evaluaron {len(feas.feasible) + len(feas.excluded)} combinaciones verano × invierno: "
                        f"{len(feas.feasible)} factibles; descartadas: {excl_text or 'ninguna'}.")
-    limitations += [UNVERIFIED_FAO, "La incertidumbre (P10–P90 por bootstrap) todavía no está integrada en esta "
-                                    "versión."]
+    limitations += [U.MESSAGE, UNVERIFIED_FAO]
+    if water_for_all:
+        limitations.append("La estabilidad del ranking se calcula sobre el puntaje parcial (suelo y riesgo): sirve "
+                           "para ver qué tan firme es la comparación, no es un orden recomendado.")
     limitations += I.LIMITATIONS
 
     alerts = _alerts(ind_recent)
@@ -371,12 +389,17 @@ def build_compare_response(req, df, ind_recent: dict, nasa_status: dict, climate
             "last_observation_date": nasa_status.get("last_observation_date"),
             "last_successful_download": nasa_status.get("last_download"),
             "source": "NASA POWER (caché)",
-            "engine": "partial",
-            "engine_detail": [d for d in (
-                None if climate.et0 is not None else "S_agua pendiente: falta la ET0 FAO-56 (physics.py)",
-                "Incertidumbre (bootstrap) pendiente") if d],
+            "engine": "ready" if climate.et0 is not None else "partial",
+            "engine_detail": [] if climate.et0 is not None else
+            ["S_agua pendiente: falta la ET0 FAO-56 (physics.py)"],
             "weights_received": weights,
             "years_used": climate.period_label,
+            "uncertainty": {
+                "method": "bootstrap de años agrícolas completos (nov→oct) con reemplazo",
+                "n_iterations": boot["n_iter"], "seed": boot["seed"], "years_per_iteration": boot["n_years"],
+                "pairwise_prob_better": {k: round(v, 3) for k, v in boot["pairwise"].items()},
+                "note": U.MESSAGE,
+            },
             "et0": {"status": "available" if climate.et0 is not None else "unavailable",
                     "reason": climate.et0_reason},
             "assumptions": {k: {"value": v["value"], "note": v["note"], "evidence_status": v["evidence_status"]}

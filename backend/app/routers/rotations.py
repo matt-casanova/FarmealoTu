@@ -5,13 +5,15 @@ Si el motor falla, responde 500 con un detalle en español; nunca cae a datos de
 """
 from __future__ import annotations
 
+import copy
 import logging
-import time
+import threading
 from functools import lru_cache
 
 from fastapi import APIRouter, HTTPException
 
-from app.routers.nasa import MAX_DISTANCE_DEG, _df, _indicators_cached
+from analytics import indicators as I
+from app.routers.nasa import MAX_DISTANCE_DEG, _df
 from app.schemas import CompareRequest
 from engine.recommendation import Climate, build_climate
 from engine.reference import ReferenceDataError, load_reference
@@ -23,14 +25,47 @@ router = APIRouter(prefix="/api/rotations", tags=["rotaciones"])
 log = logging.getLogger(__name__)
 
 
-@lru_cache(maxsize=2)
-def _climate_cached(_bucket: int) -> Climate:
-    return build_climate(_df())
+def data_signature(df) -> tuple:
+    """Identidad de la caché NASA cargada: filas, última fecha y fecha de descarga. Si no cambia, la
+    climatología y los indicadores tampoco: no hace falta recalcularlos aunque nasa._df() se recargue."""
+    power = df.attrs.get("power", {})
+    parts = power.get("parts", {})
+    downloaded = max((c.get("downloaded_at") or "") for c in parts.values()) if parts else None
+    return len(df), str(df.index.max()), power.get("last_valid_date"), downloaded
+
+
+_DATA: dict[tuple, tuple] = {}   # firma → (df, climatología, indicadores recientes); cambia solo si cambia la caché
+_DATA_LOCK = threading.Lock()
+
+
+def _data():
+    df = _df()
+    sig = data_signature(df)
+    if sig not in _DATA:
+        with _DATA_LOCK:         # el endpoint corre en varios hilos: se construye una sola vez
+            if sig not in _DATA:
+                _DATA[sig] = (df, build_climate(df), I.build_indicators_response("recent", None, df=df))
+    return sig, _DATA[sig]
 
 
 def climate() -> Climate:
-    """Climatología por año agrícola, recalculada como máximo cada 10 min (igual que nasa._df)."""
-    return _climate_cached(int(time.time() // 600))
+    return _data()[1][1]
+
+
+@lru_cache(maxsize=256)
+def _cached_response(req_json: str, sig: tuple) -> dict:
+    """Respuesta cacheada por hash del request (JSON canónico) y por la firma de los datos.
+    Los errores no se cachean (lru_cache no guarda excepciones)."""
+    req = CompareRequest.model_validate_json(req_json)
+    load_reference()
+    df, clim, ind = _DATA[sig]
+    return build_compare_response(req, df, ind, build_nasa_status(), clim)
+
+
+def warm_up() -> None:
+    """Precalcula la climatología y una comparación con el request por defecto (se llama al arrancar)."""
+    sig, _ = _data()
+    _cached_response(CompareRequest(current_rotation=["soy", "sorghum"]).model_dump_json(), sig)
 
 
 @router.post("/compare", summary="Compara tu rotación con alternativas (agua, suelo y riesgo) con datos NASA POWER")
@@ -41,9 +76,8 @@ def compare(req: CompareRequest):
             "msg": f"Fuera del área piloto: solo hay datos para ±{MAX_DISTANCE_DEG}° del punto de referencia "
                    f"de Cuatro Cañadas ({P.PILOT_LAT}, {P.PILOT_LON})."}])
     try:
-        load_reference()
-        ind = _indicators_cached("recent", None, int(time.time() // 600))
-        return build_compare_response(req, _df(), ind, build_nasa_status(), climate())
+        sig, _ = _data()
+        return copy.deepcopy(_cached_response(req.model_dump_json(), sig))
     except ReferenceDataError as exc:
         log.exception("Base de referencia inválida")
         raise HTTPException(status_code=500, detail=f"La base agrícola de referencia tiene errores: {exc}") from exc
