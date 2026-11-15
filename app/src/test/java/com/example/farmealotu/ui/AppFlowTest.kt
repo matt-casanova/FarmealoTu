@@ -47,6 +47,7 @@ class AppFlowTest {
 
     private fun settle(millis: Long = 3_000) {
         shadowOf(Looper.getMainLooper()).idleFor(millis, TimeUnit.MILLISECONDS)
+        runCatching { rule.mainClock.advanceTimeBy(millis) }
         rule.waitForIdle()
     }
 
@@ -88,10 +89,10 @@ class AppFlowTest {
 
     @Test
     fun recorridoCompletoEnModoDemo() {
-        settle(3_000) // Espera a que termine el Splash Screen (Sowlt logo) y navegue a las 5 preguntas
+        settle() // Espera a que termine el Splash Screen (Sowlt logo) y navegue a las 5 preguntas
         answerFiveQuestions()
         tap("Comparar opciones de siembra")
-        settle(3_000)
+        settle()
 
         // Resultado principal.
         rule.onNodeWithText("Opción mejor posicionada").assertExists()
@@ -111,7 +112,7 @@ class AppFlowTest {
         tap("Cambiar mis prioridades")
         tap("Volver a los valores iniciales (40 / 35 / 25)")
         tap("Actualizar comparación")
-        settle(3_000)
+        settle()
         rule.onNodeWithText("Agua 40 % · Suelo 35 % · Riesgo 25 %").assertExists()
 
         // «¿Por qué esta opción?»
@@ -131,7 +132,7 @@ class AppFlowTest {
 
         // Módulo 03
         tap("Conocer los riesgos")
-        settle(3_000)
+        settle()
         rule.onNodeWithText("Riesgo por mes y año").assertExists()
         rule.onNodeWithText("Baja cobertura del suelo").assertExists()
         rule.onNodeWithText("Estar expuesto a lluvia intensa no equivale a predecir un desborde del río.").assertExists()
@@ -148,7 +149,7 @@ class AppFlowTest {
 
         // Datos de terreno
         tap("Datos de terreno")
-        settle(3_000)
+        settle()
         rule.onNodeWithText("ORIGEN: SIMULADO").assertExists()
         rule.onNodeWithText("Estos datos no cambian la recomendación en esta versión.").assertExists()
         rule.onNodeWithText("Dato regional (~50 km): contexto, no tu campo").assertExists()
@@ -158,7 +159,7 @@ class AppFlowTest {
 
         // Explorar mi zona
         tap("Explorar mi zona")
-        settle(3_000)
+        settle()
         rule.onNodeWithText("Las 5 capas").assertExists()
         rule.onNodeWithText("Capa: Lluvia").assertExists()
         tap("Agua")
@@ -169,7 +170,7 @@ class AppFlowTest {
 
         // Fuentes y conexión
         tap("Fuentes y límites")
-        settle(3_000)
+        settle()
         rule.onNodeWithText("Quién hace qué").assertExists()
         goHome()
         tap("Configurar conexión")
@@ -178,7 +179,7 @@ class AppFlowTest {
 
         // Rotación de pantalla
         rule.activityRule.scenario.recreate()
-        settle(3_000)
+        settle()
         rule.onNodeWithText("Conviene revisar la opción «E2 · Cuidar agua».").assertExists()
         rule.onNodeWithText("Advertencias").assertExists()
         tap("Ver resultado")
@@ -187,17 +188,17 @@ class AppFlowTest {
 
     @Test
     fun sinConsultaLosModulosInvitanARegistrarElCampo() {
-        settle(3_000)
+        settle()
         answerFiveQuestions()
         tap("Comparar opciones de siembra")
-        settle(3_000)
+        settle()
         tap("Comparar todas")
         rule.onNodeWithText("Comparar formas de sembrar").assertIsDisplayed()
     }
 
     @Test
     fun cultivoNoReconocidoPideElegirDeLaLista() {
-        settle(3_000)
+        settle()
         rule.onNode(hasSetTextAction()).performTextInput("quinua")
         tap("Siguiente")
         rule.onNodeWithText("No reconocí «quinua». Elegí un cultivo de la lista.").assertIsDisplayed()
@@ -207,10 +208,10 @@ class AppFlowTest {
 
     @Test
     fun alSalirDelModoDemoSeBorranLosResultadosDeEjemplo() {
-        settle(3_000)
+        settle()
         answerFiveQuestions()
         tap("Comparar opciones de siembra")
-        settle(3_000)
+        settle()
         rule.onNodeWithText("Opción mejor posicionada").assertExists()
 
         val settings = ApplicationProvider.getApplicationContext<FarmealoTuApp>().container.settings
@@ -218,7 +219,7 @@ class AppFlowTest {
             settings.setBaseUrl("http://127.0.0.1:9/")
             settings.setDemoMode(false)
         }
-        settle(3_000)
+        settle()
         rule.onNodeWithText("Opción mejor posicionada").assertDoesNotExist()
     }
 }
