@@ -25,8 +25,11 @@ def _f(v, fmt="{:.1f}", none="—"):
 
 def line(r: dict) -> str:
     zones = {z["id"]: z for z in (r.get("internal") or {}).get("zones", [])}
-    soil = "  ".join(f"{zid}:{_f((z.get('soil_moisture_vwc') or 0) * 100 if z.get('soil_moisture_vwc') is not None else None, '{:4.1f}%')}"
-                     f"/{_f(z.get('soil_temp_c'), '{:4.1f}°')}" for zid, z in sorted(zones.items()))
+    def hum(z: dict) -> str:  # % calibrado si existe; si no, el valor crudo del ADC (sin calibrar)
+        if z.get("soil_moisture_vwc") is not None:
+            return _f(z["soil_moisture_vwc"] * 100, "{:4.1f}%")
+        return f"crudo {z['soil_moisture_raw']}" if z.get("soil_moisture_raw") is not None else "—"
+    soil = "  ".join(f"{zid}:{hum(z)}/{_f(z.get('soil_temp_c'), '{:4.1f}°')}" for zid, z in sorted(zones.items()))
     ext = r.get("external") or {}
     bme, dht, ldr = ext.get("bme680") or {}, ext.get("dht11") or {}, ext.get("ldr") or {}
     air = f"BME {_f(bme.get('t_c'))}°C {_f(bme.get('rh_pct'), '{:.0f}')}%  DHT {_f(dht.get('t_c'), '{:.0f}')}°C  luz {_f(ldr.get('light_pct'), '{:.0f}')}%"

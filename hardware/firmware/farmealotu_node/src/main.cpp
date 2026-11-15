@@ -25,7 +25,7 @@ const char* WIFI_PASSWORD = "TU_CLAVE";
 
 // URL COMPLETA del endpoint. Opción 1 (recomendada): túnel HTTPS del backend de Alvin.
 //   Si se reinicia el túnel, la URL cambia y hay que volver a cargar el firmware.
-const char* API_URL = "https://stores-alter-excluded-neck.trycloudflare.com/api/field-node/readings";
+const char* API_URL = "https://investor-subscription-gains-speeches.trycloudflare.com/api/field-node/readings";
 // Opción 2 (respaldo): PC y ESP32 en el mismo hotspot, sin túnel:
 //   const char* API_URL = "http://<IP-de-la-PC>:8000/api/field-node/readings";
 
@@ -35,9 +35,15 @@ const float DEPTH_CM  = 7.0;                        // profundidad real de las s
 const float LDR_R_FIXED_OHM = 10000.0;              // resistencia fija del divisor del LDR: poner el valor real
 const unsigned long SEND_EVERY_MS = 10000;          // cada 10 s
 
+// Qué hay conectado HOY. Lo que no está conectado se manda como null (nunca un pin "al aire", que da basura).
+#define NUM_ZONES  1                                // cuántas macetas con humedad + DS18B20 (1 a 3)
+#define USE_DHT11  0                                // 1 cuando el DHT11 esté conectado
+#define USE_LDR    0                                // 1 cuando el LDR esté conectado
 #define USE_BME680 0                                // 1 solo si hay un BME680 conectado
 
 // ======================= PINES =======================
+// Pongan aquí los pines que REALMENTE usaron. La humedad tiene que ir a un pin ADC1 (GPIO 32, 33, 34, 35, 36 o 39):
+// los pines ADC2 (p. ej. 25, 26, 27, 14, 12, 13, 15, 2, 4) NO leen analógico mientras el Wi-Fi está encendido.
 #define PIN_HUM_A   34
 #define PIN_HUM_B   35
 #define PIN_HUM_C   32
@@ -54,8 +60,10 @@ bool bmeOk = false;
 #endif
 
 OneWire oneWire(PIN_DS18B20);
-DallasTemperature ds(&oneWire);
+DallasTemperature ds(&oneWire);                    // también lee DS1820 / DS18S20
+#if USE_DHT11
 DHT dht(PIN_DHT11, DHT11);
+#endif
 
 // Orden de las sondas DS18B20 por zona. getTempCByIndex() ordena por dirección interna, NO por posición:
 // al arrancar se imprimen las direcciones; calentá una sonda con la mano para saber cuál es cuál y ajustá
@@ -110,12 +118,16 @@ void setup() {
   Serial.begin(115200);
   delay(500);
   analogReadResolution(12);
-  for (int i = 0; i < 3; i++) analogSetPinAttenuation(HUM_PINS[i], ADC_11db);
+  for (int i = 0; i < NUM_ZONES; i++) analogSetPinAttenuation(HUM_PINS[i], ADC_11db);
+#if USE_LDR
   analogSetPinAttenuation(PIN_LDR, ADC_11db);
+#endif
 
   ds.begin();
   printDsAddresses();
+#if USE_DHT11
   dht.begin();
+#endif
 #if USE_BME680
   bmeOk = bme.begin(0x76) || bme.begin(0x77);
   if (bmeOk) {
@@ -147,7 +159,7 @@ void loop() {
   internal["depth_cm"] = DEPTH_CM;
   JsonArray zones = internal["zones"].to<JsonArray>();
   ds.requestTemperatures();
-  for (int z = 0; z < 3; z++) {
+  for (int z = 0; z < NUM_ZONES; z++) {
     JsonObject zo = zones.add<JsonObject>();
     zo["id"] = ZONE_IDS[z];
     JsonArray zf = zo["flags"].to<JsonArray>();
@@ -171,6 +183,7 @@ void loop() {
   // ---------- externos ----------
   JsonObject external = doc["external"].to<JsonObject>();
 
+#if USE_DHT11
   float dt = dht.readTemperature();
   float dh = dht.readHumidity();
   if (isnan(dt) || isnan(dh)) {
@@ -181,7 +194,11 @@ void loop() {
     d["t_c"] = dt;
     d["rh_pct"] = dh;
   }
+#else
+  external["dht11"] = nullptr;                 // todavía no conectado
+#endif
 
+#if USE_LDR
   int ldrRaw = readAdcAvg(PIN_LDR);
   JsonObject l = external["ldr"].to<JsonObject>();
   l["raw"] = ldrRaw;
@@ -189,6 +206,9 @@ void loop() {
   l["r_fixed_ohm"] = LDR_R_FIXED_OHM;
   l["light_pct"] = nullptr;                    // índice relativo: se define tras ver el rango real (sombra/sol)
   if (ldrRaw >= 4085) qflags.add("ldr_adc_saturated");
+#else
+  external["ldr"] = nullptr;                   // todavía no conectado
+#endif
 
 #if USE_BME680
   if (bmeOk && bme.performReading()) {

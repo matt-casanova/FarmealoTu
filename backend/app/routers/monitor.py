@@ -49,7 +49,7 @@ a{color:var(--acc)}.pill{border:1px solid var(--line);border-radius:999px;paddin
 <script>
 const $=id=>document.getElementById(id);const B={simulated:"SIMULADO",wokwi:"WOKWI",physical:"FÍSICO"};
 const f=(v,d=1,u="")=>v===null||v===undefined?"—":Number(v).toFixed(d)+u;let seen=new Set(),first=true;
-function zone(z){if(!z)return"—";const h=z.soil_moisture_vwc==null?"—":(z.soil_moisture_vwc*100).toFixed(1)+"%";return h+" / "+f(z.soil_temp_c,1,"°")}
+function zone(z){if(!z)return"—";const h=z.soil_moisture_vwc!=null?(z.soil_moisture_vwc*100).toFixed(1)+"%":(z.soil_moisture_raw!=null?"crudo "+z.soil_moisture_raw:"—");return h+" / "+f(z.soil_temp_c,1,"°")}
 async function j(u){const r=await fetch(u,{cache:"no-store"});if(!r.ok)throw new Error(u+" "+r.status);return r.json()}
 async function tick(){
  try{
