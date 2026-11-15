@@ -38,12 +38,22 @@ También se actualizó `DESIGN.md` y `.impeccable/design.json` para describir el
 - Revisado en el teléfono: tema claro, oscuro y letra 1.3. Al terminar se restauraron los valores del teléfono
   (modo oscuro activado, letra 1.0, No molestar apagado, «mantener encendida» = 7).
 
+## Segundo pase: P2
+
+| # | Problema (antes) | Cambio | Archivo | Comparar |
+|---|---|---|---|---|
+| P2-1 | Datos de terreno: etiquetas «A»/«B» superpuestas y eje 6 · 15.7 · 25.3 · 35 | Marcas redondas (`niceTicks`: pasos de 1, 2, 2,5 o 5 × 10ⁿ) y etiquetas finales que se separan si chocan | `ui/components/Charts.kt` | `antes/claro/15_datos_terreno_3..4` → `despues/claro/15_datos_terreno_humedad*` |
+| P2-2 | Escala 0·50·100 repetida bajo cada opción del 04 | La escala se rotula solo en la primera barra; las demás conservan las marcas | `Charts.kt` (`RangeBar`), `UncertaintyScreen.kt` | `13_incertidumbre_1` |
+| P2-3 | Leyenda «1 a 6 días / 6 a 11 días» (¿dónde va el 6?) | «1 a 6», «más de 6 a 11», igual que se asigna el color | `ui/components/HeatScale.kt` | `12_riesgos_mapa_calor` |
+| P2-4 | Fondo crema y sombras de 1–2 dp | Papel con matiz verde (contrastes revalidados) y profundidad plana; `ChartPalette.surface` fijado para no cambiar la paleta | `ui/theme/Color.kt`, `Theme.kt`, `Common.kt` | cualquier captura |
+| P2-5 | Preguntas 3 y 4: glifo «○ / ✓» y sin grupo para TalkBack | `RadioButton` de Material y `selectableGroup()` | `ui/screens/input/FarmerInputScreen.kt` | `despues/claro/04_entrada_p3_seleccion` |
+| P2-6 | Fuentes: «318083» | «318 083» con espacio fino, solo en números de 5 o más cifras (los años no cambian) | `Format.kt` (`groupThousands`), `SourcesScreen.kt` | `16_fuentes_contexto` |
+| P2-7 | `10.0.2.2` no anda en celular y nada lo decía | Aviso en Conexión cuando la dirección es 10.0.2.2 y la app corre en un celular | `ui/screens/settings/ConnectionScreen.kt` | `17_conexion_1` |
+
+Tests: **63/63 en verde** después del segundo pase.
+
 ## Pendiente (no se hizo)
 
-- **P2 (no aprobados en este pase):** marcas del eje y etiquetas superpuestas en «Datos de terreno»; eje
-  0·50·100 repetido en el módulo 04; leyenda de rangos con bordes compartidos («1 a 6 / 6 a 11»); papel con matiz
-  verde y elevación plana tonal (aprobados en `DESIGN.md`, sin aplicar); `selectableGroup()` en las preguntas 3 y 4;
-  separador de miles en Fuentes; nota de que `10.0.2.2` solo sirve en emulador.
 - **Sin probar:** tablet y horizontal, TalkBack de punta a punta (solo revisión de código), rendimiento medido,
   brillo bajo sol real, backend real (no disponible; todo en modo demo).
 - `local.properties` quedó con `farmealotu.demoMode=true` (archivo local, fuera de git).

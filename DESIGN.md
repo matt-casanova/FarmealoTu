@@ -11,16 +11,16 @@ colors:
   clay: "#8A5A00"
   clay-container: "#FFE9B8"
   on-clay-container: "#3D2800"
-  paper: "#F7F4EC"
-  card-surface: "#FCFCFB"
+  paper: "#F3F5EC"
+  card-surface: "#FBFCF8"
   surface-container-lowest: "#FFFFFF"
-  surface-container: "#F3F0E6"
-  card-surface-variant: "#EDE9DD"
-  surface-container-highest: "#E6E2D4"
+  surface-container: "#ECEFE3"
+  card-surface-variant: "#E6E9DB"
+  surface-container-highest: "#DFE3D2"
   ink: "#14180F"
   ink-secondary: "#45493F"
   outline: "#7B7F72"
-  outline-soft: "#CFCBBD"
+  outline-soft: "#C6CBB9"
   alert-red: "#A62B22"
   alert-red-container: "#FBE0DC"
   on-alert-red-container: "#5C120D"
@@ -42,6 +42,7 @@ colors:
   chart-div-mid: "#F0EFEC"
   chart-div-high-soft: "#86B6EF"
   chart-div-high: "#1C5CAB"
+  chart-surface: "#FCFCFB"
   chart-no-data: "#F0EFEC"
   chart-grid: "#E1E0D9"
   chart-axis: "#C3C2B7"
@@ -241,8 +242,8 @@ components:
 
 > Este documento describe el sistema **tal como está implementado** en `app/src/main/java/com/example/farmealotu/ui/`
 > (`theme/Color.kt`, `theme/Type.kt`, `theme/Theme.kt`, `components/Common.kt`, `components/Charts.kt`,
-> `components/HeatScale.kt`). Las decisiones aprobadas que todavía no están en el código se marcan
-> **«aprobada, pendiente de aplicar»**.
+> `components/HeatScale.kt`, `components/FarmIcons.kt`). Si se aprueba una decisión que todavía no está en el código,
+> se marca **«aprobada, pendiente de aplicar»**; hoy no hay ninguna.
 
 ## Overview
 
@@ -328,9 +329,10 @@ no se reordenan y no se cambian sin volver a validarlos.
 
 **The Purple Means Demo Rule.** El morado aparece solo en la franja de MODO DEMO. Si lo ves en otro lugar, es un error.
 
-**The Green Paper Rule (aprobada, pendiente de aplicar).** Llevar `paper` y las superficies neutras a un papel con un
-matiz verde leve, sin perder la calidez ni el contraste de la tinta. Es un cambio pequeño dentro de la misma
-identidad; se aplica en la Fase 2 (tema) y se revalidan los contrastes.
+**The Green Paper Rule.** `paper` y las superficies neutras son un papel con un matiz verde leve (antes crema
+#F7F4EC), sin perder la calidez ni el contraste: la tinta queda en 14:1 o más, la secundaria en 7:1 o más y el verde
+de los textos en 4,9:1 o más sobre todas las superficies. `ChartPalette.surface` tiene su propio valor fijo
+(`chart-surface`) y no sigue a `card-surface`.
 
 ## Typography
 
@@ -390,18 +392,18 @@ detalle. Lo técnico va al final y plegado.
 
 ## Elevation & Depth
 
-Hoy el sistema es mixto. Las tarjetas combinan una sombra de 1 dp con un borde fino de `outline-soft` al 70 %. El
-botón principal tiene 2 dp de sombra, y la barra de navegación usa elevación tonal de 6 dp. Las tarjetas tranquilas
-(`surface-container`, sin borde) ya se apoyan solo en el tono.
+Plana y tonal. Las tarjetas declaran la elevación una sola vez, con un borde fino de `outline-soft` al 70 % y sin
+sombra. El botón principal no tiene sombra. La barra de navegación usa elevación tonal de 6 dp, y las tarjetas
+tranquilas (`surface-container`, sin borde) se apoyan solo en el tono.
 
 ### Shadow Vocabulary
-- **Tarjeta** (elevación Material 1 dp + borde de 1 dp en `outline-soft` al 70 %): todas las `SectionCard`.
-- **Botón principal** (elevación Material 2 dp): `PrimaryButton`.
+- **Tarjeta** (sin sombra; borde de 1 dp en `outline-soft` al 70 %): todas las `SectionCard`.
+- **Botón principal** (sin sombra, también al presionar): `PrimaryButton`.
 - **Barra de navegación** (elevación tonal de 6 dp): `NavigationBar`.
 - **Sombra del geovisor** (negro al 20 %, `0x33000000`): sombra de las capas de la pila isométrica en Canvas.
 
 ### Named Rules
-**The Flat Tonal Rule (aprobada, pendiente de aplicar).** La profundidad se expresa con los niveles tonales de
+**The Flat Tonal Rule.** La profundidad se expresa con los niveles tonales de
 superficie de Material 3 y bordes finos, con una sombra casi nula. Así se lee más limpio y ordenado, y al sol no se
 ensucia. La tarjeta destacada se distingue por su contenedor y su borde de 2 dp, no por la sombra.
 
@@ -422,7 +424,7 @@ acción principal clara por pantalla.
 ### Buttons
 - **Shape:** esquinas redondeadas medias (14 dp).
 - **Primary (`PrimaryButton`):** relleno Verde Cultivo con texto blanco en Title Medium Bold; ancho completo, alto
-  mínimo de 54 dp, relleno de 12/16 dp y 2 dp de sombra. Ejemplos: «Comparar opciones de siembra», «Comparar todas»,
+  mínimo de 54 dp, relleno de 12/16 dp y sin sombra. Ejemplos: «Comparar opciones de siembra», «Comparar todas»,
   «Reintentar».
 - **Secondary (`SecondaryButton`):** contorno de 1,5 dp en Verde Cultivo y texto verde en Label Large SemiBold;
   ancho completo, alto mínimo de 50 dp. Se usa para navegar y para acciones alternativas.
