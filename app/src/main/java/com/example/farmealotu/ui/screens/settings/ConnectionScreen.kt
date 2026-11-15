@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -87,6 +90,22 @@ fun ConnectionScreen(
             message?.let {
                 Text(it, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary)
             }
+            // 10.0.2.2 es «la PC» solo dentro del emulador; en un celular no llega a ningún lado.
+            if ("10.0.2.2" in urlText && !isProbablyEmulator()) {
+                Surface(
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        "La dirección 10.0.2.2 solo funciona en el emulador. En este celular, escribí la IP de la " +
+                            "computadora que corre el servidor (en la misma red Wi-Fi), por ejemplo http://192.168.1.10:8000/.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(12.dp),
+                    )
+                }
+            }
             PrimaryButton("Guardar dirección", {
                 val trimmed = urlText.trim()
                 when {
@@ -151,3 +170,11 @@ fun ConnectionScreenPreview() {
         )
     }
 }
+
+/** Heurística conocida para el emulador de Android Studio (no se usa para nada más que este aviso). */
+private fun isProbablyEmulator(): Boolean =
+    android.os.Build.FINGERPRINT.startsWith("generic") ||
+        android.os.Build.FINGERPRINT.contains("emulator") ||
+        android.os.Build.HARDWARE.contains("ranchu") ||
+        android.os.Build.HARDWARE.contains("goldfish") ||
+        android.os.Build.PRODUCT.contains("sdk")

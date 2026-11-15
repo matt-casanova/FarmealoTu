@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -299,7 +302,8 @@ private fun ChoiceStep(
 ) {
     QuestionTitle(question)
     if (hint != null) Text(hint, style = MaterialTheme.typography.bodyMedium)
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    // selectableGroup: TalkBack anuncia la lista como un grupo de opciones («1 de 4»).
+    Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         options.forEachIndexed { index, label ->
             ChoiceButton(label, selected = selectedIndex == index, onClick = { onSelect(index) })
         }
@@ -325,7 +329,12 @@ private fun ChoiceButton(label: String, selected: Boolean, onClick: () -> Unit) 
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(if (selected) "✓" else "○", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = scheme.primary)
+            // Radio de Material (decorativo: toda la tarjeta es el objetivo táctil de 60 dp).
+            RadioButton(
+                selected = selected,
+                onClick = null,
+                colors = RadioButtonDefaults.colors(selectedColor = scheme.primary, unselectedColor = scheme.outline),
+            )
             Text(label, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
         }
     }

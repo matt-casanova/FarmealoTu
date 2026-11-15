@@ -52,3 +52,21 @@ fun scoreAxisMax(values: List<Double?>): Double {
 }
 
 fun scoreDecimals(axisMax: Double): Int = if (axisMax <= 1.0) 2 else 0
+
+private val LONG_NUMBER = Regex("""-?\d{5,}(\.\d+)?""")
+
+/**
+ * Agrupa los miles con un espacio fino («318083» → «318 083») solo si el texto es un número de 5 o más
+ * cifras enteras: los años («2023») y los textos quedan igual. No cambia el valor, solo cómo se lee.
+ * Se usa espacio (no punto) porque la app escribe los decimales con punto («612.4 mm»).
+ */
+fun groupThousands(text: String): String {
+    val trimmed = text.trim()
+    if (!LONG_NUMBER.matches(trimmed)) return text
+    val negative = trimmed.startsWith("-")
+    val digits = trimmed.removePrefix("-")
+    val integer = digits.substringBefore('.')
+    val decimals = digits.substringAfter('.', "")
+    val grouped = integer.reversed().chunked(3).joinToString(" ").reversed()
+    return (if (negative) "-" else "") + grouped + (if (decimals.isNotEmpty()) ".$decimals" else "")
+}

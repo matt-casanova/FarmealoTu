@@ -22,6 +22,7 @@ import com.example.farmealotu.ui.components.FIXED_LIMITATIONS
 import com.example.farmealotu.ui.components.FarmScreen
 import com.example.farmealotu.ui.components.FreshnessNote
 import com.example.farmealotu.ui.components.LabeledValueList
+import com.example.farmealotu.ui.components.groupThousands
 import com.example.farmealotu.ui.components.NASA_ROLE
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.StateContent
@@ -74,7 +75,9 @@ fun SourcesScreen(
                 style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
             )
             state.data.forEach { section ->
-                SectionCard(title = section.title) { LabeledValueList(section.lines) }
+                SectionCard(title = section.title) {
+                    LabeledValueList(section.lines.map { it.copy(value = groupThousands(it.value)) })
+                }
             }
         }
     }
