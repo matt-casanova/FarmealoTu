@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.example.farmealotu.ui.components.FarmIcons
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,16 +27,19 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.farmealotu.AppSettings
+import com.example.farmealotu.ui.components.FarmIcons
 import com.example.farmealotu.ui.screens.compare.CompareRotationsScreen
 import com.example.farmealotu.ui.screens.compare.StrategyDetailScreen
 import com.example.farmealotu.ui.screens.decision.DecisionScreen
 import com.example.farmealotu.ui.screens.home.HomeScreen
 import com.example.farmealotu.ui.screens.input.FarmerInputScreen
+import com.example.farmealotu.ui.screens.splash.SplashScreen
 import com.example.farmealotu.viewmodel.AppViewModelFactory
 import com.example.farmealotu.viewmodel.MainViewModel
 import com.example.farmealotu.viewmodel.dataOrNull
 
 object Routes {
+    const val SPLASH = "splash"
     const val HOME = "home"
     const val INPUT = "input?summary={summary}"
     const val DECISION = "decision"
@@ -65,7 +67,10 @@ private data class BottomNavItem(
 )
 
 /**
- * Navegación principal con barra de navegación inferior permanente (`Bottom Navigation Bar`).
+ * Navegación principal:
+ * 1. Splash Screen con logo Sowlt (fondo blanco)
+ * 2. Formulario de 5 Preguntas (si aún no se completó)
+ * 3. Inicio (Home) con todos los módulos y navegación inferior.
  */
 @Composable
 fun FarmealoTuNavHost(
@@ -88,6 +93,8 @@ fun FarmealoTuNavHost(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    val showBottomBar = currentRoute != Routes.SPLASH
+
     val navItems = listOf(
         BottomNavItem(
             route = Routes.HOME,
@@ -105,8 +112,6 @@ fun FarmealoTuNavHost(
             route = Routes.DECISION,
             label = "Siembra",
             icon = FarmIcons.Leaf,
-            // El recorrido de siembra completo: preguntas, resultado y los módulos 01, 02 y 04
-            // (el 03 tiene su propia pestaña «Riesgos»).
             isSelected = { route ->
                 route == Routes.DECISION || route?.startsWith("input") == true ||
                     route?.startsWith("compare") == true || route?.startsWith("strategy") == true ||
@@ -144,34 +149,35 @@ fun FarmealoTuNavHost(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface,
-                tonalElevation = 6.dp,
-            ) {
-                navItems.forEach { item ->
-                    val selected = item.isSelected(currentRoute)
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = item.onClick,
-                        // El ícono es decorativo: la etiqueta ya nombra el destino para TalkBack.
-                        icon = { Icon(item.icon, contentDescription = null) },
-                        label = {
-                            Text(
-                                text = item.label,
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-                                maxLines = 1,
-                                softWrap = false,
+            if (showBottomBar) {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 6.dp,
+                ) {
+                    navItems.forEach { item ->
+                        val selected = item.isSelected(currentRoute)
+                        NavigationBarItem(
+                            selected = selected,
+                            onClick = item.onClick,
+                            icon = { Icon(item.icon, contentDescription = null) },
+                            label = {
+                                Text(
+                                    text = item.label,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                                    maxLines = 1,
+                                    softWrap = false,
+                                )
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            selectedTextColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                    )
+                    }
                 }
             }
         }
@@ -179,13 +185,25 @@ fun FarmealoTuNavHost(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = innerPadding.calculateBottomPadding())
+                .padding(bottom = if (showBottomBar) innerPadding.calculateBottomPadding() else 0.dp)
         ) {
             NavHost(
                 navController = navController,
-                startDestination = Routes.HOME,
+                startDestination = Routes.SPLASH,
                 modifier = Modifier.fillMaxSize()
             ) {
+                composable(Routes.SPLASH) {
+                    SplashScreen(
+                        onFinished = {
+                            val target = if (inputState.isComplete) Routes.HOME else Routes.input(summary = false)
+                            navController.navigate(target) {
+                                popUpTo(Routes.SPLASH) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
+
                 composable(Routes.HOME) {
                     val compare by viewModel.compare.collectAsStateWithLifecycle()
                     val input by viewModel.input.collectAsStateWithLifecycle()

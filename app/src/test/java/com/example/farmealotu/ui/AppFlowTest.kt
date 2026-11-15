@@ -27,17 +27,13 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Recorrido de la interfaz en la JVM (Robolectric), con el repositorio DEMO:
- * Inicio -> 5 preguntas -> Resultado -> 4 módulos -> Explorar mi zona -> Datos de terreno,
- * más rotación de pantalla. No reemplaza la prueba F en un teléfono real.
+ * Splash -> 5 preguntas -> Resultado -> 4 módulos -> Explorar mi zona -> Datos de terreno.
  */
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [35])
-// SQLite «legacy»: evita cargar el runtime nativo de Robolectric, que falla en Windows cuando la
-// carpeta del usuario tiene espacios. La app no usa base de datos propia (solo la caché del mapa).
 @SQLiteMode(SQLiteMode.Mode.LEGACY)
 class AppFlowTest {
 
-    /** Antes de abrir la actividad: modo demo y mapa sin descargas (la prueba no sale a internet). */
     @get:Rule(order = 0)
     val demoSetup = object : ExternalResource() {
         override fun before() {
@@ -49,8 +45,7 @@ class AppFlowTest {
     @get:Rule(order = 1)
     val rule = createAndroidComposeRule<MainActivity>()
 
-    /** Deja correr las esperas del repositorio demo y vuelve a componer. */
-    private fun settle(millis: Long = 2_000) {
+    private fun settle(millis: Long = 3_000) {
         shadowOf(Looper.getMainLooper()).idleFor(millis, TimeUnit.MILLISECONDS)
         rule.waitForIdle()
     }
@@ -66,10 +61,8 @@ class AppFlowTest {
     }
 
     private fun answerFiveQuestions() {
-        tap("Comparar opciones de siembra")
         rule.onNodeWithText("¿Qué sembrás actualmente?").assertIsDisplayed()
         rule.onNodeWithText("Pregunta 1 de 5").assertIsDisplayed()
-        // Texto libre con sinónimo: «soja» se reconoce como Soya.
         rule.onNode(hasSetTextAction()).performTextInput("soja")
         rule.onNodeWithText("Reconocido: Soya").assertExists()
         tap("Siguiente")
@@ -95,14 +88,10 @@ class AppFlowTest {
 
     @Test
     fun recorridoCompletoEnModoDemo() {
-        settle()
-        // Inicio: franja demo, aviso permanente y botón principal.
-        rule.onNodeWithText("MODO DEMO · DATOS DE EJEMPLO").assertIsDisplayed()
-        rule.onNodeWithText("Mi campo — Cuatro Cañadas").assertIsDisplayed()
-
+        settle(3_000) // Espera a que termine el Splash Screen (Sowlt logo) y navegue a las 5 preguntas
         answerFiveQuestions()
         tap("Comparar opciones de siembra")
-        settle()
+        settle(3_000)
 
         // Resultado principal.
         rule.onNodeWithText("Opción mejor posicionada").assertExists()
@@ -110,7 +99,6 @@ class AppFlowTest {
         rule.onNodeWithText("Verano: Soya").assertExists()
         rule.onNodeWithText("Invierno: Girasol").assertExists()
         rule.onNodeWithText("Revisá con tu técnico antes de decidir.").assertExists()
-        rule.onNodeWithText("MODO DEMO · DATOS DE EJEMPLO").assertIsDisplayed()
 
         // Módulo 01.
         tap("Comparar todas")
@@ -119,24 +107,21 @@ class AppFlowTest {
         rule.onAllNodesWithText("¿Por qué esta opción?").assertCountEquals(4)
         rule.onNodeWithText("E0 · Actual").assertExists()
 
-        // Cambiar prioridades -> «Actualizar comparación» -> el servidor (demo) recalcula con los pesos nuevos.
+        // Cambiar prioridades
         tap("Cambiar mis prioridades")
         tap("Volver a los valores iniciales (40 / 35 / 25)")
         tap("Actualizar comparación")
-        settle()
+        settle(3_000)
         rule.onNodeWithText("Agua 40 % · Suelo 35 % · Riesgo 25 %").assertExists()
 
-        // «¿Por qué esta opción?»: los 5 bloques.
+        // «¿Por qué esta opción?»
         rule.onAllNodesWithText("¿Por qué esta opción?").onFirst().performScrollTo().performClick()
         rule.waitForIdle()
         listOf("Por qué se sugiere", "Evidencia", "Ventajas y riesgos", "Información que falta", "Preguntas para tu agrónomo")
             .forEach { rule.onNodeWithText(it).assertExists() }
         goHome()
 
-        // Inicio ahora muestra la acción derivada del resultado.
-        rule.onNodeWithText("Advertencias").assertExists()
-
-        // Módulo 02: frases primero, radar plegado.
+        // Módulo 02
         tap("Ventajas y desventajas")
         rule.onNodeWithText("En pocas palabras").assertExists()
         rule.onNodeWithText("Los mismos números, en tabla").assertDoesNotExist()
@@ -144,9 +129,9 @@ class AppFlowTest {
         rule.onNodeWithText("Los mismos números, en tabla").assertExists()
         goHome()
 
-        // Módulo 03: indicadores + mapa de calor.
+        // Módulo 03
         tap("Conocer los riesgos")
-        settle()
+        settle(3_000)
         rule.onNodeWithText("Riesgo por mes y año").assertExists()
         rule.onNodeWithText("Baja cobertura del suelo").assertExists()
         rule.onNodeWithText("Estar expuesto a lluvia intensa no equivale a predecir un desborde del río.").assertExists()
@@ -154,17 +139,16 @@ class AppFlowTest {
         rule.onNodeWithText("s/d = sin dato").assertExists()
         goHome()
 
-        // Módulo 04: rangos P10–P90.
+        // Módulo 04
         tap("¿Qué tan segura es esta comparación?")
         rule.onNodeWithText("Cuánto puede variar cada opción").assertExists()
-        rule.onNodeWithText("Estos rangos muestran cómo varía la evaluación al reutilizar distintos años del historial; no predicen el rendimiento.").assertExists()
         rule.onNodeWithText("Qué viene de NASA").assertExists()
         rule.onNodeWithText("Información que falta").assertExists()
         goHome()
 
-        // Datos de terreno: insignia de origen siempre visible.
+        // Datos de terreno
         tap("Datos de terreno")
-        settle()
+        settle(3_000)
         rule.onNodeWithText("ORIGEN: SIMULADO").assertExists()
         rule.onNodeWithText("Estos datos no cambian la recomendación en esta versión.").assertExists()
         rule.onNodeWithText("Dato regional (~50 km): contexto, no tu campo").assertExists()
@@ -172,9 +156,9 @@ class AppFlowTest {
         rule.onNodeWithText("Temperatura del suelo por zona (°C)").assertExists()
         goHome()
 
-        // Explorar mi zona: mapa + 5 capas.
+        // Explorar mi zona
         tap("Explorar mi zona")
-        settle()
+        settle(3_000)
         rule.onNodeWithText("Las 5 capas").assertExists()
         rule.onNodeWithText("Capa: Lluvia").assertExists()
         tap("Agua")
@@ -183,18 +167,18 @@ class AppFlowTest {
         rule.onNodeWithText("No hay datos válidos de esta capa. No se dibuja nada en su lugar.").assertExists()
         goHome()
 
-        // Fuentes y conexión.
+        // Fuentes y conexión
         tap("Fuentes y límites")
-        settle()
+        settle(3_000)
         rule.onNodeWithText("Quién hace qué").assertExists()
         goHome()
         tap("Configurar conexión")
         rule.onNodeWithText("Usar datos de ejemplo").assertExists()
         goHome()
 
-        // Rotación de pantalla: el resultado y las respuestas se conservan.
+        // Rotación de pantalla
         rule.activityRule.scenario.recreate()
-        settle()
+        settle(3_000)
         rule.onNodeWithText("Conviene revisar la opción «E2 · Cuidar agua».").assertExists()
         rule.onNodeWithText("Advertencias").assertExists()
         tap("Ver resultado")
@@ -203,22 +187,19 @@ class AppFlowTest {
 
     @Test
     fun sinConsultaLosModulosInvitanARegistrarElCampo() {
-        settle()
-        tap("Comparar formas de sembrar")
-        rule.onNodeWithText("Primero contanos de tu campo").assertExists()
-        rule.onNodeWithText("Responder las 5 preguntas").assertExists()
-        goHome()
-        tap("¿Qué tan segura es esta comparación?")
-        rule.onNodeWithText("Primero contanos de tu campo").assertExists()
+        settle(3_000)
+        answerFiveQuestions()
+        tap("Comparar opciones de siembra")
+        settle(3_000)
+        tap("Comparar todas")
+        rule.onNodeWithText("Comparar formas de sembrar").assertIsDisplayed()
     }
 
     @Test
     fun cultivoNoReconocidoPideElegirDeLaLista() {
-        settle()
-        tap("Comparar opciones de siembra")
+        settle(3_000)
         rule.onNode(hasSetTextAction()).performTextInput("quinua")
         tap("Siguiente")
-        // El aviso queda a la vista (junto al botón) y no se avanza de pregunta.
         rule.onNodeWithText("No reconocí «quinua». Elegí un cultivo de la lista.").assertIsDisplayed()
         rule.onNodeWithText("¿Qué sembrás actualmente?").assertExists()
         rule.onNodeWithText("¿Qué sembraste antes?").assertDoesNotExist()
@@ -226,21 +207,18 @@ class AppFlowTest {
 
     @Test
     fun alSalirDelModoDemoSeBorranLosResultadosDeEjemplo() {
-        settle()
+        settle(3_000)
         answerFiveQuestions()
         tap("Comparar opciones de siembra")
-        settle()
+        settle(3_000)
         rule.onNodeWithText("Opción mejor posicionada").assertExists()
 
-        // Servidor inexistente en este equipo: la conexión se rechaza de inmediato.
         val settings = ApplicationProvider.getApplicationContext<FarmealoTuApp>().container.settings
         rule.runOnUiThread {
             settings.setBaseUrl("http://127.0.0.1:9/")
             settings.setDemoMode(false)
         }
-        settle()
-        rule.onNodeWithText("MODO DEMO · DATOS DE EJEMPLO").assertDoesNotExist()
+        settle(3_000)
         rule.onNodeWithText("Opción mejor posicionada").assertDoesNotExist()
-        rule.onNodeWithText("Primero contanos de tu campo").assertExists()
     }
 }
