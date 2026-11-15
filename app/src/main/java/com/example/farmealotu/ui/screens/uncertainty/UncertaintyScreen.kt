@@ -41,7 +41,7 @@ import com.example.farmealotu.ui.theme.FarmealoTuTheme
 import com.example.farmealotu.viewmodel.MainViewModel
 
 private const val RANGE_MEANING =
-    "Estos rangos muestran cómo varía la evaluación al reutilizar distintos años del historial; no predicen el rendimiento."
+    "Rangos según años pasados; no predicen la cosecha."
 
 private fun Evidence.line(): String = buildString {
     append(indicator)
@@ -93,7 +93,7 @@ private fun RangesCard(result: ComparisonResult) {
         Text(RANGE_MEANING, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
         if (withRange.isEmpty()) {
             Text(
-                "El servidor no envió rangos de variación (P10–P90) para estas opciones, así que no se dibuja ninguno.",
+                "Sin rangos P10–P90.",
                 style = MaterialTheme.typography.bodyMedium,
             )
             return@SectionCard
@@ -121,13 +121,13 @@ private fun RangesCard(result: ComparisonResult) {
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     } else {
-                        Text("Sin rango informado para esta opción.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("Sin rango.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
         }
         Text(
-            "Barra = del P10 al P90. Punto negro = P50 (valor del medio). Si dos barras se pisan mucho, la diferencia entre esas opciones es poco firme.",
+            "Barra: P10 a P90. Punto: valor del medio. Si dos barras se pisan, la diferencia es poco firme.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -142,7 +142,7 @@ private fun ConfidenceCard(result: ComparisonResult) {
     SectionCard(title = "Qué tan firme es el orden") {
         informed.forEach { strategy -> ConfidenceItem(strategy) }
         Text(
-            "Con datos regionales y valores generales de cultivo, la confianza nunca se rotula como alta.",
+            "Con datos de la zona, la confianza nunca es alta.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -177,7 +177,7 @@ private fun ProvenanceSections(result: ComparisonResult, appliedInput: FarmerInp
     val unavailable = evidenceWith(result) { it.statusIs("unavailable") }
 
     SectionCard(title = "Qué viene de NASA") {
-        BulletList(fromNasa, emptyText = "En esta respuesta el servidor no marcó ningún dato como observación de NASA.")
+        BulletList(fromNasa, emptyText = "Sin datos marcados de NASA.")
         ExplainButton(Glossary.regional)
     }
 
@@ -186,9 +186,9 @@ private fun ProvenanceSections(result: ComparisonResult, appliedInput: FarmerInp
     }
 
     SectionCard(title = "Qué calculó FarmealoTu") {
-        BulletList(derived, emptyText = "El servidor no marcó datos calculados en esta respuesta.")
+        BulletList(derived, emptyText = "Sin datos calculados.")
         Text(
-            "Los puntajes y el orden los calcula el servidor de FarmealoTu con reglas y con tus prioridades.",
+            "FarmealoTu calcula el orden con reglas y tus prioridades.",
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
@@ -211,13 +211,13 @@ private fun ProvenanceSections(result: ComparisonResult, appliedInput: FarmerInp
             }
             addAll(farmerEvidence)
         }
-        BulletList(own, emptyText = "Sin datos tuyos registrados en esta comparación.")
+        BulletList(own, emptyText = "Sin datos tuyos.")
     }
 
     SectionCard(title = "Supuestos iniciales") {
-        BulletList(assumptions, emptyText = "El servidor no listó supuestos en esta respuesta.")
+        BulletList(assumptions, emptyText = "Sin supuestos.")
         Text(
-            "Los pesos de partida (agua 40 %, suelo 35 %, riesgo 25 %) son una preferencia inicial, no un valor validado científicamente.",
+            "Pesos iniciales (agua 40 %, suelo 35 %, riesgo 25 %): una preferencia, no un valor científico.",
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
@@ -230,7 +230,7 @@ private fun ProvenanceSections(result: ComparisonResult, appliedInput: FarmerInp
     SectionCard(title = "Preguntas para tu agrónomo", containerColor = MaterialTheme.colorScheme.secondaryContainer) {
         BulletList(
             result.strategies.flatMap { it.agronomistQuestions }.distinct(),
-            emptyText = "El servidor no envió preguntas. Igual conviene revisar la comparación con tu técnico.",
+            emptyText = "Revisala con tu técnico.",
         )
     }
 

@@ -63,7 +63,7 @@ fun ConnectionScreen(
             Text(
                 text = when (val state = health) {
                     is UiState.Success -> if (connection.demoMode) "Modo demo activo: no se consulta ningún servidor."
-                    else if (state.data.ok) "Conectado. El servidor respondió bien." else "El servidor respondió, pero avisa que no está listo."
+                    else if (state.data.ok) "Conectado. El servidor respondió bien." else "El servidor todavía no está listo."
                     is UiState.Error -> "❌ ${state.failure.title}. ${state.failure.message}"
                     else -> "⏳ Comprobando estado…"
                 },

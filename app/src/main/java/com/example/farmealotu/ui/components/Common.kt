@@ -564,7 +564,7 @@ fun <T> FreshnessNote(state: UiState.Success<T>, onRetry: (() -> Unit)?) {
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary),
             ) {
                 Text(
-                    "No se pudo actualizar. Estás viendo lo último consultado.",
+                    "Sin actualizar: ves lo último guardado.",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                 )
@@ -582,7 +582,7 @@ fun <T> StateContent(
     onRetry: () -> Unit,
     loadingText: String = "Cargando…",
     emptyTitle: String = "Todavía no hay datos",
-    emptyMessage: String = "El servidor respondió, pero no envió información para mostrar.",
+    emptyMessage: String = "Sin datos para mostrar.",
     errorExtra: (@Composable ColumnScope.() -> Unit)? = null,
     content: @Composable (UiState.Success<T>) -> Unit,
 ) {

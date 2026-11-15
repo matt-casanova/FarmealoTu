@@ -84,9 +84,9 @@ fun HomeScreen(
             Text(
                 text = when {
                     observation == null && nasaStatus is UiState.Loading -> "Consultando el estado de los datos…"
-                    observation == null -> "El servidor todavía no informó la fecha de la última observación."
-                    download != null -> "Es la última observación disponible. Descargados el ${formatApiDate(download)}."
-                    else -> "Es la última observación disponible; no es la fecha de hoy."
+                    observation == null -> "Sin fecha de datos todavía."
+                    download != null -> "Descargados el ${formatApiDate(download)}."
+                    else -> "Último dato disponible."
                 } + if (connection.demoMode) " (Fechas de ejemplo.)" else "",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -118,9 +118,9 @@ fun HomeScreen(
         SectionCard(title = "Estado de conexión", containerColor = MaterialTheme.colorScheme.surfaceContainer, border = null) {
             Text(
                 text = when {
-                    connection.demoMode -> "Modo demo: se muestran datos de ejemplo, sin servidor."
-                    health is UiState.Success && health.dataOrNull?.ok == true -> "Conectado al servidor de FarmealoTu."
-                    health is UiState.Success -> "El servidor respondió, pero avisa que no está listo."
+                    connection.demoMode -> "Modo demo: datos de ejemplo."
+                    health is UiState.Success && health.dataOrNull?.ok == true -> "Conectado."
+                    health is UiState.Success -> "El servidor todavía no está listo."
                     health is UiState.Error -> "Sin conexión con el servidor. ${(health as UiState.Error).failure.message}"
                     else -> "Comprobando la conexión…"
                 },
@@ -172,16 +172,16 @@ private fun MainActionCard(
                     recommended.reasons.firstOrNull()?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
                     Text("Revisá con tu técnico antes de decidir.", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                 } else {
-                    Text("Información insuficiente para ordenar opciones", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                    Text("El servidor no eligió una opción mejor posicionada. Mirá las razones en el resultado.", style = MaterialTheme.typography.bodyMedium)
+                    Text("Faltan datos para ordenar las opciones", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Text("Ninguna opción sale mejor. Mirá el resultado.", style = MaterialTheme.typography.bodyMedium)
                 }
                 // Enlace discreto: la acción principal («Comparar opciones de siembra») lleva al mismo resultado.
                 QuietAction("Ver resultado", FarmIcons.ChevronRight, onOpenDecision)
             }
             else -> {
                 Text(
-                    text = if (inputComplete) "Ya tenemos tus respuestas. Compará tus opciones de siembra."
-                    else "Contanos de tu campo en 5 preguntas cortas y te mostramos opciones de siembra para comparar.",
+                    text = if (inputComplete) "Ya tenemos tus respuestas."
+                    else "Respondé 5 preguntas y compará opciones de siembra.",
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -193,12 +193,12 @@ private fun MainActionCard(
 fun AlertsCard(result: ComparisonResult) {
     SectionCard(title = "Advertencias") {
         if (result.alerts.isEmpty()) {
-            Text("El servidor no calculó advertencias para esta consulta.", style = MaterialTheme.typography.bodyMedium)
+            Text("Sin advertencias.", style = MaterialTheme.typography.bodyMedium)
         } else {
             result.alerts.forEach { AlertItem(it) }
         }
         Text(
-            "Las advertencias se calculan con datos fechados. No son alertas en tiempo real.",
+            "No son alertas en tiempo real.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

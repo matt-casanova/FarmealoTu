@@ -57,7 +57,7 @@ fun SourcesScreen(
             onRetry = { viewModel.loadSources(force = true) },
             loadingText = "Consultando las fuentes…",
             emptyTitle = "El servidor no listó fuentes",
-            emptyMessage = "Cuando el servidor publique su catálogo de fuentes va a aparecer acá.",
+            emptyMessage = "Sin fuentes publicadas todavía.",
         ) { state ->
             FreshnessNote(state, onRetry = { viewModel.loadSources(force = true) })
             SectionCard {

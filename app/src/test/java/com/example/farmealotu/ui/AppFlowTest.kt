@@ -115,7 +115,7 @@ class AppFlowTest {
         // Módulo 01.
         tap("Comparar todas")
         rule.onNodeWithText("Comparar formas de sembrar").assertIsDisplayed()
-        rule.onNodeWithText("Puntaje relativo entre opciones, no probabilidad de éxito.").assertExists()
+        rule.onNodeWithText("Puntaje para comparar opciones, no probabilidad de éxito.").assertExists()
         rule.onAllNodesWithText("¿Por qué esta opción?").assertCountEquals(4)
         rule.onNodeWithText("E0 · Actual").assertExists()
 
@@ -149,7 +149,7 @@ class AppFlowTest {
         settle()
         rule.onNodeWithText("Riesgo por mes y año").assertExists()
         rule.onNodeWithText("Baja cobertura del suelo").assertExists()
-        rule.onNodeWithText("Estar expuesto a lluvia intensa no equivale a predecir un desborde del río.").assertExists()
+        rule.onNodeWithText("Lluvia intensa no es un pronóstico de inundación.").assertExists()
         tap("Ver como tabla")
         rule.onNodeWithText("s/d = sin dato").assertExists()
         goHome()
@@ -157,7 +157,7 @@ class AppFlowTest {
         // Módulo 04: rangos P10–P90.
         tap("¿Qué tan segura es esta comparación?")
         rule.onNodeWithText("Cuánto puede variar cada opción").assertExists()
-        rule.onNodeWithText("Estos rangos muestran cómo varía la evaluación al reutilizar distintos años del historial; no predicen el rendimiento.").assertExists()
+        rule.onNodeWithText("Rangos según años pasados; no predicen la cosecha.").assertExists()
         rule.onNodeWithText("Qué viene de NASA").assertExists()
         rule.onNodeWithText("Información que falta").assertExists()
         goHome()
@@ -166,7 +166,7 @@ class AppFlowTest {
         tap("Datos de terreno")
         settle()
         rule.onNodeWithText("ORIGEN: SIMULADO").assertExists()
-        rule.onNodeWithText("Estos datos no cambian la recomendación en esta versión.").assertExists()
+        rule.onNodeWithText("No cambian la recomendación.").assertExists()
         rule.onNodeWithText("Dato regional (~50 km): contexto, no tu campo").assertExists()
         rule.onNodeWithText("Humedad del suelo por zona (%)").assertExists()
         rule.onNodeWithText("Temperatura del suelo por zona (°C)").assertExists()
@@ -180,7 +180,7 @@ class AppFlowTest {
         tap("Agua")
         rule.onNodeWithText("Capa: Agua").assertExists()
         tap("Vegetación")
-        rule.onNodeWithText("No hay datos válidos de esta capa. No se dibuja nada en su lugar.").assertExists()
+        rule.onNodeWithText("Sin datos para esta capa.").assertExists()
         goHome()
 
         // Fuentes y conexión.

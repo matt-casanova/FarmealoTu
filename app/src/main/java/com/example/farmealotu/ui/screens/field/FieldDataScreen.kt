@@ -86,8 +86,8 @@ private val ZONES = listOf(
 
 fun calibrationLabel(method: String?, flags: List<String>): String = when {
     flags.any { it.contains("uncalibrated", ignoreCase = true) } ->
-        "Humedad SIN calibrar: el valor es relativo, no un % volumétrico real"
-    method == null -> "Calibración no informada: tomá la humedad como valor orientativo"
+        "Humedad SIN calibrar (valor relativo)"
+    method == null -> "Calibración no informada: valor orientativo"
     method.equals("gravimetric_3pt", ignoreCase = true) -> "Humedad calibrada con 3 puntos (método gravimétrico)"
     else -> "Calibración informada por el nodo: $method"
 }
@@ -144,9 +144,9 @@ fun FieldDataScreen(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary),
         ) {
-            Text("Estos datos no cambian la recomendación en esta versión.", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            Text("No cambian la recomendación.", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
             Text(
-                "Muestran cómo varía un campo de un punto a otro: algo que el satélite, que mira zonas de kilómetros, promedia.",
+                "Miden un punto del campo; el satélite promedia kilómetros.",
                 style = MaterialTheme.typography.bodyMedium,
             )
             ExplainButton(Glossary.satelliteVsGround, label = "Satélite y sensor: ¿en qué se diferencian?")
@@ -161,7 +161,7 @@ fun FieldDataScreen(
             UiState.Empty -> {
                 EmptyBlock(
                     title = "Todavía no hay lecturas del nodo",
-                    message = "El servidor respondió, pero no tiene lecturas guardadas.",
+                    message = "Todavía no hay lecturas.",
                 ) { SecondaryButton("Volver a consultar", viewModel::refresh) }
                 StatusCard(status.dataOrNull, latest = null)
             }
@@ -188,7 +188,7 @@ private fun ReadingsContent(data: FieldReadings, status: NodeStatus?) {
 
     if (sources.size > 1) {
         SectionCard(title = "Hay lecturas de más de un origen") {
-            Text("Se muestran por separado para no mezclar simulación con medición.", style = MaterialTheme.typography.bodyMedium)
+            Text("Simulación y medición van por separado.", style = MaterialTheme.typography.bodyMedium)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 sources.forEach { item ->
                     FilterChip(
@@ -261,7 +261,7 @@ private fun ZoneCard(zone: ZoneInfo, latest: NodeReading, source: NodeSource) {
     SectionCard(title = zone.title) {
         Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
         if (reading == null) {
-            Text("Sin dato de esta zona en la última lectura.", style = MaterialTheme.typography.bodyMedium)
+            Text("Sin dato en la última lectura.", style = MaterialTheme.typography.bodyMedium)
             return@SectionCard
         }
         Text(
@@ -310,7 +310,7 @@ private fun Charts(readings: List<NodeReading>, source: NodeSource) {
     val clock: (Long) -> String = if (simulatedClock) ::formatSimClock else ::formatClock
     if (timed.size < 2) {
         SectionCard(title = "Evolución en el tiempo") {
-            Text("Hacen falta al menos dos lecturas con hora para dibujar las curvas.", style = MaterialTheme.typography.bodyMedium)
+            Text("Faltan lecturas para el gráfico.", style = MaterialTheme.typography.bodyMedium)
         }
         return
     }
@@ -326,7 +326,7 @@ private fun Charts(readings: List<NodeReading>, source: NodeSource) {
     if (moistureKind == null) {
         SectionCard(title = "Humedad del suelo por zona") {
             Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
-            Text("Este origen no envió ningún dato de humedad del suelo.", style = MaterialTheme.typography.bodyMedium)
+            Text("Sin datos de humedad.", style = MaterialTheme.typography.bodyMedium)
         }
     } else {
         val labels = moistureKind.labels()
@@ -341,7 +341,7 @@ private fun Charts(readings: List<NodeReading>, source: NodeSource) {
                 timeLabel = if (simulatedClock) ::formatSimClock else ::formatTimeOfDay,
             )
             if (moistureKind == MoistureKind.INDEX) {
-                Text("Índice relativo del sensor: no es el % real de agua del suelo.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Índice del sensor, no % real de agua.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             SelectedReadout(selected, clock) { reading, id -> formatMoisture(reading.zone(id)?.moistureValue(moistureKind), moistureKind) }
         }
@@ -368,7 +368,7 @@ private fun Charts(readings: List<NodeReading>, source: NodeSource) {
 private fun SelectedReadout(selected: NodeReading?, clock: (Long) -> String, value: (NodeReading, String) -> String) {
     val time = selected?.chartMillis
     Text(
-        text = if (selected == null || time == null) "Tocá el gráfico para ver los valores de un momento."
+        text = if (selected == null || time == null) "Tocá el gráfico para ver valores."
         else "${clock(time)} — " + ZONES.joinToString(" · ") { "${it.id}: ${value(selected, it.id)}" },
         style = MaterialTheme.typography.bodyMedium,
         fontWeight = FontWeight.Bold,
@@ -434,7 +434,7 @@ private fun RegionalBand(status: NodeStatus?) {
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
     ) {
         if (context == null || (context.t2mC == null && context.rh2mPct == null)) {
-            Text("El servidor no envió el dato regional de NASA POWER.", style = MaterialTheme.typography.bodyMedium)
+            Text("Sin dato regional de NASA POWER.", style = MaterialTheme.typography.bodyMedium)
         } else {
             InfoRow("Temperatura del aire (regional)", formatOrMissing(context.t2mC, 1, "°C"))
             InfoRow("Humedad del aire (regional)", formatOrMissing(context.rh2mPct, 1, "%"))

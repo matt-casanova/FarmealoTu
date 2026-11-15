@@ -76,7 +76,7 @@ import kotlin.math.abs
 private fun LayerKind.glossary(): GlossaryEntry = when (this) {
     LayerKind.RAIN -> GlossaryEntry(
         "Lluvia", "Cuánta agua cayó en la zona en el período indicado.",
-        "Con NASA POWER es un solo valor para un área de unos 50 km; no es la lluvia de tu campo.",
+        "Un valor para la zona (~50 km), no tu campo.",
     )
     LayerKind.SOIL_MOISTURE -> Glossary.soilMoistureSmap
     LayerKind.HEAT -> Glossary.heat
@@ -136,8 +136,8 @@ fun GeoViewerScreen(
             InfoRow("Punto piloto", "${formatCoordinate(PilotArea.LAT)}, ${formatCoordinate(PilotArea.LON)}")
             if (farmerMoved) InfoRow("Tu punto", "${formatCoordinate(input.lat)}, ${formatCoordinate(input.lon)}")
             Text(
-                "Los datos son de la zona (decenas de kilómetros). El punto es una referencia, no los límites de tu campo. " +
-                    "Si no hay internet el mapa base no se ve; las coordenadas siguen valiendo.",
+                "Datos de la zona; el punto es solo referencia. " +
+                    "Sin internet no se ve el mapa base.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -159,7 +159,7 @@ fun GeoViewerScreen(
 @Composable
 private fun LayerStackCard(layers: List<MapLayer>, selected: LayerKind, onSelect: (LayerKind) -> Unit) {
     SectionCard(title = "Las 5 capas") {
-        Text("Tocá una capa para ver de dónde sale y qué significa.", style = MaterialTheme.typography.bodyMedium)
+        Text("Tocá una capa para ver qué muestra.", style = MaterialTheme.typography.bodyMedium)
         IsometricLayerStack(layers, selected, onSelect)
         // Mismo selector como botones (accesible con lector de pantalla).
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -294,7 +294,7 @@ private fun LayerPanel(layer: MapLayer) {
         )
         when (layer.availability) {
             LayerAvailability.UNAVAILABLE -> Text(
-                "No hay datos válidos de esta capa. No se dibuja nada en su lugar.",
+                "Sin datos para esta capa.",
                 style = MaterialTheme.typography.bodyLarge,
             )
             LayerAvailability.REGIONAL -> {
@@ -303,22 +303,22 @@ private fun LayerPanel(layer: MapLayer) {
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Text(
-                    "Es un solo valor para toda la zona. No se convierte en un mapa de colores por parcela.",
+                    "Un solo valor para toda la zona.",
                     style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium,
                 )
             }
             LayerAvailability.AVAILABLE -> {
                 val drawable = layer.tileUrlTemplate?.let { isDrawableTileTemplate(it) } == true
                 Text(
-                    text = if (drawable) "La capa se dibuja sobre el mapa de arriba."
-                    else "El servidor publicó esta capa, pero en un formato que esta versión todavía no dibuja sobre el mapa.",
+                    text = if (drawable) "Se ve en el mapa de arriba."
+                    else "Esta capa todavía no se puede dibujar.",
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }
         if (layer.kind == LayerKind.WATER) {
             Text(
-                "«Agua» es un balance calculado (lluvia efectiva menos lo que pide el cultivo). No es una inundación observada.",
+                "«Agua» es un cálculo (lluvia menos lo que pide el cultivo), no una inundación.",
                 style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium,
             )
         }

@@ -176,7 +176,7 @@ fun FarmerInputScreen(
             )
             2 -> ChoiceStep(
                 question = "¿Qué te preocupa más?",
-                hint = "Con esto elegimos tus prioridades de partida. Después las podés cambiar.",
+                hint = "Después lo podés cambiar.",
                 options = Concern.entries.map { it.label },
                 selectedIndex = input.concern?.ordinal,
                 error = error,
@@ -250,7 +250,7 @@ private fun CropStep(
 ) {
     val focusRequester = remember { FocusRequester() }
     QuestionTitle(question)
-    Text("Tocá una opción o escribilo con tus palabras.", style = MaterialTheme.typography.bodyMedium)
+    Text("Tocá una opción o escribila.", style = MaterialTheme.typography.bodyMedium)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         options.forEach { crop ->
             FilterChip(
@@ -343,7 +343,7 @@ private fun ChoiceButton(label: String, selected: Boolean, onClick: () -> Unit) 
 @Composable
 private fun NotesStep(notes: String, onNotesChange: (String) -> Unit, onNext: () -> Unit) {
     QuestionTitle("¿Querés contar algo de tu terreno?")
-    Text("Es opcional. Lo guardamos tal cual lo escribís; la app no lo interpreta.", style = MaterialTheme.typography.bodyMedium)
+    Text("Opcional.", style = MaterialTheme.typography.bodyMedium)
     OutlinedTextField(
         value = notes,
         onValueChange = onNotesChange,
@@ -382,14 +382,14 @@ private fun SummaryStep(
         InfoRow("Riesgo", formatPercentWeight(normalized.risk))
         ProvenanceChip("assumption")
         Text(
-            "Salen de lo que más te preocupa. Son un punto de partida, no un valor científico: las podés cambiar después de comparar.",
+            "Según lo que más te preocupa. Las podés cambiar.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 
     SectionCard(title = "Cultivos que no querés sembrar (opcional)") {
-        Text("Las opciones que los usen no se van a proponer.", style = MaterialTheme.typography.bodyMedium)
+        Text("No se van a proponer.", style = MaterialTheme.typography.bodyMedium)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             CROP_OPTIONS.filter { it != input.currentCrop }.forEach { crop ->
                 FilterChip(
@@ -405,7 +405,7 @@ private fun SummaryStep(
     LocationCard(input, onSetLocation, onResetLocation)
 
     if (!input.isComplete) {
-        Text("Todavía faltan respuestas. Tocá «Cambiar» en la que falte.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
+        Text("Faltan respuestas: tocá «Cambiar».", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
     }
     PrimaryButton("Comparar opciones de siembra", onCompare, enabled = input.isComplete)
 }
@@ -441,7 +441,7 @@ private fun LocationCard(input: FarmerInput, onSetLocation: (Double, Double) -> 
             fontWeight = FontWeight.SemiBold,
         )
         Text(
-            "Es un punto de referencia de la zona, no necesariamente tu finca. Los datos son regionales (~50 km).",
+            "Punto de referencia de la zona (~50 km), no tu finca.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

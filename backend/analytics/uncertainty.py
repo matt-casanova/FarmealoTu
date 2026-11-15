@@ -18,8 +18,7 @@ import numpy as np
 
 N_ITER = 200
 SEED = 42
-MESSAGE = ("P10–P90 es la variabilidad del modelo bajo remuestreo histórico; no es una garantía de rendimiento ni "
-           "un pronóstico.")
+MESSAGE = "P10–P90 muestra cuánto varía el puntaje según el año; no es una garantía de rendimiento ni un pronóstico."
 
 
 @dataclass(frozen=True)

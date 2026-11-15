@@ -16,15 +16,12 @@ from engine.reference import load_reference, param, value
 from engine.rules import CROP_ES, NO_CROP, SEASON_ES, Feasibility, Sequence, farmer_sequence, feasible_sequences
 from pipeline import power as P
 
-ECONOMY = "Sin datos de precios ni costos: la economía no se evalúa. Consultá con tu técnico."
-NO_SOIL = "Sin análisis de suelo de tu campo: el puntaje de suelo usa solo la rotación (cobertura, residuo y familias)."
-NO_SMAP_NDVI = ("Sin SMAP (humedad del suelo) ni NDVI (vegetación) para este período: no se usan en el puntaje; el "
-                "visor los muestra solo como imagen regional.")
-GENERIC_HEAT = ("Umbral de calor genérico (Tmáx > P90 histórico del mes): no hay un umbral del cultivo con fuente, "
-                "así que el calor pesa la mitad en el riesgo y no afirma daño al cultivo.")
-UNVERIFIED_FAO = ("Los parámetros de FAO-56 (Kc, etapas, raíz) todavía no fueron cotejados con las tablas "
-                  "(verified_at = null en crops.json).")
-RELATIVE = "Los puntajes son relativos entre las opciones (0–100); no son una probabilidad de éxito."
+ECONOMY = "No se evalúan precios ni costos."
+NO_SOIL = "Falta un análisis de suelo de tu campo."
+NO_SMAP_NDVI = "SMAP y NDVI se ven en el mapa, pero no entran en el puntaje."
+GENERIC_HEAT = "El calor usa un umbral general, no uno propio del cultivo."
+UNVERIFIED_FAO = "Valores de cultivo: tablas generales de FAO-56."
+RELATIVE = "Los puntajes (0–100) comparan opciones; no son probabilidad de éxito."
 SCALE = P.SCALE_LABEL
 
 
@@ -221,10 +218,10 @@ def _missing(ev: Evaluation, partial: bool, farmer_issues: list[str], eid: str) 
         if k in ev.reasons_missing:
             items.append(f"Puntaje de {CRITERIA_ES[k]} insuficiente: {ev.reasons_missing[k]}")
     if partial and any(k in ev.reasons_missing for k in CRITERIA):
-        items.append("Puntaje parcial: el peso de los criterios faltantes se repartió entre los disponibles.")
+        items.append("Puntaje parcial: falta un criterio.")
     if eid == "E0":
         items += farmer_issues
-    items += [NO_SOIL, NO_SMAP_NDVI, GENERIC_HEAT, UNVERIFIED_FAO, ECONOMY]
+    items += [NO_SOIL, NO_SMAP_NDVI, ECONOMY]
     return items
 
 
@@ -367,13 +364,13 @@ def build_compare_response(req, df, ind_recent: dict, nasa_status: dict, climate
     if ranking_note:
         limitations.append(ranking_note)
     limitations += selection_notes
-    limitations.append(f"Se evaluaron {len(feas.feasible) + len(feas.excluded)} combinaciones verano × invierno: "
-                       f"{len(feas.feasible)} factibles; descartadas: {excl_text or 'ninguna'}.")
+    limitations.append(f"Combinaciones verano × invierno: {len(feas.feasible)} factibles de "
+                       f"{len(feas.feasible) + len(feas.excluded)}.")
     limitations += [U.MESSAGE, UNVERIFIED_FAO]
     if water_for_all:
         limitations.append("La estabilidad del ranking se calcula sobre el puntaje parcial (suelo y riesgo): sirve "
                            "para ver qué tan firme es la comparación, no es un orden recomendado.")
-    limitations += I.LIMITATIONS
+    limitations += ["Datos de NASA POWER: zona de ~50 km, no tu campo.", GENERIC_HEAT]
 
     alerts = _alerts(ind_recent)
     if climate.et0 is None:

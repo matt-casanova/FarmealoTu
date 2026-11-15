@@ -85,9 +85,9 @@ fun CompareRotationsScreen(
             OutdatedInputNotice(viewModel)
 
             SectionCard(containerColor = MaterialTheme.colorScheme.surfaceContainer, border = null) {
-                Text("Puntaje relativo entre opciones, no probabilidad de éxito.", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                Text("Puntaje para comparar opciones, no probabilidad de éxito.", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                 Text(
-                    "Las barras sirven para comparar una opción con otra. No dicen cuánto vas a cosechar ni cuánto vas a ganar.",
+                    "No indica cosecha ni ganancia.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 ExplainButton(Glossary.relativeScore)
@@ -105,7 +105,7 @@ fun CompareRotationsScreen(
             if (result.strategies.size < 3) {
                 SectionCard(containerColor = MaterialTheme.colorScheme.tertiaryContainer, border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary)) {
                     Text(
-                        "El servidor devolvió menos de tres opciones defendibles. No se inventan las que faltan.",
+                        "Hay menos de tres opciones posibles.",
                         style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold,
                     )
                     BulletList(result.limitations, emptyText = "El servidor no explicó el motivo.")
@@ -156,7 +156,7 @@ private fun StrategyCard(
         if (strategy.partialScore) {
             Pill("Puntaje parcial", container = MaterialTheme.colorScheme.tertiaryContainer, content = MaterialTheme.colorScheme.onTertiaryContainer)
             Text(
-                "Falta al menos un criterio; el total se calculó solo con los disponibles.",
+                "Puntaje parcial: falta un criterio.",
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -218,7 +218,7 @@ private fun PrioritiesEditor(
             SecondaryButton("Cambiar mis prioridades", { expanded = true })
             return@SectionCard
         }
-        Text("Mové las barras según lo que más te importa. Siempre suman 100 %.", style = MaterialTheme.typography.bodyMedium)
+        Text("Mové las barras: siempre suman 100 %.", style = MaterialTheme.typography.bodyMedium)
         ProvenanceChip("farmer_provided")
         PrioritySlider("Agua", priorities.water, normalized?.water) { onChange(priorities.copy(water = it)) }
         PrioritySlider("Suelo", priorities.soil, normalized?.soil) { onChange(priorities.copy(soil = it)) }
@@ -228,7 +228,7 @@ private fun PrioritiesEditor(
         }
         if (applied != null && pending) {
             Text(
-                "Los valores de arriba son los de la comparación en pantalla. Tocá «Actualizar comparación» para usar los nuevos.",
+                "Tocá «Actualizar comparación» para aplicarlas.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -239,7 +239,7 @@ private fun PrioritiesEditor(
             enabled = pending && !refreshing,
         )
         Text(
-            "El servidor vuelve a calcular con tus prioridades. El orden cambia solo si el cálculo cambia.",
+            "Se recalcula con tus prioridades.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

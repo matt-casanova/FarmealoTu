@@ -70,11 +70,11 @@ fun RisksScreen(
     FarmScreen(title = "Conocer los riesgos", subtitle = "Módulo 03", demoMode = demoMode, onBack = onBack, onHome = onHome) {
         SectionCard(containerColor = MaterialTheme.colorScheme.surfaceContainer, border = null) {
             Text(
-                "Esto muestra cómo fue el clima de la zona en los años pasados. Sirve para saber a qué estás expuesto; no es un pronóstico.",
+                "Clima de la zona en años pasados. No es un pronóstico.",
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                "Estar expuesto a lluvia intensa no equivale a predecir un desborde del río.",
+                "Lluvia intensa no es un pronóstico de inundación.",
                 style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold,
             )
             ExplainButton(Glossary.regional, label = "¿De dónde salen estos datos?")
@@ -103,7 +103,7 @@ private fun SummaryCards(result: IndicatorsResult) {
     val (cover, others) = result.summaries.partition { it.isCoverIndicator() }
     if (others.isEmpty() && cover.isEmpty()) {
         SectionCard {
-            Text("El servidor no envió un resumen de indicadores.", style = MaterialTheme.typography.bodyMedium)
+            Text("Sin resumen.", style = MaterialTheme.typography.bodyMedium)
         }
     }
     others.forEach { IndicatorCard(it) }
@@ -113,7 +113,7 @@ private fun SummaryCards(result: IndicatorsResult) {
         SectionCard(title = "Baja cobertura del suelo", containerColor = MaterialTheme.colorScheme.surfaceContainer) {
             ProvenanceChip("unavailable")
             Text(
-                "No hay una serie de vegetación (NDVI) verificable para este punto, así que no se evalúa este riesgo.",
+                "Sin datos de vegetación (NDVI) para este punto.",
                 style = MaterialTheme.typography.bodyMedium,
             )
             ExplainButton(Glossary.ndvi)
@@ -145,7 +145,7 @@ private fun IndicatorCard(summary: IndicatorSummary) {
             )
         }
         ExplainButton(
-            entry = Glossary.forIndicatorId(summary.id) ?: GlossaryEntry(summary.name, summary.description ?: "Indicador calculado por FarmealoTu a partir de datos fechados."),
+            entry = Glossary.forIndicatorId(summary.id) ?: GlossaryEntry(summary.name, summary.description ?: "Calculado con datos de NASA POWER."),
             details = traceDetails(summary.source, summary.period, summary.unit, summary.scale, summary.status),
         )
     }
@@ -159,7 +159,7 @@ private fun HeatmapSection(result: IndicatorsResult) {
         SectionCard(title = "Riesgo por mes y año", containerColor = MaterialTheme.colorScheme.surfaceContainer) {
             ProvenanceChip("unavailable")
             Text(
-                "El servidor no envió la grilla mensual, así que no hay mapa de calor para mostrar. Arriba está el resumen disponible.",
+                "Sin mapa de calor para este dato.",
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -197,14 +197,14 @@ private fun HeatmapSection(result: IndicatorsResult) {
         )
         series.description?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
         Text(
-            "Cada cuadro es un mes (columnas) de un año (filas). Tocá un cuadro para ver su valor exacto.",
+            "Cada cuadro es un mes de un año. Tocalo para ver el valor.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
         if (scale == null) {
             ProvenanceChip("unavailable")
-            Text("La grilla llegó sin valores: todos los meses figuran sin dato.", style = MaterialTheme.typography.bodyMedium)
+            Text("Sin valores.", style = MaterialTheme.typography.bodyMedium)
         } else {
             MonthYearHeatmap(
                 series = series,
@@ -230,7 +230,7 @@ private fun HeatmapSection(result: IndicatorsResult) {
         if (showTable) HeatmapTable(series)
 
         ExplainButton(
-            entry = Glossary.forIndicatorId(series.id) ?: GlossaryEntry(series.name, series.description ?: "Indicador mensual calculado con datos fechados."),
+            entry = Glossary.forIndicatorId(series.id) ?: GlossaryEntry(series.name, series.description ?: "Valor mensual."),
             details = traceDetails(series.source, "${series.years.firstOrNull() ?: "?"}–${series.years.lastOrNull() ?: "?"}", series.unit, series.scale, series.status),
         )
     }
@@ -243,7 +243,7 @@ private fun CellDetail(series: HeatmapSeries, year: Int?, month: Int?) {
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         if (year == null || month == null) {
-            Text("Tocá un cuadro del mapa para ver el detalle de ese mes.", style = MaterialTheme.typography.bodyMedium)
+            Text("Tocá un cuadro para ver el mes.", style = MaterialTheme.typography.bodyMedium)
             return@SectionCard
         }
         val cell = series.cell(year, month)

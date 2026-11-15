@@ -31,7 +31,7 @@ object Glossary {
     val range = GlossaryEntry(
         title = "Rango P10–P90",
         body = "Se repite el cálculo muchas veces combinando años pasados. El rango muestra entre qué valores cae la evaluación la mayoría de las veces; el punto es el valor del medio.",
-        limitation = "Estos rangos muestran cómo varía la evaluación al reutilizar distintos años del historial; no predicen el rendimiento.",
+        limitation = "Rangos según años pasados; no predicen la cosecha.",
     )
     val rankStability = GlossaryEntry(
         title = "Estabilidad del orden",
@@ -51,7 +51,7 @@ object Glossary {
     val heavyRain = GlossaryEntry(
         title = "Lluvia intensa",
         body = "Un día de lluvia «muy fuerte»: solo el 5 % de los días lluviosos lo superan.",
-        limitation = "Estar expuesto a lluvia intensa no equivale a predecir un desborde del río.",
+        limitation = "Lluvia intensa no es un pronóstico de inundación.",
     )
     val heat = GlossaryEntry(
         title = "Días de calor",
@@ -125,12 +125,12 @@ object Glossary {
 
 /** Limitaciones que la app declara siempre (plan 11.3). */
 val FIXED_LIMITATIONS = listOf(
-    "NASA POWER es una celda de unos 50 km: es contexto regional, no una medición de tu finca.",
-    "Los puntajes dependen de reglas y pesos. Son relativos entre opciones, no probabilidades.",
-    "P10–P90 es la variabilidad al reutilizar años pasados; no es un pronóstico ni una garantía.",
-    "No se predicen rendimientos ni precios, y no se reemplaza el análisis de suelo ni la visita técnica.",
+    "Los datos de NASA son de la zona (~50 km), no de tu campo.",
+    "Los puntajes comparan opciones; no son probabilidades.",
+    "P10–P90 sale de años pasados; no es un pronóstico.",
+    "No predice cosecha ni precios.",
     "Cambiar la rotación no elimina el riesgo de inundación.",
-    "Los datos del nodo de campo son de un prototipo y no cambian la recomendación en esta versión.",
+    "El sensor de campo es un prototipo: no cambia la recomendación.",
 )
 
 const val NASA_ROLE = "NASA aporta datos; FarmealoTu los interpreta. No es un producto oficial de NASA."

@@ -89,7 +89,7 @@ fun TradeoffsScreen(
                 SectionCard(title = "En pocas palabras", containerColor = MaterialTheme.colorScheme.primaryContainer) {
                     BulletList(highlights)
                     Text(
-                        "Ninguna opción gana en todo: mejorar en un criterio suele costar en otro.",
+                        "Ninguna opción gana en todo.",
                         style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold,
                     )
                 }
@@ -100,7 +100,7 @@ fun TradeoffsScreen(
                     StrategyHeader(strategy, position = null, isRecommended = result.recommended?.id == strategy.id)
                     Text(strategy.sequenceText, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
                     if (strategy.tradeoffs.isEmpty) {
-                        Text("El servidor no envió ventajas ni desventajas para esta opción.", style = MaterialTheme.typography.bodyMedium)
+                        Text("Sin ventajas ni desventajas.", style = MaterialTheme.typography.bodyMedium)
                     } else {
                         TradeoffLine("Ventaja", strategy.tradeoffs.advantage)
                         TradeoffLine("Desventaja", strategy.tradeoffs.disadvantage)
@@ -123,7 +123,7 @@ private fun TechnicalComparison(result: ComparisonResult) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     SectionCard(title = "Comparación técnica") {
         if (!expanded) {
-            Text("Un gráfico con los tres criterios de cada opción, para quien quiera el detalle.", style = MaterialTheme.typography.bodyMedium)
+            Text("Los tres criterios de cada opción.", style = MaterialTheme.typography.bodyMedium)
             SecondaryButton("Ver comparación técnica", { expanded = true })
         } else {
             val axisMax = comparisonAxisMax(result)
@@ -135,7 +135,7 @@ private fun TechnicalComparison(result: ComparisonResult) {
                 )
             }
             Text(
-                "Cada punta es un criterio: más lejos del centro, mejor puntaje relativo. " +
+                "Más lejos del centro = mejor. " +
                     "Cada anillo suma un cuarto de la escala (0 en el centro, ${formatNumber(axisMax, scoreDecimals(axisMax))} en el borde). " +
                     "No es probabilidad de éxito.",
                 style = MaterialTheme.typography.bodyMedium,

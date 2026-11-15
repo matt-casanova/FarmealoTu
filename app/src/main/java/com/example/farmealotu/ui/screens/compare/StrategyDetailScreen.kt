@@ -54,7 +54,7 @@ fun StrategyDetailScreen(
             if (strategy == null) {
                 EmptyBlock(
                     title = "Esa opción ya no está en la comparación",
-                    message = "Puede que la comparación se haya actualizado. Volvé a «Comparar formas de sembrar».",
+                    message = "Volvé a «Comparar formas de sembrar».",
                 ) { SecondaryButton("Volver", onBack) }
                 return@ComparisonGate
             }
@@ -67,7 +67,7 @@ fun StrategyDetailScreen(
             }
 
             SectionCard(title = "Por qué se sugiere") {
-                BulletList(strategy.reasons, emptyText = "El servidor no envió una explicación para esta opción.")
+                BulletList(strategy.reasons, emptyText = "Sin explicación.")
             }
 
             SectionCard(title = "Cómo le fue en cada criterio") {
@@ -78,7 +78,7 @@ fun StrategyDetailScreen(
                     ExplainButton(Glossary.forCriterion(key))
                 }
                 ScoreBar("Total", strategy.score, axisMax, color = color, emphasized = true)
-                Text("Puntaje relativo entre opciones, no probabilidad de éxito.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Puntaje para comparar opciones, no probabilidad de éxito.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             SectionCard(title = "Ventajas y riesgos") {
@@ -90,7 +90,7 @@ fun StrategyDetailScreen(
 
             SectionCard(title = "Evidencia") {
                 if (strategy.evidence.isEmpty()) {
-                    Text("El servidor no envió evidencia para esta opción.", style = MaterialTheme.typography.bodyMedium)
+                    Text("Sin evidencia.", style = MaterialTheme.typography.bodyMedium)
                 } else {
                     strategy.evidence.forEachIndexed { index, evidence ->
                         if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -100,11 +100,11 @@ fun StrategyDetailScreen(
             }
 
             SectionCard(title = "Información que falta") {
-                BulletList(strategy.missingInformation, emptyText = "El servidor no informó vacíos para esta opción.")
+                BulletList(strategy.missingInformation, emptyText = "Nada pendiente.")
             }
 
             SectionCard(title = "Preguntas para tu agrónomo", containerColor = MaterialTheme.colorScheme.secondaryContainer) {
-                BulletList(strategy.agronomistQuestions, emptyText = "El servidor no envió preguntas. Igual conviene revisar esta opción con tu técnico.")
+                BulletList(strategy.agronomistQuestions, emptyText = "Revisala con tu técnico.")
             }
 
             FooterActions(onEditData = onEditData, onHome = onHome)
@@ -135,9 +135,9 @@ fun EvidenceItem(evidence: Evidence) {
         ExplainButton(
             entry = Glossary.forIndicatorId(evidence.indicator) ?: GlossaryEntry(
                 title = evidence.indicator,
-                body = "Dato usado por FarmealoTu para comparar las opciones.",
+                body = "Dato usado para comparar.",
                 limitation = if (evidence.scale?.contains("regional", ignoreCase = true) == true)
-                    "Es un dato regional: describe la zona, no tu parcela." else null,
+                    "Dato de la zona, no de tu campo." else null,
             ),
             details = traceDetails(evidence.source, evidence.period, evidence.unit, evidence.scale, evidence.status),
         )

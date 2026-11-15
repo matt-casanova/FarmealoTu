@@ -48,7 +48,7 @@ fun ComparisonGate(
     if (state is UiState.Idle) {
         EmptyBlock(
             title = "Primero contanos de tu campo",
-            message = "Para comparar opciones necesitamos saber qué sembrás, qué sembraste antes, qué te preocupa y si tenés riego.",
+            message = "Respondé 5 preguntas para comparar.",
         ) { PrimaryButton("Responder las 5 preguntas", onStartInput) }
         return
     }
@@ -73,7 +73,7 @@ fun OutdatedInputNotice(viewModel: MainViewModel) {
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary),
         ) {
             Text(
-                "Cambiaste tus datos después de esta comparación. Lo que ves corresponde a tus respuestas anteriores.",
+                "Cambiaste tus datos: esto es de tus respuestas anteriores.",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
             )
@@ -169,7 +169,7 @@ private fun RecommendedCard(strategy: Strategy, result: ComparisonResult) {
         if (strategy.score != null) {
             ScoreBar("Puntaje general", strategy.score, axisMax, color = ChartPalette.forStrategy(strategy.id, 0), emphasized = true)
             Text(
-                "Puntaje relativo entre opciones, no probabilidad de éxito.",
+                "Puntaje para comparar opciones, no probabilidad de éxito.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -191,18 +191,18 @@ private fun InsufficientCard(result: ComparisonResult) {
         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.tertiary),
     ) {
-        Text("Información insuficiente para ordenar opciones", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        Text("Faltan datos para ordenar las opciones", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
         Text(
             text = when (result.strategies.size) {
-                0 -> "El servidor no devolvió opciones para comparar."
-                else -> "El servidor devolvió ${result.strategies.size} opción(es), pero no eligió una mejor posicionada. No se fuerza un ganador."
+                0 -> "No hay opciones para comparar."
+                else -> "Hay ${result.strategies.size} opción(es), pero ninguna sale mejor."
             },
             style = MaterialTheme.typography.bodyLarge,
         )
         val reasons = (result.limitations + result.strategies.flatMap { it.missingInformation }).distinct()
         Text("Razones informadas", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
         BulletList(reasons, emptyText = "El servidor no explicó el motivo.")
-        Text("Revisá con tu técnico: igual podés comparar las opciones una por una.", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+        Text("Compará las opciones una por una.", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
     }
 }
 
