@@ -135,6 +135,8 @@ fun OsmMap(
                         map.context.applicationContext,
                         TemplateTileSource(tileLayer.id, tileLayer.urlTemplate, tileLayer.maxZoom),
                     )
+                    // Sin esto las teselas llegan a la caché pero el mapa no se redibuja hasta el próximo gesto.
+                    provider.setTileRequestCompleteHandler(map.tileRequestCompleteHandler)
                     TilesOverlay(provider, map.context).apply { loadingBackgroundColor = Color.TRANSPARENT }
                         .also { map.overlays.add(0, it) }
                 } else {
