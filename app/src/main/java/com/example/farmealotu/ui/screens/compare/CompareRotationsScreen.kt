@@ -39,6 +39,7 @@ import com.example.farmealotu.ui.components.PrimaryButton
 import com.example.farmealotu.ui.components.ProvenanceChip
 import com.example.farmealotu.ui.components.ScoreBar
 import com.example.farmealotu.ui.components.SecondaryButton
+import com.example.farmealotu.ui.components.FoldRow
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.formatPercentWeight
 import com.example.farmealotu.ui.components.sampleMainViewModel
@@ -108,7 +109,7 @@ fun CompareRotationsScreen(
                         "Hay menos de tres opciones posibles.",
                         style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold,
                     )
-                    BulletList(result.limitations, emptyText = "El servidor no explicó el motivo.")
+                    FoldRow("Ver motivos") { BulletList(result.limitations, emptyText = "El servidor no explicó el motivo.") }
                 }
             }
 
@@ -161,9 +162,11 @@ private fun StrategyCard(
             )
         }
 
-        TradeoffLine("Ventaja más importante", strategy.tradeoffs.advantage)
-        TradeoffLine("Desventaja más importante", strategy.tradeoffs.disadvantage)
-        TradeoffLine("Riesgo principal", strategy.tradeoffs.mainRisk)
+        FoldRow("Ver ventajas y riesgos") {
+            TradeoffLine("Ventaja más importante", strategy.tradeoffs.advantage)
+            TradeoffLine("Desventaja más importante", strategy.tradeoffs.disadvantage)
+            TradeoffLine("Riesgo principal", strategy.tradeoffs.mainRisk)
+        }
 
         SecondaryButton("¿Por qué esta opción?", onOpenWhy)
     }

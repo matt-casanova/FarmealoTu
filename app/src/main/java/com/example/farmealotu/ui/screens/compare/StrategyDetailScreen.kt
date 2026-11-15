@@ -82,7 +82,7 @@ fun StrategyDetailScreen(
                 Text("Puntaje para comparar opciones, no probabilidad de éxito.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
-            SectionCard(title = "Ventajas y riesgos") {
+            FoldCard(title = "Ventajas y riesgos") {
                 TradeoffLine("Ventaja más importante", strategy.tradeoffs.advantage)
                 TradeoffLine("Desventaja más importante", strategy.tradeoffs.disadvantage)
                 TradeoffLine("Riesgo principal", strategy.tradeoffs.mainRisk)

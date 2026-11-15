@@ -26,6 +26,7 @@ import com.example.farmealotu.ui.components.Pill
 import com.example.farmealotu.ui.components.PrimaryButton
 import com.example.farmealotu.ui.components.ScoreBar
 import com.example.farmealotu.ui.components.SecondaryButton
+import com.example.farmealotu.ui.components.FoldRow
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.StateContent
 import com.example.farmealotu.ui.components.sampleMainViewModel
@@ -162,8 +163,7 @@ private fun RecommendedCard(strategy: Strategy, result: ComparisonResult) {
 
         val caution = strategy.tradeoffs.mainRisk ?: strategy.tradeoffs.disadvantage
         if (caution != null) {
-            Text("A tener en cuenta", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
-            Text(caution, style = MaterialTheme.typography.bodyLarge)
+            FoldRow("A tener en cuenta") { Text(caution, style = MaterialTheme.typography.bodyLarge) }
         }
 
         if (strategy.score != null) {
@@ -178,8 +178,10 @@ private fun RecommendedCard(strategy: Strategy, result: ComparisonResult) {
 
         val confidence = ConfidenceDisplay.from(strategy.uncertainty?.confidenceLevel)
         Text("Confianza de la comparación: ${confidence.label}", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-        strategy.uncertainty?.confidenceReason?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
-        ExplainButton(Glossary.confidence)
+        FoldRow("¿Por qué esta confianza?") {
+            strategy.uncertainty?.confidenceReason?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
+            ExplainButton(Glossary.confidence)
+        }
 
         Text("Revisá con tu técnico antes de decidir.", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
     }
@@ -200,8 +202,7 @@ private fun InsufficientCard(result: ComparisonResult) {
             style = MaterialTheme.typography.bodyLarge,
         )
         val reasons = (result.limitations + result.strategies.flatMap { it.missingInformation }).distinct()
-        Text("Razones informadas", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
-        BulletList(reasons, emptyText = "El servidor no explicó el motivo.")
+        FoldRow("Ver razones") { BulletList(reasons, emptyText = "El servidor no explicó el motivo.") }
         Text("Compará las opciones una por una.", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
     }
 }

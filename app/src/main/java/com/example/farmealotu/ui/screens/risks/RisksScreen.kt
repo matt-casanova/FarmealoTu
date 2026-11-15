@@ -40,6 +40,7 @@ import com.example.farmealotu.ui.components.MONTH_NAMES
 import com.example.farmealotu.ui.components.MonthYearHeatmap
 import com.example.farmealotu.ui.components.ProvenanceChip
 import com.example.farmealotu.ui.components.SecondaryButton
+import com.example.farmealotu.ui.components.FoldRow
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.FoldCard
 import com.example.farmealotu.ui.components.StateContent
@@ -131,6 +132,7 @@ private fun IndicatorCard(summary: IndicatorSummary) {
             fontWeight = FontWeight.Bold
         )
         Level.from(summary.level)?.let { LevelBadge(it, prefix = "Exposición") }
+        FoldRow("Ver detalles") {
         summary.description?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
         ProvenanceChip(summary.status)
         InfoRow("Período", formatApiDate(summary.period) ?: "no informado")
@@ -149,6 +151,7 @@ private fun IndicatorCard(summary: IndicatorSummary) {
             entry = Glossary.forIndicatorId(summary.id) ?: GlossaryEntry(summary.name, summary.description ?: "Calculado con datos de NASA POWER."),
             details = traceDetails(summary.source, summary.period, summary.unit, summary.scale, summary.status),
         )
+        }
     }
 }
 

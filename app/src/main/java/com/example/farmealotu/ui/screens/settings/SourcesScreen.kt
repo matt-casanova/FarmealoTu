@@ -52,7 +52,7 @@ fun SourcesScreen(
 
         FoldCard(title = "Límites de esta herramienta") { BulletList(FIXED_LIMITATIONS) }
 
-        Text("Fuentes de los datos", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        FoldCard(title = "Fuentes de los datos") {
         StateContent(
             state = sources,
             onRetry = { viewModel.loadSources(force = true) },
@@ -61,12 +61,13 @@ fun SourcesScreen(
             emptyMessage = "Sin fuentes publicadas todavía.",
         ) { state ->
             FreshnessNote(state, onRetry = { viewModel.loadSources(force = true) })
-            SectionCard {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 state.data.forEachIndexed { index, source ->
                     if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     SourceItem(source)
                 }
             }
+        }
         }
 
         (context as? UiState.Success)?.let { state ->
@@ -76,7 +77,7 @@ fun SourcesScreen(
                 style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
             )
             state.data.forEach { section ->
-                SectionCard(title = section.title) {
+                FoldCard(title = section.title) {
                     LabeledValueList(section.lines.map { it.copy(value = groupThousands(it.value)) })
                 }
             }

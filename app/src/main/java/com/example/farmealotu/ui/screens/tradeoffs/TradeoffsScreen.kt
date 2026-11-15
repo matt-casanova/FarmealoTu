@@ -34,6 +34,7 @@ import com.example.farmealotu.ui.components.Glossary
 import com.example.farmealotu.ui.components.RadarChart
 import com.example.farmealotu.ui.components.RadarSeries
 import com.example.farmealotu.ui.components.SecondaryButton
+import com.example.farmealotu.ui.components.FoldRow
 import com.example.farmealotu.ui.components.SectionCard
 import com.example.farmealotu.ui.components.SeriesLegend
 import com.example.farmealotu.ui.components.sampleMainViewModel
@@ -102,10 +103,12 @@ fun TradeoffsScreen(
                     if (strategy.tradeoffs.isEmpty) {
                         Text("Sin ventajas ni desventajas.", style = MaterialTheme.typography.bodyMedium)
                     } else {
-                        TradeoffLine("Ventaja", strategy.tradeoffs.advantage)
-                        TradeoffLine("Desventaja", strategy.tradeoffs.disadvantage)
-                        TradeoffLine("Riesgo principal", strategy.tradeoffs.mainRisk)
-                        if (strategy.tradeoffs.extra.isNotEmpty()) BulletList(strategy.tradeoffs.extra)
+                        FoldRow("Ver ventajas y desventajas") {
+                            TradeoffLine("Ventaja", strategy.tradeoffs.advantage)
+                            TradeoffLine("Desventaja", strategy.tradeoffs.disadvantage)
+                            TradeoffLine("Riesgo principal", strategy.tradeoffs.mainRisk)
+                            if (strategy.tradeoffs.extra.isNotEmpty()) BulletList(strategy.tradeoffs.extra)
+                        }
                     }
                     SecondaryButton("¿Por qué esta opción?", { onOpenWhy(strategy.id) }, icon = FarmIcons.Help)
                 }

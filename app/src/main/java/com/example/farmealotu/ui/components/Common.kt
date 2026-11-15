@@ -282,6 +282,46 @@ fun FoldCard(
     }
 }
 
+/**
+ * Botón desplegable liviano para usar DENTRO de una tarjeta: una fila «Ver …» con flecha que abre el
+ * detalle en el mismo lugar (sin otra tarjeta encima). Cerrado por defecto; ≥ 48 dp; TalkBack anuncia el estado.
+ */
+@Composable
+fun FoldRow(
+    label: String,
+    initiallyExpanded: Boolean = false,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    var expanded by rememberSaveable(label) { mutableStateOf(initiallyExpanded) }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 48.dp)
+                .clickable(role = Role.Button, onClickLabel = if (expanded) "Cerrar" else "Abrir") { expanded = !expanded }
+                .semantics { stateDescription = if (expanded) "abierto" else "cerrado" },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                label,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.weight(1f),
+            )
+            Icon(
+                FarmIcons.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(24.dp).rotate(if (expanded) 90f else 0f),
+            )
+        }
+        AnimatedVisibility(visible = expanded) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = content)
+        }
+    }
+}
+
 @Composable
 fun PrimaryButton(
     text: String,
