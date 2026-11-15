@@ -188,6 +188,10 @@ void loop() {
       zo["soil_temp_c"] = nullptr;
       char f[32]; snprintf(f, sizeof(f), "ds18b20_%s_disconnected", ZONE_IDS[z]);
       zf.add(f);
+    } else if (tc >= 84.9f) {                    // 85.0 °C = valor de encendido del DS18B20 (no midió): NO es real
+      zo["soil_temp_c"] = nullptr;
+      char f[32]; snprintf(f, sizeof(f), "ds18b20_%s_reset_85", ZONE_IDS[z]);
+      zf.add(f);
     } else {
       zo["soil_temp_c"] = tc;
     }
