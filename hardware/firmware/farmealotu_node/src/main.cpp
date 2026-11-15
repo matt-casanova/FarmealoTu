@@ -33,7 +33,7 @@ const char* NODE_ID   = "farmealotu-node-01";
 const char* SOURCE    = "physical";                 // "wokwi" si corre en el simulador Wokwi
 const float DEPTH_CM  = 7.0;                        // profundidad real de las sondas: MEDIRLA y corregir
 const float LDR_R_FIXED_OHM = 10000.0;              // resistencia fija del divisor del LDR: poner el valor real
-const unsigned long SEND_EVERY_MS = 10000;          // cada 10 s
+const unsigned long SEND_EVERY_MS = 3000;           // una lectura cada 3 s (mínimo seguro: DS18B20 ~0.75 s, DHT11 ≥ 1 s)
 
 // Qué hay conectado HOY. Lo que no está conectado se manda como null (nunca un pin "al aire", que da basura).
 #define NUM_ZONES  1                                // cuántas macetas con humedad + DS18B20 (1 a 3)
@@ -153,6 +153,7 @@ void setup() {
 }
 
 void loop() {
+  const unsigned long cycleStart = millis();       // el período se mide desde el inicio: medir + enviar cuenta
   connectWifi();
 
   JsonDocument doc;
@@ -271,5 +272,6 @@ void loop() {
     http.end();
   }
 
-  delay(SEND_EVERY_MS);
+  const unsigned long elapsed = millis() - cycleStart;
+  if (elapsed < SEND_EVERY_MS) delay(SEND_EVERY_MS - elapsed);   // si el envío tardó más, sigue enseguida
 }

@@ -73,7 +73,7 @@ import com.example.farmealotu.viewmodel.dataOrNull
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
-private const val REFRESH_MILLIS = 15_000L
+private const val REFRESH_MILLIS = 3_000L   // el nodo envía cada 3 s; solo refresca con la pantalla visible
 private const val MAX_CHART_POINTS = 240
 
 private data class ZoneInfo(val id: String, val title: String, val color: Color)
