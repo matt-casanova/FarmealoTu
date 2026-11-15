@@ -1,5 +1,8 @@
 package com.example.farmealotu.ui.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,8 +19,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.farmealotu.ui.components.FarmIcons
+import com.example.farmealotu.ui.components.FarmMotion
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,6 +64,11 @@ object Routes {
     fun strategy(id: String) = "strategy/${android.net.Uri.encode(id)}"
 }
 
+/** Destinos de las pestañas del menú de abajo: ir de una a otra no es avanzar ni volver. */
+private val TAB_ROOTS = setOf(Routes.HOME, Routes.DECISION, Routes.RISKS, Routes.GEO, Routes.SOURCES)
+
+private fun isTabSwitch(from: String?, to: String?): Boolean = from in TAB_ROOTS && to in TAB_ROOTS
+
 private data class BottomNavItem(
     val route: String,
     val label: String,
@@ -93,6 +103,7 @@ fun FarmealoTuNavHost(
     val editData: () -> Unit = { open(Routes.input(summary = true)) }
     val openWhy: (String) -> Unit = { id -> open(Routes.strategy(id)) }
 
+    val density = LocalDensity.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -152,7 +163,12 @@ fun FarmealoTuNavHost(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            if (onboarded) NavigationBar(
+            // Al terminar las preguntas el menú sube suave desde abajo (no aparece de golpe).
+            AnimatedVisibility(
+                visible = onboarded,
+                enter = slideInVertically(FarmMotion.enter(FarmMotion.LONG)) { it } + fadeIn(FarmMotion.enter(FarmMotion.MEDIUM)),
+            ) {
+            NavigationBar(
                 containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 6.dp,
             ) {
@@ -182,6 +198,7 @@ fun FarmealoTuNavHost(
                     )
                 }
             }
+            }
         }
     ) { innerPadding ->
         Box(
@@ -192,6 +209,24 @@ fun FarmealoTuNavHost(
             NavHost(
                 navController = navController,
                 startDestination = startRoute,
+                // Eje compartido (Material): avanzar entra desde la derecha, volver desde la izquierda;
+                // cambiar de pestaña del menú es un fundido sin desplazamiento.
+                enterTransition = {
+                    if (isTabSwitch(initialState.destination.route, targetState.destination.route)) FarmMotion.tabEnter
+                    else FarmMotion.forwardEnter(density)
+                },
+                exitTransition = {
+                    if (isTabSwitch(initialState.destination.route, targetState.destination.route)) FarmMotion.tabExit
+                    else FarmMotion.forwardExit(density)
+                },
+                popEnterTransition = {
+                    if (isTabSwitch(initialState.destination.route, targetState.destination.route)) FarmMotion.tabEnter
+                    else FarmMotion.backEnter(density)
+                },
+                popExitTransition = {
+                    if (isTabSwitch(initialState.destination.route, targetState.destination.route)) FarmMotion.tabExit
+                    else FarmMotion.backExit(density)
+                },
                 modifier = Modifier.fillMaxSize()
             ) {
                 composable(Routes.HOME) {

@@ -1,5 +1,11 @@
 package com.example.farmealotu.ui.screens.input
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.ui.platform.LocalDensity
+import com.example.farmealotu.ui.components.FarmMotion
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -125,11 +131,20 @@ fun FarmerInputScreen(
         if (step < SUMMARY_STEP) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text("Pregunta ${step + 1} de 5", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
-                LinearProgressIndicator(progress = { (step + 1) / 5f }, modifier = Modifier.fillMaxWidth())
+                val progress by animateFloatAsState((step + 1) / 5f, FarmMotion.enter(FarmMotion.LONG), label = "avance")
+                LinearProgressIndicator(progress = { progress }, modifier = Modifier.fillMaxWidth())
             }
         }
 
-        when (step) {
+        // Cada pregunta entra desde la dirección del avance (adelante: derecha; atrás: izquierda).
+        val density = LocalDensity.current
+        AnimatedContent(
+            targetState = step,
+            transitionSpec = { with(FarmMotion) { stepTransform(density) } },
+            label = "pregunta",
+        ) { shownStep ->
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        when (shownStep) {
             0 -> CropStep(
                 question = "¿Qué sembrás actualmente?",
                 text = currentText,
@@ -208,6 +223,8 @@ fun FarmerInputScreen(
                     onCompare()
                 },
             )
+        }
+        }
         }
     }
 }
@@ -321,8 +338,11 @@ private fun ChoiceButton(label: String, selected: Boolean, onClick: () -> Unit) 
             .heightIn(min = 60.dp)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick),
         shape = RoundedCornerShape(14.dp),
-        color = if (selected) scheme.primaryContainer else scheme.surface,
-        border = BorderStroke(if (selected) 2.dp else 1.dp, if (selected) scheme.primary else scheme.outline),
+        color = animateColorAsState(if (selected) scheme.primaryContainer else scheme.surface, FarmMotion.enter(FarmMotion.SHORT), label = "fondo").value,
+        border = BorderStroke(
+            animateDpAsState(if (selected) 2.dp else 1.dp, FarmMotion.enter(FarmMotion.SHORT), label = "borde").value,
+            animateColorAsState(if (selected) scheme.primary else scheme.outline, FarmMotion.enter(FarmMotion.SHORT), label = "color del borde").value,
+        ),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),

@@ -115,6 +115,8 @@ fun ScoreBar(
                 modifier = Modifier.weight(1f),
             )
         } else {
+            // Momento principal: la barra crece hasta su valor (el total, un poco después de los criterios).
+            val fraction = animatedFraction((value / axisMax).coerceIn(0.0, 1.0).toFloat(), delayMillis = if (emphasized) 120 else 0)
             Canvas(
                 Modifier
                     .weight(1f)
@@ -122,7 +124,6 @@ fun ScoreBar(
             ) {
                 val radius = CornerRadius(4.dp.toPx())
                 drawRoundRect(ChartPalette.grid, size = size, cornerRadius = radius)
-                val fraction = (value / axisMax).coerceIn(0.0, 1.0).toFloat()
                 if (fraction > 0f) {
                     drawRoundRect(color, size = Size(size.width * fraction, size.height), cornerRadius = radius)
                     // Extremo de la base recto: la barra «nace» del eje.

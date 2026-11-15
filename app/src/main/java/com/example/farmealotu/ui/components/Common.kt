@@ -1,6 +1,7 @@
 package com.example.farmealotu.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -242,6 +243,7 @@ fun FoldCard(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     var expanded by rememberSaveable(title) { mutableStateOf(initiallyExpanded) }
+    val chevron by animateFloatAsState(if (expanded) 90f else 0f, FarmMotion.enter(FarmMotion.MEDIUM), label = "flecha")
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -269,10 +271,10 @@ fun FoldCard(
                 FarmIcons.ChevronRight,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(28.dp).rotate(if (expanded) 90f else 0f),
+                modifier = Modifier.size(28.dp).rotate(chevron),
             )
         }
-        AnimatedVisibility(visible = expanded) {
+        AnimatedVisibility(visible = expanded, enter = FarmMotion.revealEnter, exit = FarmMotion.revealExit) {
             Column(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -293,6 +295,7 @@ fun FoldRow(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     var expanded by rememberSaveable(label) { mutableStateOf(initiallyExpanded) }
+    val chevron by animateFloatAsState(if (expanded) 90f else 0f, FarmMotion.enter(FarmMotion.MEDIUM), label = "flecha")
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
             modifier = Modifier
@@ -313,10 +316,10 @@ fun FoldRow(
                 FarmIcons.ChevronRight,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp).rotate(if (expanded) 90f else 0f),
+                modifier = Modifier.size(24.dp).rotate(chevron),
             )
         }
-        AnimatedVisibility(visible = expanded) {
+        AnimatedVisibility(visible = expanded, enter = FarmMotion.revealEnter, exit = FarmMotion.revealExit) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = content)
         }
     }
