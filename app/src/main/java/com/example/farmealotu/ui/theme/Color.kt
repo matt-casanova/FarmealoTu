@@ -10,13 +10,14 @@ val Earth = Color(0xFF7A4F2A)
 val EarthContainer = Color(0xFFF1E2CF)
 val Clay = Color(0xFF8A5A00)
 val ClayContainer = Color(0xFFFFE9B8)
-val Paper = Color(0xFFF7F4EC)
-val CardSurface = Color(0xFFFCFCFB)
-val CardSurfaceVariant = Color(0xFFEDE9DD)
+// Papel con un matiz verde leve (DESIGN.md, «The Green Paper Rule»); antes #F7F4EC.
+val Paper = Color(0xFFF3F5EC)
+val CardSurface = Color(0xFFFBFCF8)
+val CardSurfaceVariant = Color(0xFFE6E9DB)
 val Ink = Color(0xFF14180F)
 val InkSecondary = Color(0xFF45493F)
 val Outline = Color(0xFF7B7F72)
-val OutlineSoft = Color(0xFFCFCBBD)
+val OutlineSoft = Color(0xFFC6CBB9)
 val AlertRed = Color(0xFFA62B22)
 val AlertRedContainer = Color(0xFFFBE0DC)
 
@@ -36,7 +37,8 @@ object ChartPalette {
     val seriesOther = Color(0xFF898781)
     val sequential = listOf(Color(0xFFCDE2FB), Color(0xFF86B6EF), Color(0xFF3987E5), Color(0xFF1C5CAB), Color(0xFF0D366B))
     val diverging = listOf(Color(0xFFD03B3B), Color(0xFFEC9A93), Color(0xFFF0EFEC), Color(0xFF86B6EF), Color(0xFF1C5CAB))
-    val surface = CardSurface
+    // Valor fijo de la paleta validada: no sigue a CardSurface si el tema cambia.
+    val surface = Color(0xFFFCFCFB)
     val noData = Color(0xFFF0EFEC)
     val grid = Color(0xFFE1E0D9)
     val axis = Color(0xFFC3C2B7)
