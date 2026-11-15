@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fondo de ventana oscuro al abrir la app con el teléfono en modo oscuro (evita el destello blanco). -->
+    <style name="Theme.FarmealoTu" parent="android:Theme.Material.NoActionBar" />
+</resources>
