@@ -27,10 +27,15 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 $dir = "$env:LOCALAPPDATA\cloudflared"; New-Item -ItemType Directory -Force $dir | Out-Null
 Invoke-WebRequest "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -OutFile "$dir\cloudflared.exe"
 # Levantar (con el backend corriendo en el puerto 8000):
-& "$env:LOCALAPPDATA\cloudflared\cloudflared.exe" tunnel --no-autoupdate --url http://localhost:8000
+& "$env:LOCALAPPDATA\cloudflared\cloudflared.exe" tunnel --no-autoupdate --protocol http2 --url http://localhost:8000
 ```
 
-Busca en la salida la línea `https://<palabras>.trycloudflare.com`: esa es la URL pública (HTTPS).
+Busca en la salida la línea `https://<palabras>.trycloudflare.com`: esa es la URL pública (HTTPS). Antes de usarla, espera a
+que aparezca `Registered tunnel connection … protocol=http2`.
+
+> **Por qué `--protocol http2`:** sin esa opción cloudflared intenta QUIC (UDP, puerto 7844). En redes que bloquean ese tráfico
+> (pasó el 14-nov-2026 en la red del equipo) el log repite `Failed to dial a quic connection … timeout`, nunca registra la
+> conexión y la URL responde **530**. HTTP/2 va por TCP 443 y funciona en esas redes.
 
 > ⚠️ **La URL cambia cada vez que se reinicia cloudflared.** Hay que avisar al canal y actualizar el firmware de Mateo
 > y el `local.properties` de los teléfonos. Para la demo final conviene el despliegue estable (paso 10) o no reiniciar el túnel.
