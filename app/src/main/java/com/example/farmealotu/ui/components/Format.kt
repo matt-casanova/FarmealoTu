@@ -30,6 +30,15 @@ fun formatApiDate(text: String?): String? {
 fun formatClock(epochMillis: Long): String =
     DAY_TIME.format(Instant.ofEpochMilli(epochMillis).atZone(ZoneId.systemDefault()))
 
+/**
+ * Hora simulada (reloj literal guardado en UTC por DtoMappers.parseSimClockMillis), p. ej. «14-nov 10:20».
+ * No se pasa a la zona del teléfono: es la hora que escribe la simulación.
+ */
+fun formatSimClock(epochMillis: Long): String {
+    val time = Instant.ofEpochMilli(epochMillis).atOffset(java.time.ZoneOffset.UTC)
+    return "${time.dayOfMonth}-${MONTH_NAMES[time.monthValue - 1].take(3)} " + TIME.format(time)
+}
+
 fun formatTimeOfDay(epochMillis: Long): String =
     TIME.format(Instant.ofEpochMilli(epochMillis).atZone(ZoneId.systemDefault()))
 

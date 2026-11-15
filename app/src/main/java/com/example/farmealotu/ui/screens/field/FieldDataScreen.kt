@@ -37,9 +37,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.farmealotu.domain.FieldReadings
+import com.example.farmealotu.domain.MoistureKind
 import com.example.farmealotu.domain.NodeReading
 import com.example.farmealotu.domain.NodeSource
 import com.example.farmealotu.domain.NodeStatus
+import com.example.farmealotu.domain.ZoneReading
+import com.example.farmealotu.domain.moistureKindFor
 import com.example.farmealotu.ui.components.BulletList
 import com.example.farmealotu.ui.components.EmptyBlock
 import com.example.farmealotu.ui.components.ErrorBlock
@@ -58,6 +61,8 @@ import com.example.farmealotu.ui.components.TimeSeriesChart
 import com.example.farmealotu.ui.components.formatApiDate
 import com.example.farmealotu.ui.components.formatClock
 import com.example.farmealotu.ui.components.formatOrMissing
+import com.example.farmealotu.ui.components.formatSimClock
+import com.example.farmealotu.ui.components.formatTimeOfDay
 import com.example.farmealotu.ui.components.sampleFieldDataViewModel
 import com.example.farmealotu.ui.theme.ChartPalette
 import com.example.farmealotu.ui.theme.FarmealoTuTheme
@@ -85,6 +90,29 @@ fun calibrationLabel(method: String?, flags: List<String>): String = when {
     method == null -> "Calibración no informada: tomá la humedad como valor orientativo"
     method.equals("gravimetric_3pt", ignoreCase = true) -> "Humedad calibrada con 3 puntos (método gravimétrico)"
     else -> "Calibración informada por el nodo: $method"
+}
+
+/** Texto principal de humedad de una zona, por prioridad: VWC → índice del sensor → lectura cruda → sin dato. */
+internal fun moistureHeadline(zone: ZoneReading): String = when (zone.moistureKind) {
+    MoistureKind.VWC -> "Humedad del suelo: " + formatOrMissing(zone.moisturePct, 1, "%")
+    MoistureKind.INDEX -> "Índice de humedad del sensor: " + formatOrMissing(zone.moistureIndexPct, 0, "%") + " (relativo, sin calibrar)"
+    MoistureKind.RAW -> "Lectura cruda del sensor: " + formatOrMissing(zone.moistureRaw, 0) + " (sin calibrar)"
+    null -> "Humedad del suelo: sin dato"
+}
+
+/** Valor de humedad de un tipo ya elegido (gráfico, lectura seleccionada, tabla). Null → [missing], nunca 0. */
+internal fun formatMoisture(value: Double?, kind: MoistureKind, missing: String = "sin dato"): String = when (kind) {
+    MoistureKind.VWC -> formatOrMissing(value, 1, "%", missing = missing)
+    MoistureKind.INDEX -> formatOrMissing(value, 0, missing = missing)
+    MoistureKind.RAW -> formatOrMissing(value, 0, missing = missing)
+}
+
+private data class MoistureChartLabels(val title: String, val unit: String, val column: String)
+
+private fun MoistureKind.labels(): MoistureChartLabels = when (this) {
+    MoistureKind.VWC -> MoistureChartLabels("Humedad del suelo por zona (%)", "% volumétrico", "hum. %")
+    MoistureKind.INDEX -> MoistureChartLabels("Índice del sensor (0–100) por zona", "índice relativo del sensor (0–100), sin calibrar", "índice")
+    MoistureKind.RAW -> MoistureChartLabels("Lectura cruda del sensor de humedad", "lectura cruda, sin calibrar", "crudo")
 }
 
 /**
@@ -155,7 +183,7 @@ private fun ReadingsContent(data: FieldReadings, status: NodeStatus?) {
     val sameSource = data.readings.filter { it.source == source }
     val latest = sameSource.last()
 
-    SourceBadge(source, latest.scenario)
+    SourceBadge(source, latest.scenario, latest.simEpochMillis)
 
     if (sources.size > 1) {
         SectionCard(title = "Hay lecturas de más de un origen") {
@@ -174,7 +202,7 @@ private fun ReadingsContent(data: FieldReadings, status: NodeStatus?) {
     }
 
     SectionCard(title = "Calibración") {
-        Text(calibrationLabel(latest.calibrationMethod, latest.qualityFlags), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+        Text(calibrationLabel(latest.calibrationMethod, latest.qualityFlags + latest.zones.flatMap { it.flags }), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
         InfoRow("Fecha de calibración", formatApiDate(latest.calibrationDate) ?: "no informada")
         InfoRow("Profundidad de sensores", formatOrMissing(latest.depthCm, 0, "cm", missing = "no informada"))
         ExplainButton(Glossary.vwc)
@@ -204,7 +232,7 @@ private fun ReadingsContent(data: FieldReadings, status: NodeStatus?) {
 }
 
 @Composable
-private fun SourceBadge(source: NodeSource, scenario: String?) {
+private fun SourceBadge(source: NodeSource, scenario: String?, simMillis: Long?) {
     val scheme = MaterialTheme.colorScheme
     val (container, content) = when (source) {
         NodeSource.PHYSICAL -> scheme.primary to scheme.onPrimary
@@ -221,6 +249,7 @@ private fun SourceBadge(source: NodeSource, scenario: String?) {
             Text("ORIGEN: ${source.badge}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Text(source.description, style = MaterialTheme.typography.bodyMedium)
             if (scenario != null) Text("Escenario de simulación: $scenario", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+            if (simMillis != null) Text("Hora simulada: ${formatSimClock(simMillis)}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -235,19 +264,35 @@ private fun ZoneCard(zone: ZoneInfo, latest: NodeReading, source: NodeSource) {
             return@SectionCard
         }
         Text(
-            text = "Humedad del suelo: " + formatOrMissing(reading.moisturePct, 1, "%"),
+            text = moistureHeadline(reading),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
         )
-        reading.moistureVwc?.let {
-            Text("(${formatOrMissing(it, 3)} m³/m³, tal como lo envía el nodo)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        val secondary = MaterialTheme.colorScheme.onSurfaceVariant
+        when (reading.moistureKind) {
+            MoistureKind.VWC -> reading.moistureVwc?.let {
+                Text("(${formatOrMissing(it, 3)} m³/m³, tal como lo envía el nodo)", style = MaterialTheme.typography.bodySmall, color = secondary)
+            }
+            MoistureKind.INDEX -> {
+                reading.moistureRaw?.let {
+                    Text("lectura cruda ${formatOrMissing(it, 0)}", style = MaterialTheme.typography.bodySmall, color = secondary)
+                }
+                Text(Glossary.moistureIndex.body, style = MaterialTheme.typography.bodySmall, color = secondary)
+                ExplainButton(Glossary.moistureIndex)
+            }
+            MoistureKind.RAW, null -> Unit
         }
         Text(
             text = "Temperatura del suelo: " + formatOrMissing(reading.soilTempC, 1, "°C"),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
         )
-        InfoRow("Hora de la lectura", formatApiDate(latest.timestamp) ?: "no informada")
+        if (latest.simEpochMillis != null) {
+            InfoRow("Hora simulada", formatSimClock(latest.simEpochMillis))
+            InfoRow("Recibida por el servidor", formatApiDate(latest.timestamp) ?: "no informada")
+        } else {
+            InfoRow("Hora de la lectura", formatApiDate(latest.timestamp) ?: "no informada")
+        }
         if (reading.flags.isNotEmpty()) {
             Text("Avisos: ${reading.flags.joinToString()}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)
         }
@@ -256,7 +301,12 @@ private fun ZoneCard(zone: ZoneInfo, latest: NodeReading, source: NodeSource) {
 
 @Composable
 private fun Charts(readings: List<NodeReading>, source: NodeSource) {
-    val timed = readings.filter { it.epochMillis != null }
+    // Si el origen trae hora simulada, el eje usa esa hora (y solo las lecturas que la tienen): el gemelo
+    // manda muchas horas simuladas en pocos segundos reales y por la hora del servidor se amontonarían.
+    val simulatedClock = readings.any { it.simEpochMillis != null }
+    val timed = readings.filter { (if (simulatedClock) it.simEpochMillis else it.epochMillis) != null }
+        .sortedBy { it.chartMillis }
+    val clock: (Long) -> String = if (simulatedClock) ::formatSimClock else ::formatClock
     if (timed.size < 2) {
         SectionCard(title = "Evolución en el tiempo") {
             Text("Hacen falta al menos dos lecturas con hora para dibujar las curvas.", style = MaterialTheme.typography.bodyMedium)
@@ -265,22 +315,35 @@ private fun Charts(readings: List<NodeReading>, source: NodeSource) {
     }
     var selectedTime by rememberSaveable { mutableStateOf<Long?>(null) }
     var showTable by rememberSaveable { mutableStateOf(false) }
-    val selected = timed.firstOrNull { it.epochMillis == selectedTime }
+    val selected = timed.firstOrNull { it.chartMillis == selectedTime }
+    val moistureKind = moistureKindFor(timed)
 
     fun series(value: (NodeReading, String) -> Double?): List<LineSeries> = ZONES.map { zone ->
-        LineSeries(zone.id, zone.color, timed.map { LinePoint(it.epochMillis!!, value(it, zone.id)) })
+        LineSeries(zone.id, zone.color, timed.map { LinePoint(it.chartMillis!!, value(it, zone.id)) })
     }
 
-    SectionCard(title = "Humedad del suelo por zona (%)") {
-        Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
-        SeriesLegend(ZONES.map { it.color to it.title })
-        TimeSeriesChart(
-            series = series { reading, id -> reading.zone(id)?.moisturePct },
-            unit = "% volumétrico",
-            selectedTime = selectedTime,
-            onSelect = { selectedTime = it },
-        )
-        SelectedReadout(selected) { reading, id -> formatOrMissing(reading.zone(id)?.moisturePct, 1, "%") }
+    if (moistureKind == null) {
+        SectionCard(title = "Humedad del suelo por zona") {
+            Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+            Text("Este origen no envió ningún dato de humedad del suelo.", style = MaterialTheme.typography.bodyMedium)
+        }
+    } else {
+        val labels = moistureKind.labels()
+        SectionCard(title = labels.title) {
+            Text(source.badge, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+            SeriesLegend(ZONES.map { it.color to it.title })
+            TimeSeriesChart(
+                series = series { reading, id -> reading.zone(id)?.moistureValue(moistureKind) },
+                unit = labels.unit,
+                selectedTime = selectedTime,
+                onSelect = { selectedTime = it },
+                timeLabel = if (simulatedClock) ::formatSimClock else ::formatTimeOfDay,
+            )
+            if (moistureKind == MoistureKind.INDEX) {
+                Text("Índice relativo del sensor: no es el % real de agua del suelo.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            SelectedReadout(selected, clock) { reading, id -> formatMoisture(reading.zone(id)?.moistureValue(moistureKind), moistureKind) }
+        }
     }
 
     SectionCard(title = "Temperatura del suelo por zona (°C)") {
@@ -291,41 +354,45 @@ private fun Charts(readings: List<NodeReading>, source: NodeSource) {
             unit = "grados Celsius",
             selectedTime = selectedTime,
             onSelect = { selectedTime = it },
+            timeLabel = if (simulatedClock) ::formatSimClock else ::formatTimeOfDay,
         )
-        SelectedReadout(selected) { reading, id -> formatOrMissing(reading.zone(id)?.soilTempC, 1, "°C") }
+        SelectedReadout(selected, clock) { reading, id -> formatOrMissing(reading.zone(id)?.soilTempC, 1, "°C") }
     }
 
     SecondaryButton(if (showTable) "Ocultar tabla de lecturas" else "Ver lecturas como tabla", { showTable = !showTable })
-    if (showTable) ReadingsTable(timed.takeLast(20).reversed())
+    if (showTable) ReadingsTable(timed.takeLast(20).reversed(), moistureKind, simulatedClock, clock)
 }
 
 @Composable
-private fun SelectedReadout(selected: NodeReading?, value: (NodeReading, String) -> String) {
+private fun SelectedReadout(selected: NodeReading?, clock: (Long) -> String, value: (NodeReading, String) -> String) {
+    val time = selected?.chartMillis
     Text(
-        text = if (selected?.epochMillis == null) "Tocá el gráfico para ver los valores de un momento."
-        else "${formatClock(selected.epochMillis)} — " + ZONES.joinToString(" · ") { "${it.id}: ${value(selected, it.id)}" },
+        text = if (selected == null || time == null) "Tocá el gráfico para ver los valores de un momento."
+        else "${clock(time)} — " + ZONES.joinToString(" · ") { "${it.id}: ${value(selected, it.id)}" },
         style = MaterialTheme.typography.bodyMedium,
         fontWeight = FontWeight.Bold,
     )
 }
 
 @Composable
-private fun ReadingsTable(readings: List<NodeReading>) {
+private fun ReadingsTable(readings: List<NodeReading>, moistureKind: MoistureKind?, simulatedClock: Boolean, clock: (Long) -> String) {
+    val moistureColumn = moistureKind?.labels()?.column ?: "hum."
     SectionCard(title = "Últimas ${readings.size} lecturas") {
         Column(Modifier.horizontalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row {
-                Text("Hora", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, modifier = Modifier.width(140.dp))
+                Text(if (simulatedClock) "Hora simulada" else "Hora", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, modifier = Modifier.width(140.dp))
                 ZONES.forEach { zone ->
-                    Text("${zone.id} hum. %", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.End, modifier = Modifier.width(84.dp))
+                    Text("${zone.id} $moistureColumn", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.End, modifier = Modifier.width(84.dp))
                     Text("${zone.id} temp. °C", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, textAlign = TextAlign.End, modifier = Modifier.width(92.dp))
                 }
             }
             readings.forEach { reading ->
                 Row {
-                    Text(reading.epochMillis?.let { formatClock(it) } ?: "s/d", style = MaterialTheme.typography.bodySmall, modifier = Modifier.width(140.dp))
+                    Text(reading.chartMillis?.let(clock) ?: "s/d", style = MaterialTheme.typography.bodySmall, modifier = Modifier.width(140.dp))
                     ZONES.forEach { zone ->
                         val item = reading.zone(zone.id)
-                        Text(formatOrMissing(item?.moisturePct, 1, missing = "s/d"), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.End, modifier = Modifier.width(84.dp))
+                        val moisture = moistureKind?.let { formatMoisture(item?.moistureValue(it), it, missing = "s/d") } ?: "s/d"
+                        Text(moisture, style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.End, modifier = Modifier.width(84.dp))
                         Text(formatOrMissing(item?.soilTempC, 1, missing = "s/d"), style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.End, modifier = Modifier.width(92.dp))
                     }
                 }
@@ -350,7 +417,11 @@ private fun AirCard(latest: NodeReading, source: NodeSource) {
         InfoRow("Humedad del aire", formatOrMissing(latest.dhtRhPct, 1, "%"))
 
         Text("Luz (LDR)", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-        InfoRow("Luz relativa", formatOrMissing(latest.ldrLightPct, 0, "%", missing = "no disponible"))
+        InfoRow("Luz (índice relativo)", formatOrMissing(latest.ldrLightPct, 0, "%", missing = "no disponible"))
+        if (latest.ldrLightPct != null) {
+            Text("No son lux ni radiación solar.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            ExplainButton(Glossary.lightIndex)
+        }
     }
 }
 
