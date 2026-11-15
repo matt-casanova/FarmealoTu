@@ -36,9 +36,20 @@ class HeatScale private constructor(
         return if (dark) Color.White else ChartPalette.ink
     }
 
+    /**
+     * Rangos sin bordes compartidos, igual que [binIndex]: el primero incluye ambos extremos y los
+     * siguientes empiezan «más de» el límite anterior («1 a 6 días», «más de 6 a 11 días»…).
+     */
     fun legend(unit: String?): List<Pair<Color, String>> = colors.mapIndexed { index, color ->
         val suffix = unit?.let { " $it" } ?: ""
-        color to "${formatNumber(edges[index], 1)} a ${formatNumber(edges[index + 1], 1)}$suffix"
+        val low = formatNumber(edges[index], 1)
+        val high = formatNumber(edges.getOrElse(index + 1) { edges[index] }, 1)
+        val label = when {
+            low == high -> "$low$suffix"
+            index == 0 -> "$low a $high$suffix"
+            else -> "más de $low a $high$suffix"
+        }
+        color to label
     }
 
     companion object {

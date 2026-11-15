@@ -101,6 +101,8 @@ private fun RangesCard(result: ComparisonResult) {
         }
         val axisMax = scoreAxisMax(withRange.flatMap { listOf(it.uncertainty?.p10, it.uncertainty?.p50, it.uncertainty?.p90) })
         val decimals = scoreDecimals(axisMax)
+        // La escala 0 · mitad · máximo se rotula una sola vez (en la primera barra): todas comparten el eje.
+        val firstWithRange = result.strategies.indexOfFirst { it.uncertainty?.p10 != null && it.uncertainty?.p90 != null }
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             result.strategies.forEachIndexed { index, strategy ->
                 val uncertainty = strategy.uncertainty
@@ -110,7 +112,10 @@ private fun RangesCard(result: ComparisonResult) {
                     val p10 = uncertainty?.p10
                     val p90 = uncertainty?.p90
                     if (p10 != null && p90 != null) {
-                        RangeBar(p10 = p10, p50 = uncertainty?.p50, p90 = p90, axisMax = axisMax, color = color)
+                        RangeBar(
+                            p10 = p10, p50 = uncertainty?.p50, p90 = p90, axisMax = axisMax, color = color,
+                            showScaleLabels = index == firstWithRange,
+                        )
                         Text(
                             text = "La mayoría de las veces queda entre ${formatNumber(p10, decimals)} y ${formatNumber(p90, decimals)}" +
                                 (uncertainty?.p50?.let { "; el valor del medio es ${formatNumber(it, decimals)}" } ?: "") + ".",

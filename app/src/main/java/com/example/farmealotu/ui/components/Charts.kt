@@ -51,6 +51,9 @@ import kotlin.math.PI
 import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.floor
+import kotlin.math.log10
+import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 /*
@@ -147,6 +150,8 @@ fun RangeBar(
     axisMax: Double,
     color: Color,
     modifier: Modifier = Modifier,
+    /** Números de la escala (0 · mitad · máximo). Con varias barras sobre el mismo eje, basta en una. */
+    showScaleLabels: Boolean = true,
 ) {
     val measurer = rememberTextMeasurer()
     val decimals = scoreDecimals(axisMax)
@@ -156,7 +161,7 @@ fun RangeBar(
         modifier
             .chartSurface()
             .fillMaxWidth()
-            .height(54.dp)
+            .height(if (showScaleLabels) 54.dp else 32.dp)
             .semantics { contentDescription = description }
     ) {
         val left = 8.dp.toPx()
@@ -168,7 +173,9 @@ fun RangeBar(
         drawLine(ChartPalette.axis, Offset(left, trackY), Offset(right, trackY), 1.dp.toPx())
         listOf(0.0, axisMax / 2, axisMax).forEach { tick ->
             drawLine(ChartPalette.axis, Offset(x(tick), trackY - 4.dp.toPx()), Offset(x(tick), trackY + 4.dp.toPx()), 1.dp.toPx())
-            drawLabel(measurer, formatNumber(tick, decimals), Offset(x(tick), trackY + 22.dp.toPx()), alignX = 0.5f)
+            if (showScaleLabels) {
+                drawLabel(measurer, formatNumber(tick, decimals), Offset(x(tick), trackY + 22.dp.toPx()), alignX = 0.5f)
+            }
         }
         // Intervalo.
         val barHeight = 10.dp.toPx()
@@ -442,11 +449,11 @@ fun TimeSeriesChart(
         Text("No hay valores válidos para graficar.", style = MaterialTheme.typography.bodyMedium)
         return
     }
-    val rawMin = values.min()
-    val rawMax = values.max()
-    val pad = ((rawMax - rawMin) * 0.15).takeIf { it > 0 } ?: 1.0
-    val yMin = floor(rawMin - pad)
-    val yMax = ceil(rawMax + pad)
+    // Eje con marcas redondas (p. ej. 10 · 20 · 30 · 40), no cortes arbitrarios como 15.7 o 25.3.
+    val ticks = niceTicks(values.min(), values.max())
+    val yMin = ticks.first()
+    val yMax = ticks.last()
+    val tickDecimals = if (ticks.size > 1 && (ticks[1] - ticks[0]) % 1.0 != 0.0) 1 else 0
     val tMin = times.first()
     val tMax = times.last()
     val description = "Gráfico de líneas en $unit: " + series.joinToString("; ") { item ->
@@ -478,11 +485,23 @@ fun TimeSeriesChart(
         fun y(value: Double): Float = bottom - (bottom - top) * ((value - yMin) / (yMax - yMin)).toFloat()
 
         // Rejilla horizontal tenue + etiquetas del eje (un solo eje).
-        for (step in 0..3) {
-            val value = yMin + (yMax - yMin) * step / 3.0
+        ticks.forEach { value ->
             drawLine(ChartPalette.grid, Offset(left, y(value)), Offset(right, y(value)), 1.dp.toPx())
-            drawLabel(measurer, formatNumber(value, decimals), Offset(left - 6.dp.toPx(), y(value)), alignX = 1f, alignY = 0.5f)
+            drawLabel(measurer, formatNumber(value, tickDecimals), Offset(left - 6.dp.toPx(), y(value)), alignX = 1f, alignY = 0.5f)
         }
+
+        // Etiquetas finales (A, B, C): si dos series terminan cerca, se separan verticalmente
+        // en vez de dibujarse una encima de otra. El punto queda donde está el dato.
+        val labelGap = 16.dp.toPx()
+        val endLabelY = series.mapNotNull { item ->
+            item.points.sortedBy { it.epochMillis }.lastOrNull { it.value != null }?.let { item.name to y(it.value!!) }
+        }.sortedBy { it.second }.toMutableList()
+        for (index in 1 until endLabelY.size) {
+            val (name, wanted) = endLabelY[index]
+            val minimum = endLabelY[index - 1].second + labelGap
+            if (wanted < minimum) endLabelY[index] = name to minimum
+        }
+        val labelYByName = endLabelY.toMap()
         drawLine(ChartPalette.axis, Offset(left, bottom), Offset(right, bottom), 1.dp.toPx())
         drawLabel(measurer, formatTimeOfDay(tMin), Offset(left, bottom + 4.dp.toPx()))
         if (tMax != tMin) drawLabel(measurer, formatTimeOfDay(tMax), Offset(right, bottom + 4.dp.toPx()), alignX = 1f)
@@ -510,7 +529,8 @@ fun TimeSeriesChart(
                 val end = Offset(x(last.epochMillis), y(last.value!!))
                 drawCircle(ChartPalette.surface, 6.dp.toPx(), end)
                 drawCircle(item.color, 4.dp.toPx(), end)
-                drawLabel(measurer, item.name, end + Offset(9.dp.toPx(), 0f), LabelTextStyle, alignY = 0.5f)
+                val labelY = labelYByName[item.name] ?: end.y
+                drawLabel(measurer, item.name, Offset(end.x + 9.dp.toPx(), labelY), LabelTextStyle, alignY = 0.5f)
             }
             if (selectedTime != null) {
                 item.points.firstOrNull { it.epochMillis == selectedTime }?.value?.let { value ->
@@ -521,6 +541,22 @@ fun TimeSeriesChart(
             }
         }
     }
+}
+
+/**
+ * Marcas de eje «redondas» (paso de 1, 2, 2,5 o 5 × 10ⁿ) que cubren [min, max] con 3 a 5 divisiones.
+ * Solo decide dónde van las líneas de referencia; los datos se dibujan con su valor exacto.
+ */
+internal fun niceTicks(min: Double, max: Double, target: Int = 4): List<Double> {
+    val low = if (max > min) min else min - 1.0
+    val high = if (max > min) max else max + 1.0
+    val rough = (high - low) / target
+    val magnitude = 10.0.pow(floor(log10(rough)))
+    val step = listOf(1.0, 2.0, 2.5, 5.0, 10.0).map { it * magnitude }.first { it >= rough }
+    val start = floor(low / step) * step
+    val end = ceil(high / step) * step
+    val count = ((end - start) / step).roundToInt()
+    return (0..count).map { start + step * it }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
