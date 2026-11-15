@@ -9,11 +9,16 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.farmealotu.ConnectionSettings
 import com.example.farmealotu.FarmealoTuApp
+import com.example.farmealotu.data.remote.ApiResult
 import com.example.farmealotu.data.repository.FarmealoTuRepository
 import com.example.farmealotu.domain.FieldReadings
 import com.example.farmealotu.domain.MapLayer
+import com.example.farmealotu.domain.NodeReadingOrder
+import com.example.farmealotu.domain.NodeSource
 import com.example.farmealotu.domain.NodeStatus
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -53,10 +58,32 @@ class FieldDataViewModel(
         if (_readings.value !is UiState.Empty) _readings.value = _readings.value.toLoading()
         _status.value = _status.value.toLoading()
         job = viewModelScope.launch {
-            _readings.value = _readings.value.reduce(repository.fieldReadings(), repository.origin, clock()) { it.readings.isEmpty() }
+            // Una consulta por origen con límite: el nodo físico (1 lectura cada 10 s) no tapa a la simulación
+            // y la pantalla no baja miles de lecturas en cada refresco.
+            val perSource = FIELD_SOURCES.map { source ->
+                async { repository.fieldReadings(source = source.apiCode, limit = READINGS_PER_SOURCE) }
+            }.awaitAll()
+            _readings.value = _readings.value.reduce(mergeFieldReadings(perSource), repository.origin, clock()) { it.readings.isEmpty() }
             _status.value = _status.value.reduce(repository.fieldStatus(), repository.origin, clock())
         }
     }
+
+    companion object {
+        const val READINGS_PER_SOURCE = 300
+        val FIELD_SOURCES = NodeSource.entries.filter { it != NodeSource.UNKNOWN }
+    }
+}
+
+/**
+ * Junta las respuestas por origen. Si al menos una respondió, se muestran sus lecturas (un origen
+ * caído no deja la pantalla vacía); si fallaron todas, se informa el primer error.
+ */
+internal fun mergeFieldReadings(results: List<ApiResult<FieldReadings>>): ApiResult<FieldReadings> {
+    val ok = results.filterIsInstance<ApiResult.Success<FieldReadings>>().map { it.data }
+    if (ok.isEmpty()) return results.firstOrNull { it is ApiResult.Failure } ?: ApiResult.Success(FieldReadings(emptyList(), 0))
+    return ApiResult.Success(
+        FieldReadings(ok.flatMap { it.readings }.distinct().sortedWith(NodeReadingOrder), ok.sumOf { it.skipped }),
+    )
 }
 
 /** «Explorar mi zona»: metadatos de las 5 capas desde GET /api/map/layers. */

@@ -278,6 +278,19 @@ enum class NodeSource(val apiCode: String, val badge: String, val description: S
     }
 }
 
+/**
+ * Cómo llega la humedad del suelo de una zona, en orden de prioridad para mostrarla.
+ * Nunca se convierte una en otra: cada una se muestra con su propio nombre y unidad.
+ */
+enum class MoistureKind {
+    /** Humedad volumétrica calibrada (`soil_moisture_vwc`, m³/m³), se muestra en %. */
+    VWC,
+    /** Índice RELATIVO del sensor (`soil_moisture_index_pct`, 0–100: seco al aire = 0, en agua = 100). No es VWC. */
+    INDEX,
+    /** Lectura cruda del sensor (`soil_moisture_raw`, cuentas del ADC), sin calibrar. */
+    RAW,
+}
+
 data class ZoneReading(
     val id: String,
     /** Humedad volumétrica en m³/m³ tal como llega (`soil_moisture_vwc`). */
@@ -285,9 +298,29 @@ data class ZoneReading(
     val moistureRaw: Double?,
     val soilTempC: Double?,
     val flags: List<String>,
+    /** Índice relativo del sensor, 0–100 (`soil_moisture_index_pct`). NO es humedad volumétrica. */
+    val moistureIndexPct: Double? = null,
 ) {
     /** m³/m³ -> % volumétrico. Solo para mostrar. */
     val moisturePct: Double? get() = moistureVwc?.let { it * 100.0 }
+
+    /** El mejor dato de humedad que trae la zona (VWC → índice → crudo); null = sin dato. */
+    val moistureKind: MoistureKind? get() = MoistureKind.entries.firstOrNull { moistureValue(it) != null }
+
+    /** Valor de la zona para ese tipo, sin conversiones (VWC en %). */
+    fun moistureValue(kind: MoistureKind): Double? = when (kind) {
+        MoistureKind.VWC -> moisturePct
+        MoistureKind.INDEX -> moistureIndexPct
+        MoistureKind.RAW -> moistureRaw
+    }
+}
+
+/**
+ * Tipo de humedad para graficar un conjunto de lecturas de UN origen sin mezclar unidades:
+ * VWC si alguna lectura la trae; si no, el índice; si no, la lectura cruda; null si no hay nada.
+ */
+fun moistureKindFor(readings: List<NodeReading>): MoistureKind? = MoistureKind.entries.firstOrNull { kind ->
+    readings.any { reading -> reading.zones.any { it.moistureValue(kind) != null } }
 }
 
 data class NodeReading(
@@ -308,8 +341,17 @@ data class NodeReading(
     val calibrationMethod: String?,
     val calibrationDate: String?,
     val qualityFlags: List<String>,
+    /** Hora DENTRO de la simulación (`sim_time`, solo el gemelo digital). `timestamp` es la hora del servidor. */
+    val simTime: String? = null,
+    val simEpochMillis: Long? = null,
 ) {
     fun zone(id: String): ZoneReading? = zones.firstOrNull { it.id.equals(id, ignoreCase = true) }
+
+    /**
+     * Hora para ubicar la lectura en el gráfico: la simulada si existe (el gemelo manda muchas horas
+     * simuladas en pocos segundos reales, todas con casi el mismo `ts`), si no la del nodo.
+     */
+    val chartMillis: Long? get() = simEpochMillis ?: epochMillis
 }
 
 data class NodeStatus(
@@ -335,3 +377,7 @@ data class FieldReadings(
     val readings: List<NodeReading>,
     val skipped: Int,
 )
+
+/** Orden de las lecturas: hora del nodo/servidor y, a igual hora, la hora simulada. */
+val NodeReadingOrder: Comparator<NodeReading> =
+    compareBy({ it.epochMillis ?: Long.MIN_VALUE }, { it.simEpochMillis ?: Long.MIN_VALUE })

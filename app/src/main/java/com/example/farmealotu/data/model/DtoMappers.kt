@@ -20,6 +20,7 @@ import com.example.farmealotu.domain.LegendEntry
 import com.example.farmealotu.domain.MapLayer
 import com.example.farmealotu.domain.NasaStatus
 import com.example.farmealotu.domain.NodeReading
+import com.example.farmealotu.domain.NodeReadingOrder
 import com.example.farmealotu.domain.NodeSource
 import com.example.farmealotu.domain.NodeStatus
 import com.example.farmealotu.domain.Priorities
@@ -37,7 +38,9 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import kotlin.math.round
 
 /**
@@ -493,7 +496,7 @@ object DtoMappers {
             runCatching { toReading(json.decodeFromJsonElement<SensorReadingDto>(item)) }
                 .getOrElse { skipped++; null }
         }
-        return FieldReadings(readings.sortedBy { it.epochMillis ?: Long.MIN_VALUE }, skipped)
+        return FieldReadings(readings.sortedWith(NodeReadingOrder), skipped)
     }
 
     fun toReading(dto: SensorReadingDto): NodeReading {
@@ -510,9 +513,11 @@ object DtoMappers {
                 ZoneReading(
                     id = id,
                     moistureVwc = zone.soilMoistureVwc?.takeIf { it.isFinite() },
-                    moistureRaw = zone.soilMoistureRaw,
+                    moistureRaw = zone.soilMoistureRaw?.takeIf { it.isFinite() },
                     soilTempC = zone.soilTempC?.takeIf { it.isFinite() },
                     flags = zone.flags.orEmpty(),
+                    // Índice relativo del sensor: se guarda aparte, nunca se convierte a VWC.
+                    moistureIndexPct = zone.soilMoistureIndexPct?.takeIf { it.isFinite() },
                 )
             },
             bmeTempC = dto.external?.bme680?.tC,
@@ -525,7 +530,22 @@ object DtoMappers {
             calibrationMethod = dto.calibration?.moistureMethod?.takeIf { it.isNotBlank() },
             calibrationDate = dto.calibration?.date?.takeIf { it.isNotBlank() },
             qualityFlags = dto.qualityFlags.orEmpty(),
+            simTime = dto.simTime?.takeIf { it.isNotBlank() },
+            simEpochMillis = parseSimClockMillis(dto.simTime),
         )
+    }
+
+    /**
+     * `sim_time` se muestra con la hora TAL COMO la escribe la simulación (p. ej. «10:20» para
+     * "2026-11-14T10:20:00Z"), sin pasarla a la zona del teléfono. Por eso se guarda su reloj literal
+     * expresado en UTC; la pantalla lo formatea en UTC.
+     */
+    fun parseSimClockMillis(text: String?): Long? {
+        val value = text?.trim()?.takeIf { it.isNotEmpty() } ?: return null
+        val local = runCatching { OffsetDateTime.parse(value).toLocalDateTime() }
+            .recoverCatching { LocalDateTime.parse(value) }
+            .getOrNull() ?: return null
+        return local.toInstant(ZoneOffset.UTC).toEpochMilli()
     }
 
     fun parseEpochMillis(timestamp: String?): Long? {

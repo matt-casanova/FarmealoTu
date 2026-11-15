@@ -87,6 +87,16 @@ object Glossary {
         body = "Qué parte del volumen del suelo es agua. El nodo la manda en m³/m³ y acá se muestra en % (se multiplica por 100).",
         limitation = "Solo vale si el sensor fue calibrado; cada sensor barato se calibra por separado.",
     )
+    val moistureIndex = GlossaryEntry(
+        title = "Índice de humedad del sensor",
+        body = "El índice compara la lectura con el sensor seco (0) y en agua (100). Sirve para ver si el suelo se moja o se seca; no es el porcentaje real de agua del suelo.",
+        limitation = "Un suelo saturado tiene alrededor de 40–50 % de agua, no 100 %. Para el % real hace falta calibrar el sensor con muestras de suelo.",
+    )
+    val lightIndex = GlossaryEntry(
+        title = "Luz (índice relativo)",
+        body = "Valor de 0 a 100 que el nodo calcula con su sensor de luz (LDR). Sirve para comparar momentos: si hay más o menos luz que antes.",
+        limitation = "No son lux ni radiación solar, y no se puede comparar con otro sensor.",
+    )
     val satelliteVsGround = GlossaryEntry(
         title = "Satélite y sensor en tierra",
         body = "El satélite da el contexto de una zona grande y muchos años de historia. El sensor da la medición de un punto. Un campo no es uniforme, y un píxel de 9 a 50 km lo promedia todo.",

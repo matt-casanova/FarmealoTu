@@ -109,6 +109,8 @@ data class SensorReadingDto(
     val external: ExternalDto? = null,
     val calibration: CalibrationDto? = null,
     @SerialName("quality_flags") val qualityFlags: List<String>? = null,
+    /** Campo extra del gemelo digital: hora dentro de la simulación (`ts` lo pone el servidor). */
+    @SerialName("sim_time") val simTime: String? = null,
 )
 
 @Serializable
@@ -123,6 +125,8 @@ data class ZoneDto(
     /** m³/m³ (0–1). NO es un porcentaje. */
     @SerialName("soil_moisture_vwc") val soilMoistureVwc: Double? = null,
     @SerialName("soil_moisture_raw") val soilMoistureRaw: Double? = null,
+    /** Índice RELATIVO del sensor (0–100, calibración de 2 puntos: seco al aire / en agua). NO es VWC. */
+    @SerialName("soil_moisture_index_pct") val soilMoistureIndexPct: Double? = null,
     @SerialName("soil_temp_c") val soilTempC: Double? = null,
     val flags: List<String>? = null,
 )

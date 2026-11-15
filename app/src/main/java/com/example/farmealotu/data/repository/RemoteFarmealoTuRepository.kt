@@ -43,8 +43,8 @@ class RemoteFarmealoTuRepository(
     override suspend fun mapLayers(): ApiResult<List<MapLayer>> =
         safeApiCall(json) { DtoMappers.toMapLayers(api.mapLayers()) }
 
-    override suspend fun fieldReadings(nodeId: String?, source: String?, since: String?): ApiResult<FieldReadings> =
-        safeApiCall(json) { DtoMappers.toFieldReadings(api.fieldNodeReadings(nodeId, source, since), json) }
+    override suspend fun fieldReadings(nodeId: String?, source: String?, since: String?, limit: Int?): ApiResult<FieldReadings> =
+        safeApiCall(json) { DtoMappers.toFieldReadings(api.fieldNodeReadings(nodeId, source, since, limit), json) }
 
     override suspend fun fieldStatus(): ApiResult<NodeStatus> =
         safeApiCall(json) { DtoMappers.toNodeStatus(api.fieldNodeStatus()) }

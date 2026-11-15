@@ -89,11 +89,11 @@ class FakeFarmealoTuRepository(
         return ApiResult.Success(DtoMappers.toMapLayers(mapLayersJson()))
     }
 
-    override suspend fun fieldReadings(nodeId: String?, source: String?, since: String?): ApiResult<FieldReadings> {
+    override suspend fun fieldReadings(nodeId: String?, source: String?, since: String?, limit: Int?): ApiResult<FieldReadings> {
         delay(latencyMillis / 2)
         val all = DtoMappers.toFieldReadings(fieldReadingsJson(), json)
         val filtered = if (source.isNullOrBlank()) all else all.copy(readings = all.readings.filter { it.source.apiCode == source })
-        return ApiResult.Success(filtered)
+        return ApiResult.Success(if (limit == null) filtered else filtered.copy(readings = filtered.readings.takeLast(limit)))
     }
 
     override suspend fun fieldStatus(): ApiResult<NodeStatus> {

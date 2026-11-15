@@ -47,6 +47,7 @@ interface FarmealoTuApi {
         @Query("node_id") nodeId: String? = null,
         @Query("source") source: String? = null,
         @Query("since") since: String? = null,
+        @Query("limit") limit: Int? = null,
     ): JsonElement
 
     @GET("api/field-node/status")

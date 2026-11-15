@@ -440,6 +440,7 @@ fun TimeSeriesChart(
     onSelect: (Long) -> Unit,
     modifier: Modifier = Modifier,
     decimals: Int = 1,
+    timeLabel: (Long) -> String = ::formatTimeOfDay,
 ) {
     val measurer = rememberTextMeasurer()
     val allPoints = series.flatMap { it.points }
@@ -503,8 +504,8 @@ fun TimeSeriesChart(
         }
         val labelYByName = endLabelY.toMap()
         drawLine(ChartPalette.axis, Offset(left, bottom), Offset(right, bottom), 1.dp.toPx())
-        drawLabel(measurer, formatTimeOfDay(tMin), Offset(left, bottom + 4.dp.toPx()))
-        if (tMax != tMin) drawLabel(measurer, formatTimeOfDay(tMax), Offset(right, bottom + 4.dp.toPx()), alignX = 1f)
+        drawLabel(measurer, timeLabel(tMin), Offset(left, bottom + 4.dp.toPx()))
+        if (tMax != tMin) drawLabel(measurer, timeLabel(tMax), Offset(right, bottom + 4.dp.toPx()), alignX = 1f)
 
         // Lectura seleccionada.
         if (selectedTime != null && selectedTime in tMin..tMax) {
