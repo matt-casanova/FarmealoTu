@@ -1,11 +1,11 @@
-"""Build RotaSat plan: generate Gantt SVG, assemble HTML, render PDF with Edge (2 passes for TOC pages)."""
+"""Build FarmealoTu plan: generate Gantt SVG, assemble HTML, render PDF with Edge (2 passes for TOC pages)."""
 import re
 import subprocess
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).parent
-OUT_PDF = HERE / "RotaSat_Plan_de_Proyecto.pdf"   # salida local (no se versiona); el PDF oficial está en la raíz
+OUT_PDF = HERE / "FarmealoTu_Plan_de_Proyecto.pdf"   # salida local (no se versiona); se copia a la raíz
 EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 PARTS = ["p0_head.html", "p1_problem_solution.html", "p2_app_sim.html",
          "p3_proto.html", "p4_team.html", "p5_schedule_rest.html"]

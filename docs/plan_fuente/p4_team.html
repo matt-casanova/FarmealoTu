@@ -70,7 +70,7 @@
   </div>
   <h4>Paso a paso</h4>
   <table class="steps">
-    <tr><td class="h">09:00–09:45</td><td><strong>Kickoff.</strong> Repasa el plan con todos, confirma el alcance del MVP, crea el monorepo <code>rotasat</code> (estructura de 4.9, README esqueleto, <code>.env.example</code>, <code>.gitignore</code>, tablero) y congela con Matías el OpenAPI v0 y, con todos, <code>shared/sensor_reading.schema.json</code> v1.</td></tr>
+    <tr><td class="h">09:00–09:45</td><td><strong>Kickoff.</strong> Repasa el plan con todos, confirma el alcance del MVP, crea el monorepo <code>farmealotu</code> (estructura de 4.9, README esqueleto, <code>.env.example</code>, <code>.gitignore</code>, tablero) y congela con Matías el OpenAPI v0 y, con todos, <code>shared/sensor_reading.schema.json</code> v1.</td></tr>
     <tr><td class="h">09:45–11:00</td><td><code>fetch_power_daily(lat, lon, start, end)</code>: GET con <code>requests</code> (timeout de 60 s, 3 reintentos con backoff), validación del HTTP y de <code>properties.parameter</code>, fechas YYYYMMDD → ISO, variables alineadas por fecha, −999 → <code>null</code>, unidades y elevación de <code>geometry</code> conservadas. Caché en <code>backend/data/cache/</code> con fecha de descarga; si NASA no responde, reutiliza la última descarga válida y avisa. Descarga 2015-01-01→2025-12-31 y 2026-01-01→2026-11-14, detecta la última observación válida y prueba GWETROOT por separado.</td></tr>
     <tr><td class="h">11:00–11:30</td><td><code>fetch_power_hourly</code> para el punto piloto (períodos de S1, S2 y S3) → <code>hardware/simulation/forcing/power_hourly_*.csv</code>. <strong>Traspaso a Christian a las 11:30.</strong></td></tr>
     <tr><td class="h">11:30–12:00</td><td><strong>Prueba A</strong> (<code>tests/test_power.py</code>): llamada real o desde caché, JSON inspeccionable, unidades y fuente presentes.</td></tr>
@@ -98,7 +98,7 @@
 <!-- ======================= MATÍAS ======================= -->
 <div class="person">
   <div class="ph"><div><div class="nm">Matías</div><div class="rl">Ing. Sistemas · Motor de recomendación, base agrícola y API</div></div><div><span class="chip app">App</span></div></div>
-  <div class="mission"><strong>Misión:</strong> construir el cerebro explicable de RotaSat (cultivos → reglas → estrategias → puntajes → incertidumbre → explicación) y exponerlo con una API estable, incluido el puente con el nodo de campo.</div>
+  <div class="mission"><strong>Misión:</strong> construir el cerebro explicable de FarmealoTu (cultivos → reglas → estrategias → puntajes → incertidumbre → explicación) y exponerlo con una API estable, incluido el puente con el nodo de campo.</div>
   <div class="grid2 small">
     <div><h4>Responsabilidades</h4><ul>
       <li><code>app/schemas.py</code> (Pydantic), <code>app/main.py</code> (FastAPI, CORS, <code>/docs</code>) y mocks desde la primera hora.</li>

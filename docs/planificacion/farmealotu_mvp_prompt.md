@@ -1,9 +1,9 @@
-RotaSat — Implementación inmediata del MVP NASA Field Shift
+FarmealoTu — Implementación inmediata del MVP NASA Field Shift
 1. Tu rol y misión
 Actúa como arquitecto de software senior, ingeniero backend Python, desarrollador frontend y especialista en sistemas de apoyo a decisiones agrícolas.
 Debes construir código ejecutable, no solamente describir una solución.
 Estamos participando en el NASA Space Apps Challenge 2026, desafío Field Shift: Adapting Farms with NASA Data.
-Disponemos de 12 horas para desarrollar un MVP completamente funcional llamado RotaSat.
+Disponemos de 12 horas para desarrollar un MVP completamente funcional llamado FarmealoTu.
 Problema concreto: los agricultores de Cuatro Cañadas, Santa Cruz, Bolivia, necesitan decidir qué cultivos sembrar en sucesión para reducir su exposición a sequías, exceso de lluvias, deterioro del suelo y restricciones de producción.
 Solución: una aplicación móvil-web que combina datos NASA históricos y recientes con información agrícola local y prioridades del agricultor para comparar estrategias de rotación y explicar riesgos, ventajas, limitaciones e incertidumbre.
 La aplicación debe apoyar decisiones, nunca reemplazar al agricultor ni al agrónomo.
@@ -92,7 +92,7 @@ Generador y evaluador de rotaciones
 ↓
 FastAPI REST
 ↓
-RotaSat — interfaz web móvil
+FarmealoTu — interfaz web móvil
 El navegador nunca consulta directamente NASA. Las credenciales NASA Earthdata, cuando correspondan, permanecen en el backend.
 Separar la ingestión histórica, que se ejecuta anticipadamente, de la consulta interactiva: comparar rotaciones debe funcionar sobre datos ya procesados, sin esperar una descarga satelital.
 
@@ -260,7 +260,7 @@ Presentar P10–P90 como rango de variabilidad del modelo bajo remuestreo histó
 Mostrar incertidumbre adicional cuando faltan análisis de suelo o parámetros locales.
 
 6. Diseño de la aplicación: agricultores primero
-Nombre: RotaSat
+Nombre: FarmealoTu
 Lema principal:
 "Decidí qué sembrar después, con información sobre el clima y tu tierra."
 El público objetivo incluye agricultores acostumbrados a trabajar con experiencia de campo, no necesariamente con aplicaciones analíticas.
@@ -408,7 +408,7 @@ Utilizar esquemas Pydantic, CORS configurado para el frontend, respuestas JSON c
 
 9. Estructura de archivos
 Organizar el repositorio así:
-rotasat/
+farmealotu/
 - backend/app/main.py
 - backend/app/schemas.py
 - backend/pipeline/power.py
@@ -456,7 +456,7 @@ Prueba F: interfaz móvil
 Un usuario puede introducir datos y llegar a la recomendación en menos de tres minutos usando un teléfono, sin conocimientos de ingeniería.
 Prueba G: trazabilidad
 Todo resultado relevante debe tener una fuente, una fecha, una unidad y una explicación verificable.
-No afirmar que NASA recomienda directamente un cultivo: NASA proporciona datos, RotaSat interpreta esos datos mediante su propio motor.
+No afirmar que NASA recomienda directamente un cultivo: NASA proporciona datos, FarmealoTu interpreta esos datos mediante su propio motor.
 
 11. Plan de implementación de 12 horas
 Horas 0–2: infraestructura y conexión real

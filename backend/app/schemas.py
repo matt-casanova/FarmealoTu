@@ -74,7 +74,7 @@ class Calibration(BaseModel):
 class SensorReading(BaseModel):
     """Lectura del nodo de campo, contrato v1 (plan 9.2): grupos `internal` (en la tierra) y `external`."""
     model_config = ConfigDict(extra="allow", json_schema_extra={"examples": [{
-        "schema_version": "1.0", "node_id": "rotasat-node-01", "source": "simulated", "scenario": "S4",
+        "schema_version": "1.0", "node_id": "farmealotu-node-01", "source": "simulated", "scenario": "S4",
         "ts": "2026-11-14T20:15:00Z",
         "internal": {"depth_cm": 7, "zones": [{"id": "A", "soil_moisture_vwc": 0.11, "soil_moisture_raw": 2710,
                                                "soil_temp_c": 24.6, "flags": []}]},

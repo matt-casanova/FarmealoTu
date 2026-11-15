@@ -148,7 +148,7 @@
 
   <h2>4.9 Repositorio (monorepo) y dueños</h2>
   <div class="grid2">
-<pre>rotasat/
+<pre>farmealotu/
 ├─ README.md · .env.example · LICENSE
 ├─ shared/
 │  └─ sensor_reading.schema.json  Matías·Mateo
@@ -177,7 +177,7 @@
    ├─ simulation/     (gemelo digital)   Christian
    │   models/ · scenarios/ · forcing/ · output/
    │   export.py · replay.py · fit.py · README.md
-   ├─ firmware/rotasat_node/  (ESP32)    Mateo
+   ├─ firmware/farmealotu_node/  (ESP32)    Mateo
    ├─ wokwi/diagram.json · wokwi.toml    Mateo
    ├─ calibration/  protocolo + datos    Vanesa
    └─ docs/  BOM · pinout · fotos · informe  Vanesa</pre>
@@ -342,7 +342,7 @@
   </table>
   <div class="callout warn small"><span class="h">Red en Wokwi (verificado en su documentación)</span>
   El <strong>gateway público gratuito</strong> da acceso a internet, pero para llegar a un servidor en <code>localhost</code> hace falta el <strong>Private Gateway</strong>, que es de pago. Por eso el ESP32 virtual envía a la <strong>API desplegada</strong> o a un <strong>túnel público</strong> (<code>cloudflared tunnel --url http://localhost:8000</code> o ngrok) que provee Alvin. Si es HTTPS, se usa <code>WiFiClientSecure</code> con <code>setInsecure()</code> <em>solo para la demo</em>, declarado como limitación.</div>
-  <p class="small"><strong>Estructura del firmware</strong> (<code>hardware/firmware/rotasat_node/</code>): <code>config.h</code> (pines, intervalos, <code>#define SIMULATION</code>, Wi-Fi, URL) · <code>sensors.cpp</code> (lecturas; stubs con <code>#ifdef SIMULATION</code>) · <code>calibration.h</code> (curvas por sensor) · <code>payload.cpp</code> (ArduinoJson → contrato v1) · <code>net.cpp</code> (Wi-Fi, NTP, POST con 3 reintentos y buffer circular sin conexión) · <code>rotasat_node.ino</code>. <strong>Aceptación:</strong> el JSON que imprime por serie valida contra el mismo esquema que la exportación de Python y el POST responde 201.</p>
+  <p class="small"><strong>Estructura del firmware</strong> (<code>hardware/firmware/farmealotu_node/</code>): <code>config.h</code> (pines, intervalos, <code>#define SIMULATION</code>, Wi-Fi, URL) · <code>sensors.cpp</code> (lecturas; stubs con <code>#ifdef SIMULATION</code>) · <code>calibration.h</code> (curvas por sensor) · <code>payload.cpp</code> (ArduinoJson → contrato v1) · <code>net.cpp</code> (Wi-Fi, NTP, POST con 3 reintentos y buffer circular sin conexión) · <code>farmealotu_node.ino</code>. <strong>Aceptación:</strong> el JSON que imprime por serie valida contra el mismo esquema que la exportación de Python y el POST responde 201.</p>
 
   <h2>5.7 Etapa 3: del simulador a la placa (checklist de transición)</h2>
   <table class="t compact">

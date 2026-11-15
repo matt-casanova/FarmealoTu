@@ -26,7 +26,8 @@
 |---|---|---|---|
 | Plan de proyecto (PDF) | Alvin | Redacción y maquetación a partir de los documentos del reto y de las decisiones del equipo | Revisión del equipo; las cifras de contexto citan su fuente |
 | Pipeline NASA POWER, indicadores, capas GIBS, API base, nodo de campo | Alvin | Código y pruebas | Pruebas automáticas; respuestas reales de NASA POWER; capas GIBS verificadas con `GetCapabilities` y una tesela real |
-| Motor de recomendación, referencia agrícola, incertidumbre | Matías | Código, pruebas y transcripción inicial de parámetros FAO-56 | 117 pruebas en verde; Kc, etapas y raíz cotejados contra el texto de FAO-56 (se corrigió un dato del trigo); falta el cotejo de una persona (`verified_at`) |
+| Motor de recomendación, referencia agrícola, incertidumbre | Matías | Código, pruebas y transcripción inicial de parámetros FAO-56 | 125 pruebas del backend en verde; Kc, etapas y raíz cotejados contra el texto de FAO-56 (se corrigió un dato del trigo) |
+| ET0 FAO-56 Penman–Monteith (`physics.py`) | Alvin | Código y pruebas | Reproduce los ejemplos 8 y 18 de FAO-56 y coincide con `pyet` (diferencia 0,0 en 4.329 días) |
 | Integración de la app con los endpoints NASA | Matías | Código y pruebas de contrato | Prueba de contrato con respuestas reales del backend |
 | App Android (UI/UX) | Kendra | Código Compose y pulido de diseño con Impeccable | Capturas antes/después en el emulador (`docs/ui_review/`) |
 | Gemelo digital, firmware, prototipo | Vanesa, Christian, Mateo | *A completar por el subequipo* | *A completar* |

@@ -4,7 +4,8 @@
 > not be opened from the team PC on 14-Nov-2026 because of a TLS certificate error. The fields below follow the
 > structure of earlier editions. **Confirm the 2026 field names, required fields, character limits and demo format in
 > the official guide**, and adjust.
-> **[UPDATE]** marks text that depends on work still in progress (ET0/water score, prototype, demo link).
+> **[UPDATE]** marks fields the team fills in at submission time (demo link, public repository, references list).
+> The complete, up-to-date documentation is the repository [README](../../README.md).
 
 ---
 
@@ -75,8 +76,9 @@ or PHYSICAL.
 - **Uncertainty:** 200 bootstrap resamples of whole agricultural years (seed 42) give P10/P50/P90 and ranking
   stability. Confidence is capped at "medium" because the data is regional.
 - **App:** Kotlin and Jetpack Compose (Material 3), Spanish, designed for mid-range phones used outdoors.
-- **Field node:** ESP32 with soil moisture, DS18B20, BME680, DHT11 and LDR sensors, plus a digital twin forced with NASA
-  POWER hourly data. Both share one JSON contract. **[UPDATE: prototype status]**
+- **Field node:** ESP32 with capacitive soil moisture, DS18B20, DHT11 and LDR sensors (BME680 optional), sending a
+  reading every 3 s, plus a digital twin forced with NASA POWER hourly data. Both share one JSON contract and were
+  verified live end to end (node → API → app).
 
 ### Benefits
 - Makes long-term NASA climate records usable by farmers with no geospatial background.
@@ -89,8 +91,8 @@ or PHYSICAL.
 - Crop parameters are generic FAO-56 values, and sowing dates are assumed.
 - Scores are relative, not probabilities.
 - No yield or price prediction.
-- **[UPDATE]** Until daily ET0 (FAO-56 Penman–Monteith) is integrated, the water score, the "save water" profile and
-  the global ranking are not shown; the app explains why.
+- Daily ET0 (FAO-56 Penman–Monteith) comes from regional NASA POWER data; it reproduces the FAO-56 worked examples
+  and matches the independent `pyet` implementation.
 
 ### Tools and languages
 Python (FastAPI, pandas, NumPy, pytest), Kotlin (Jetpack Compose, Material 3, Retrofit, osmdroid), ESP32/Arduino,
@@ -103,7 +105,7 @@ We used **Claude Code (Anthropic)** as a coding and documentation assistant for:
 - the project plan.
 
 The team reviewed and tested the work:
-- 117 automated backend tests;
+- 125 automated backend tests and 72 Android tests;
 - checks against real NASA responses;
 - GIBS layers verified tile by tile;
 - crop parameters checked against the FAO-56 tables, which led to correcting one value the assistant had transcribed.
@@ -111,7 +113,6 @@ The team reviewed and tested the work:
 **FarmealoTu itself does not use AI, ML or LLMs to calculate, rank or explain recommendations.** The engine is
 deterministic: the same input always gives the same output. The explanatory texts come from templates filled with the
 engine's real numbers.
-**[UPDATE: add the hardware subteam's use of AI, if any.]**
 
 ## NASA data
 - **NASA POWER Daily API** (AG community), point −17.2374, −62.2427, 2015-01-01 to Nov-2026. Variables: T2M, T2M_MAX,

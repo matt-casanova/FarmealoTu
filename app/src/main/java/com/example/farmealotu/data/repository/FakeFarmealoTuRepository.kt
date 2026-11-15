@@ -420,7 +420,7 @@ class FakeFarmealoTuRepository(
                 val wave = sin(2 * PI * index / 36.0)
                 add(buildJsonObject {
                     put("schema_version", "1.0")
-                    put("node_id", "rotasat-node-01")
+                    put("node_id", "farmealotu-node-01")
                     put("source", "simulated")
                     put("scenario", "S4")
                     put("ts", ts.toString())
@@ -473,7 +473,7 @@ class FakeFarmealoTuRepository(
     }
 
     private fun fieldStatusJson(): JsonObject = buildJsonObject {
-        put("node_id", "rotasat-node-01")
+        put("node_id", "farmealotu-node-01")
         put("last_contact", now().truncatedTo(ChronoUnit.MINUTES).toString())
         put("source", "simulated")
         putJsonObject("calibration") {

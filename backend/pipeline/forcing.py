@@ -104,7 +104,7 @@ def _write_csv(name: str, records, res: dict, info: dict) -> dict:
     path = OUT_DIR / f"power_hourly_{name}.csv"
     n_missing = 0
     with path.open("w", newline="", encoding="utf-8") as f:
-        f.write(f"# FarmealoTu / RotaSat · forzante horario {name} · {info['description']}\n")
+        f.write(f"# FarmealoTu · forzante horario {name} · {info['description']}\n")
         f.write(f"# Fuente: NASA POWER Hourly API {data['api'].get('version')} (community=AG) · "
                 f"orígenes {', '.join(data['upstream_sources'])} · evidence_status=documented\n")
         f.write(f"# Punto: lat {P.PILOT_LAT}, lon {P.PILOT_LON} (Cuatro Cañadas, referencia; celda POWER "

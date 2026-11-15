@@ -1,10 +1,10 @@
-# Prompt para Claude Code — Alvin (FarmealoTu / RotaSat)
+# Prompt para Claude Code — Alvin (FarmealoTu)
 
 > Copiá todo lo que está debajo de la línea y pegalo en Claude Code, abierto en la carpeta del repo `FarmealoTu`.
 
 ---
 
-Hola, Claude. Soy **Alvin**, de Ingeniería de Sistemas. Estoy en la hackatón **NASA Space Apps Challenge 2026**, reto **«Field Shift: Adapting Farms with NASA Data»**. Nuestro equipo se llama **FarmealoTu** (6 personas). La app también se llama **FarmealoTu** (en el plan figura como «RotaSat»). Tenemos 24 horas: del **sábado 14-nov-2026 a las 09:00** al **domingo 15-nov a las 09:00**. Hay que enviar el domingo a las **08:00**.
+Hola, Claude. Soy **Alvin**, de Ingeniería de Sistemas. Estoy en la hackatón **NASA Space Apps Challenge 2026**, reto **«Field Shift: Adapting Farms with NASA Data»**. Nuestro equipo se llama **FarmealoTu** (6 personas). La app también se llama **FarmealoTu**. Tenemos 24 horas: del **sábado 14-nov-2026 a las 09:00** al **domingo 15-nov a las 09:00**. Hay que enviar el domingo a las **08:00**.
 
 Necesito que me guíes y programes conmigo **paso a paso** en todo lo que me toca a mí. Trabajá por pasos cortos. Al terminar cada paso, mostrame qué hiciste, cómo probarlo y cuál es el siguiente paso.
 
@@ -49,7 +49,7 @@ Necesito que me guíes y programes conmigo **paso a paso** en todo lo que me toc
 3. **−999 de POWER → `null`.** Nunca lo promedies.
 4. **Nada de llamadas a NASA en vivo durante la demo.** Todo se precalcula y se guarda en caché. Si NASA no responde, se usa la última descarga válida y se avisa con su fecha.
 5. **La app Android nunca llama a NASA directamente.** Siempre pasa por nuestra API.
-6. **Nunca digas «NASA recomienda».** RotaSat interpreta datos NASA.
+6. **Nunca digas «NASA recomienda».** FarmealoTu interpreta datos NASA.
 7. **Git:** trabajá en **mi rama** (ver Fase 0). Commits chicos y claros. **No hagas `push`, `merge` ni PR a `master`, `backend` ni `ui_kendra` sin preguntarme primero.** Tampoco sobrescribas trabajo de otros.
 8. **Estoy en Windows con PowerShell.** Dame los comandos en PowerShell (por ejemplo `.\.venv\Scripts\Activate.ps1`).
 9. **Algoritmos deterministas y explicables.** Nada de ML ni de LLM para calcular o recomendar.

@@ -63,7 +63,7 @@ El motor reemplaza el stub de `POST /api/rotations/compare`. La app Android de K
 5. **`null` no es 0.** Un criterio que no se puede calcular queda «insuficiente», y se aplica la política de faltantes (sección 5.4).
 6. **No reimplementes ET0** por tu cuenta (es de Christian). Ver sección 5.5.
 7. **Escala honesta:** todo dato POWER es «contexto regional (~50 km)», nunca «tu campo».
-8. Marca **FarmealoTu** (no «RotaSat»). Código y comentarios en inglés o español, como el resto del backend; textos para el usuario en **español sencillo**.
+8. Marca **FarmealoTu**. Código y comentarios en inglés o español, como el resto del backend; textos para el usuario en **español sencillo**.
 
 ---
 

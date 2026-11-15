@@ -1,6 +1,6 @@
 """Cliente NASA POWER (diario y horario) con validación, caché y respaldo.
 
-Reglas de RotaSat / FarmealoTu (ver plan, secciones 0, 3.3 y 3.4):
+Reglas de FarmealoTu (ver plan, secciones 0, 3.3 y 3.4):
 - El navegador / app Android nunca llama a NASA: solo este backend.
 - −999 (fill_value de POWER) → None. Nunca se promedia.
 - Se conservan unidades, versión de la API, fuentes, estándar de tiempo y elevación.
@@ -171,13 +171,13 @@ def last_valid_date(data: dict, params: Iterable[str] | None = None) -> str | No
 def _write_cache(path: Path, raw: dict, meta: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps({"_rotasat_meta": meta, "response": raw}, ensure_ascii=False), encoding="utf-8")
+    tmp.write_text(json.dumps({"_farmealotu_meta": meta, "response": raw}, ensure_ascii=False), encoding="utf-8")
     tmp.replace(path)
 
 
 def _read_cache(path: Path) -> tuple[dict, dict]:
     blob = json.loads(path.read_text(encoding="utf-8"))
-    return blob["response"], blob["_rotasat_meta"]
+    return blob["response"], blob["_farmealotu_meta"]
 
 
 def _fallback_cache(kind: str, lat: float, lon: float, params: list[str]) -> Path | None:

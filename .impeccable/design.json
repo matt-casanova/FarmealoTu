@@ -345,7 +345,6 @@
       "Don't quitar ni esconder las etiquetas de procedencia, la escala «contexto regional (~50 km)» o las insignias SIMULADO / WOKWI / FÍSICO.",
       "Don't pintar un dato null o unavailable como 0 o en verde.",
       "Don't poner gráficos técnicos en el Inicio ni delante de la conclusión en lenguaje sencillo.",
-      "Don't mostrar «RotaSat» en pantalla.",
       "Don't usar emoji ni glifos de texto (←, ›, ❓) como íconos: van los de FarmIcons, y TalkBack lee el texto del botón, no el ícono.",
       "Don't usar scroll lateral en tablas ni recortar texto de procedencia o títulos de módulo."
     ]

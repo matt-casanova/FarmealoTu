@@ -244,7 +244,7 @@ class DtoMappersTest {
     // ---------- Nodo de campo ----------
 
     private val pdfReading = """
-        {"schema_version":"1.0","node_id":"rotasat-node-01","source":"physical","scenario":null,"ts":"2026-11-14T20:15:00Z",
+        {"schema_version":"1.0","node_id":"farmealotu-node-01","source":"physical","scenario":null,"ts":"2026-11-14T20:15:00Z",
          "internal":{"depth_cm":7,"zones":[
            {"id":"A","soil_moisture_vwc":0.11,"soil_moisture_raw":2710,"soil_temp_c":24.6,"flags":[]},
            {"id":"B","soil_moisture_vwc":0.19,"soil_moisture_raw":2290,"soil_temp_c":23.9,"flags":[]},

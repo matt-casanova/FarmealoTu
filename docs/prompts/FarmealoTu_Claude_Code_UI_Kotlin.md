@@ -18,7 +18,7 @@ Eres un **ingeniero Android senior + arquitecto móvil + diseñador UX para agri
 
 1. **Lee íntegramente las 44 páginas** de `FarmealoTu_Plan_de_Proyecto.pdf` en la raíz del repositorio. Si tu herramienta no extrae el contenido directamente, usa `pdftotext`, PyMuPDF u otra utilidad local disponible; comprueba especialmente tablas y diagramas. Si falta el PDF, informa qué archivo falta y continúa únicamente con el contexto explícito de este prompt, sin fingir haberlo leído.
 2. Las prioridades del PDF siguen vigentes, **excepto dos decisiones expresas del equipo**:
-   - **Nombre final: `FarmealoTu`**, nunca `RotaSat` como marca mostrada al usuario. Respeta identificadores históricos de integración cuando cambiarlos rompa un contrato existente, como el `node_id` del ESP32.
+   - **Nombre: `FarmealoTu`**. Respeta identificadores históricos de integración cuando cambiarlos rompa un contrato existente, como el `node_id` del ESP32.
    - **Frontend: Android Studio + Kotlin + Jetpack Compose**, NO React/Vite/Tailwind/TypeScript ni WebView para implementar las pantallas.
 3. Conserva el resto del PDF: alcance hiperlocal, fórmulas y motor en Python, funciones de cada pantalla, criterios de aceptación, separación satélite/sensor, esquema del nodo y etiquetas de procedencia.
 4. Secciones esenciales: **0** (decisiones), **2** (problema), **3.2–3.8** (arquitectura, datos, motor y JSON de rotaciones), **4.1–4.8** (UX, pantallas y API), **7** (responsabilidades), **9.1–9.2** (contratos), **10** (contingencias), **11** (pruebas A–N), **13** (backlog).

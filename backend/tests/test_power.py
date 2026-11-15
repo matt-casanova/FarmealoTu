@@ -33,7 +33,7 @@ def test_raw_json_is_inspectable(hist):
     """El JSON crudo de POWER está guardado tal cual y tiene la estructura esperada."""
     path = P.CACHE_DIR / hist["cache"]["file"]
     blob = json.loads(path.read_text(encoding="utf-8"))
-    raw, meta = blob["response"], blob["_rotasat_meta"]
+    raw, meta = blob["response"], blob["_farmealotu_meta"]
     P.validate_raw(raw)
     assert set(EXPECTED_UNITS) <= set(raw["properties"]["parameter"])
     assert meta["downloaded_at"] and meta["request"]["url"] == P.DAILY_URL

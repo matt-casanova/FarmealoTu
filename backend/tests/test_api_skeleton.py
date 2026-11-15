@@ -13,7 +13,7 @@ SCHEMA = json.loads((Path(__file__).resolve().parents[2] / "shared" / "sensor_re
                     .read_text(encoding="utf-8"))
 
 READING = {
-    "schema_version": "1.0", "node_id": "rotasat-node-01", "source": "simulated", "scenario": "S4",
+    "schema_version": "1.0", "node_id": "farmealotu-node-01", "source": "simulated", "scenario": "S4",
     "ts": "2026-11-14T20:15:00Z",
     "internal": {"depth_cm": 7, "zones": [
         {"id": "A", "soil_moisture_vwc": 0.11, "soil_moisture_raw": 2710, "soil_temp_c": 24.6, "flags": []},

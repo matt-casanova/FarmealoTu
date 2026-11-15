@@ -1,9 +1,9 @@
-# RotaSat · Field Shift: Adapting Farms with NASA Data
+# FarmealoTu · Field Shift: Adapting Farms with NASA Data
 ## Plan maestro unificado — NASA Space Apps Challenge 2026 (14–15 de noviembre)
 
 **Equipo:** 4 Ing. en Sistemas · 1 Ing. Industrial · 1 Ing. Electromecánica
 **Documento de trabajo:** 12 de noviembre de 2026
-**Une tres documentos:** (1) *Plan integral del equipo* (PDF de 36 páginas), (2) *RotaSat · Resumen del proyecto* y (3) *Prototipo mini: humedad + temperatura + BME280*.
+**Une tres documentos:** (1) *Plan integral del equipo* (PDF de 36 páginas), (2) *FarmealoTu · Resumen del proyecto* y (3) *Prototipo mini: humedad + temperatura + BME280*.
 
 > **Aviso de vigencia.** Fechas, reglas y estado de los datos se verificaron el 12-nov-2026. Las guías 2026 de **envío** y de **jurado** se publican el **13 de noviembre**: léanlas primero; si algo cambia, ellas prevalecen sobre este documento.
 
@@ -59,7 +59,7 @@ Al juntar los tres documentos encontré diferencias. Estas son las decisiones qu
 
 **El reto en una frase.** Construir una herramienta de apoyo a la decisión que combine observaciones de la Tierra de la NASA con información local de suelo, características de cultivos y prioridades del agricultor, para comparar **al menos tres estrategias de rotación (una de ellas, la rotación actual)** y explicar, para cada una, por qué se sugiere, qué evidencia la respalda, qué beneficios ofrece, qué información falta y qué riesgos debe revisar un experto local. La herramienta **apoya, no reemplaza**, el criterio del agricultor.
 
-**Lo que construimos (RotaSat).** Una aplicación web de cinco pasos (ubicar el campo → describir la rotación actual → priorizar → comparar estrategias → entender la evidencia) respaldada por un motor que calcula indicadores con datos NASA (POWER, GPM IMERG, SMAP, MODIS/VIIRS/HLS, SRTM, GRACE-FO y, como complemento, ECOSTRESS), detecta ventanas de suelo desnudo, puntúa estrategias con un método multicriterio explicable y muestra incertidumbre y vacíos de información. **Como extensión**, un prototipo físico (caja de tierra con 3 zonas y sensores) alimenta la pestaña "Datos de terreno" y demuestra que un campo no es uniforme.
+**Lo que construimos (FarmealoTu).** Una aplicación web de cinco pasos (ubicar el campo → describir la rotación actual → priorizar → comparar estrategias → entender la evidencia) respaldada por un motor que calcula indicadores con datos NASA (POWER, GPM IMERG, SMAP, MODIS/VIIRS/HLS, SRTM, GRACE-FO y, como complemento, ECOSTRESS), detecta ventanas de suelo desnudo, puntúa estrategias con un método multicriterio explicable y muestra incertidumbre y vacíos de información. **Como extensión**, un prototipo físico (caja de tierra con 3 zonas y sensores) alimenta la pestaña "Datos de terreno" y demuestra que un campo no es uniforme.
 
 > **Lo urgente: el evento es este fin de semana.** Sábado 14 y domingo 15 de noviembre de 2026 (hoy es jueves 12). Según la guía de envío 2025, el formulario abre el sábado a las 9:00 y cierra el domingo a las 23:59 (hora del evento local).
 
@@ -228,11 +228,11 @@ Guion para el glosario de la interfaz (tooltips de una línea) y para la present
 
 ### 4.1 Propuesta de valor y usuarios
 
-**RotaSat** (nombre de trabajo): *"En cinco pasos, el agricultor ve cómo las condiciones cambiantes afectan su rotación actual y compara alternativas que protegen el suelo, ahorran agua y encajan con sus prioridades, con evidencia NASA, incertidumbre explícita y preguntas para su agrónomo."*
+**FarmealoTu** (nombre de trabajo): *"En cinco pasos, el agricultor ve cómo las condiciones cambiantes afectan su rotación actual y compara alternativas que protegen el suelo, ahorran agua y encajan con sus prioridades, con evidencia NASA, incertidumbre explícita y preguntas para su agrónomo."*
 
-> **La idea en una frase:** RotaSat ayuda a un agricultor a decidir qué sembrar después de cada cultivo, comparando al menos tres estrategias con datos NASA, y le dice con honestidad cuánto confiar en cada una y qué debe consultar con su agrónomo.
+> **La idea en una frase:** FarmealoTu ayuda a un agricultor a decidir qué sembrar después de cada cultivo, comparando al menos tres estrategias con datos NASA, y le dice con honestidad cuánto confiar en cada una y qué debe consultar con su agrónomo.
 
-| Usuario | Necesidad | Qué le entrega RotaSat |
+| Usuario | Necesidad | Qué le entrega FarmealoTu |
 |---|---|---|
 | Agricultor/a familiar o mediano/a | Decidir con clima incierto, poco tiempo y poco ancho de banda | Cuatro estrategias comparables, lenguaje claro, semáforo de confianza, hoja imprimible |
 | Agrónomo/a o extensionista | Revisar rápido el contexto de varios predios | Evidencia trazable, vacíos explícitos y preguntas para la visita |
@@ -291,7 +291,7 @@ Guion para el glosario de la interfaz (tooltips de una línea) y para la present
 
 **Principio de diseño:** el motor es un **sistema explicable** (reglas agronómicas + puntaje multicriterio + estadística). La IA se usa donde aporta de verdad: fenología y detección de anomalías, zonificación y, de forma opcional y acotada, redacción en lenguaje claro de la evidencia ya calculada. Así cada recomendación se puede auditar.
 
-> **Diseñen desde la demo, hacia atrás.** Escriban la historia de 3 minutos: *"Un agricultor con maíz y barbecho largo quiere ahorrar agua. RotaSat muestra X días de suelo desnudo en la época de lluvias intensas, compara cuatro estrategias, advierte que la confianza es media por falta de análisis de suelo y deja tres preguntas para su agrónomo. En la caja, regamos una zona y vemos que solo esa curva sube."* Todo lo que no aparezca en esa historia es candidato a recorte.
+> **Diseñen desde la demo, hacia atrás.** Escriban la historia de 3 minutos: *"Un agricultor con maíz y barbecho largo quiere ahorrar agua. FarmealoTu muestra X días de suelo desnudo en la época de lluvias intensas, compara cuatro estrategias, advierte que la confianza es media por falta de análisis de suelo y deja tres preguntas para su agrónomo. En la caja, regamos una zona y vemos que solo esa curva sube."* Todo lo que no aparezca en esa historia es candidato a recorte.
 
 ### 4.6 Cómo elegir la región piloto (decisión del jueves)
 
@@ -315,7 +315,7 @@ Resoluciones y estado verificados el 12-nov-2026; confirmen nombres exactos de c
 
 ### 5.1 Catálogo
 
-| Producto | Variable y uso en RotaSat | Resolución (espacio · tiempo) | Cobertura | Acceso | Prio. |
+| Producto | Variable y uso en FarmealoTu | Resolución (espacio · tiempo) | Cobertura | Acceso | Prio. |
 |---|---|---|---|---|---|
 | **NASA POWER** (reanálisis + CERES) | T2M, T2M_MAX/MIN, PRECTOTCORR, RH2M, WS2M, radiación solar, humedad de suelo modelada (GWETROOT). Columna vertebral del clima y de ET0 | ≈0.5°×0.625° (50–60 km) · diario | 1981–hoy | API REST sin clave (power.larc.nasa.gov), comunidad AG | MUST |
 | **GPM IMERG V07** | Precipitación: extremos (P95), días secos, SPI | 0.1° (~10 km) · 30 min/diario | 2000–hoy; Final con ~3.5 meses de latencia | GES DISC/Earthdata; GEE (`NASA/GPM_L3/IMERG_V07`) | MUST |
@@ -1071,10 +1071,10 @@ Seis personas, ~27 horas efectivas (dos jornadas de ~13 h con descanso) y un pro
 
 ### 14.2 Borrador de textos en inglés (con huecos para completar)
 
-**Project name:** `RotaSat: a crop-rotation advisor powered by NASA Earth observations` *(working title; confirm before submitting)*
+**Project name:** `FarmealoTu: a crop-rotation advisor powered by NASA Earth observations` *(working title; confirm before submitting)*
 
 **High-level summary (draft):**
-> RotaSat is a farmer-centered decision-support tool that helps explore crop-rotation strategies under changing weather and water conditions. Given a field location, the current rotation and the farmer's priorities (saving water, soil health, income, forage), it combines NASA data (POWER, GPM IMERG, SMAP, MODIS/VIIRS/HLS vegetation indices, SRTM and GRACE-FO) with soil and crop information to compare at least three strategies, including the existing rotation. For each strategy it explains why it was suggested, the supporting evidence, expected benefits, information gaps and risks that need local review. It highlights typically bare-field periods and vulnerable seasons, reports uncertainty, and is designed to support, not replace, farmer judgment and local agricultural expertise. [Optional: A low-cost field node (ESP32 with soil-moisture, soil-temperature and air sensors) shows how local measurements can complement coarse satellite data.]
+> FarmealoTu is a farmer-centered decision-support tool that helps explore crop-rotation strategies under changing weather and water conditions. Given a field location, the current rotation and the farmer's priorities (saving water, soil health, income, forage), it combines NASA data (POWER, GPM IMERG, SMAP, MODIS/VIIRS/HLS vegetation indices, SRTM and GRACE-FO) with soil and crop information to compare at least three strategies, including the existing rotation. For each strategy it explains why it was suggested, the supporting evidence, expected benefits, information gaps and risks that need local review. It highlights typically bare-field periods and vulnerable seasons, reports uncertainty, and is designed to support, not replace, farmer judgment and local agricultural expertise. [Optional: A low-cost field node (ESP32 with soil-moisture, soil-temperature and air sensors) shows how local measurements can complement coarse satellite data.]
 
 **Detailed description (outline):**
 1. *Problem.* Climate variability and soil degradation make rotation choices hard.
@@ -1127,7 +1127,7 @@ Seis personas, ~27 horas efectivas (dos jornadas de ~13 h con descanso) y un pro
 
 ### 14.6 Tu mayor fortaleza
 
-**Es honesta.** Muchos proyectos prometen "aumentar el rendimiento 30 %"; RotaSat muestra patrones, rangos y dudas. Eso encaja con el criterio de **Validez** y con la idea del reto de que la herramienta no reemplaza el criterio local.
+**Es honesta.** Muchos proyectos prometen "aumentar el rendimiento 30 %"; FarmealoTu muestra patrones, rangos y dudas. Eso encaja con el criterio de **Validez** y con la idea del reto de que la herramienta no reemplaza el criterio local.
 
 ---
 
@@ -1142,7 +1142,7 @@ Seis personas, ~27 horas efectivas (dos jornadas de ~13 h con descanso) y un pro
 ## Anexo A. Repositorio y pila
 
 ```text
-rotasat/
+farmealotu/
   README.md                 # qué es, cómo ejecutar, datos, IA usada, créditos y licencias
   LICENSE
   data/
@@ -1309,7 +1309,7 @@ def monte_carlo(criteria_fn, weights, n=500, conc=60):
 > **No probado en hardware.** Es un esqueleto para ahorrar tiempo: revisen bibliotecas, pines y la variante de su placa antes de usarlo. Bibliotecas de Arduino: *Adafruit BME280* (con *Adafruit Unified Sensor*), *OneWire* y *DallasTemperature*. Regístrenlas en las referencias del envío.
 
 ```cpp
-// RotaSat · nodo de campo (3 zonas) — esquema de referencia
+// FarmealoTu · nodo de campo (3 zonas) — esquema de referencia
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <OneWire.h>
@@ -1428,7 +1428,7 @@ void loop() {
 
 ## Anexo G. Fuentes y enlaces
 
-**Documentos del equipo fusionados aquí:** *Plan integral del equipo* (PDF), *RotaSat · Resumen del proyecto* (PDF), *Prototipo mini: humedad + temperatura + BME280* (PDF).
+**Documentos del equipo fusionados aquí:** *Plan integral del equipo* (PDF), *FarmealoTu · Resumen del proyecto* (PDF), *Prototipo mini: humedad + temperatura + BME280* (PDF).
 
 - Space Apps · preguntas frecuentes de participantes: <https://www.spaceappschallenge.org/resources/participant-faqs/>
 - Space Apps · guía de envío de proyectos (versión 2025; la 2026 se publica el 13-nov): <https://www.spaceappschallenge.org/resources/project-submission-guide>

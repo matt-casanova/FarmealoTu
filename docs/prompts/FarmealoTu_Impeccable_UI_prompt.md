@@ -34,7 +34,7 @@ Eres un **diseñador de producto senior + ingeniero Android (Jetpack Compose, Ma
 7. **Etiquetas de procedencia visibles y nunca solo con color**: `documented / derived / assumption / farmer_provided / unavailable`, la escala "contexto regional (~50 km)" y las insignias **SIMULADO / WOKWI / FÍSICO** del nodo de campo. Puedes mejorar su diseño, no quitarlas ni esconderlas.
 8. La **franja "MODO DEMO"** (`DemoStripe`) debe seguir siendo inconfundible.
 9. `ChartPalette` en `ui/theme/Color.kt` es una paleta **validada para daltonismo** (orden fijo de series, secuencial de un tono, divergente con gris al medio, estados reservados). No cambies sus valores sin volver a validarla; si la cambias, explica por qué y con qué comprobación.
-10. Marca **FarmealoTu** (nunca "RotaSat" en pantalla). No cambies identificadores de contrato (`node_id`, campos JSON, rutas de la API, `docs/UI_BACKEND_CONTRACT.md`).
+10. Marca **FarmealoTu**. No cambies identificadores de contrato (`node_id`, campos JSON, rutas de la API, `docs/UI_BACKEND_CONTRACT.md`).
 11. **Pregunta antes** de: reemplazar texto factual o agregar afirmaciones, cambiar la estructura de navegación, agregar dependencias nuevas a Gradle, o agregar fuentes tipográficas.
 
 ---

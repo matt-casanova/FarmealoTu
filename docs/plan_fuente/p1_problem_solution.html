@@ -51,7 +51,7 @@
     </div>
   </div>
 
-  <div class="callout info"><span class="h">El dilema del agricultor que RotaSat ayuda a explorar</span>
+  <div class="callout info"><span class="h">El dilema del agricultor que FarmealoTu ayuda a explorar</span>
   «Siembro soya en verano. ¿Qué pongo en invierno, o qué cambio de mi rotación, si este año tengo poca agua y quiero evitar pérdidas sin seguir gastando el suelo?» Las opciones locales documentadas son sorgo, maíz, girasol, trigo, barbecho o cobertura. Cada una tiene un costo distinto en agua, deja distinto residuo, aporta distinta diversidad y tiene distinta exposición al clima. Esa comparación es la que hacemos visible.</div>
 
   <h2>2.3 Qué pide el reto y qué no pide</h2>
@@ -80,7 +80,7 @@
 
   <h2>2.4 Lectura fina del enunciado → implicancias de diseño</h2>
   <table class="t compact">
-    <thead><tr><th style="width:34%">Lo que dice el enunciado</th><th style="width:30%">Cómo lo interpretamos</th><th>Qué implica para RotaSat</th></tr></thead>
+    <thead><tr><th style="width:34%">Lo que dice el enunciado</th><th style="width:30%">Cómo lo interpretamos</th><th>Qué implica para FarmealoTu</th></tr></thead>
     <tbody>
       <tr><td>«app, model, interactive map, or other decision-support tool»</td><td>El formato es libre; lo que importa es que apoye una decisión</td><td>App web móvil + motor + visor geoespacial</td></tr>
       <tr><td>«NASA Earth observations + local soil information + crop characteristics + farmer priorities»</td><td>Cuatro insumos obligatorios</td><td>Pipeline NASA POWER, <code>crops.json</code> con fuentes, notas de suelo del agricultor y pesos ajustables</td></tr>
@@ -147,12 +147,12 @@
 
 <!-- ======================= 3 ======================= -->
 <div class="section" id="s3">
-  <h1><span class="num">3</span>La solución: RotaSat</h1>
-  <p class="lead">RotaSat ayuda a un agricultor de Cuatro Cañadas a decidir qué sembrar después. Compara su rotación actual con tres alternativas usando datos NASA y una base agrícola local con fuentes, y le dice con honestidad cuánto confiar en cada opción y qué consultar con su agrónomo.</p>
+  <h1><span class="num">3</span>La solución: FarmealoTu</h1>
+  <p class="lead">FarmealoTu ayuda a un agricultor de Cuatro Cañadas a decidir qué sembrar después. Compara su rotación actual con tres alternativas usando datos NASA y una base agrícola local con fuentes, y le dice con honestidad cuánto confiar en cada opción y qué consultar con su agrónomo.</p>
 
   <h2>3.1 Para quién</h2>
   <table class="t compact">
-    <thead><tr><th style="width:24%">Usuario</th><th style="width:36%">Necesidad</th><th>Qué le entrega RotaSat</th></tr></thead>
+    <thead><tr><th style="width:24%">Usuario</th><th style="width:36%">Necesidad</th><th>Qué le entrega FarmealoTu</th></tr></thead>
     <tbody>
       <tr><td>Agricultor/a de granos y oleaginosas</td><td>Decidir la próxima siembra con clima incierto, poco tiempo y sin formación técnica</td><td>Una acción concreta a revisar, 4 estrategias comparables en español sencillo y advertencias con fecha</td></tr>
       <tr><td>Técnico/a o agrónomo/a (ANAPO, cooperativas)</td><td>Revisar rápido el contexto climático de un predio</td><td>Evidencia trazable, vacíos explícitos y preguntas concretas para la visita</td></tr>
@@ -282,7 +282,7 @@
       <rect x="10" y="520" width="16" height="12" rx="3" fill="#f4f3ef" stroke="#898781" stroke-dasharray="4 3"/><text x="32" y="531" fill="#52514e">opcional (P2): solo con datos reales descargados</text>
     </g>
   </svg>
-  <div class="caption"><strong>Figura 1.</strong> Arquitectura de RotaSat. El navegador nunca consulta NASA directamente; la ingesta histórica corre antes y la comparación funciona sobre datos ya procesados. GIBS llega al visor como teselas, a través de los metadatos de <code>/api/map/layers</code>.</div>
+  <div class="caption"><strong>Figura 1.</strong> Arquitectura de FarmealoTu. El navegador nunca consulta NASA directamente; la ingesta histórica corre antes y la comparación funciona sobre datos ya procesados. GIBS llega al visor como teselas, a través de los metadatos de <code>/api/map/layers</code>.</div>
   </div>
 
   <div class="grid2 small">

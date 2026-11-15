@@ -523,4 +523,3 @@ Cada gráfico tiene `contentDescription` o un equivalente en texto.
   SIMULADO / WOKWI / FÍSICO.
 - **Don't** pintar un dato `null` o `unavailable` como 0 o en verde.
 - **Don't** poner gráficos técnicos en el Inicio ni delante de la conclusión en lenguaje sencillo.
-- **Don't** mostrar «RotaSat» en pantalla.

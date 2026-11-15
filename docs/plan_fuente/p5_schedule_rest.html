@@ -67,7 +67,7 @@
   <div class="grid2">
 <pre>{
   "schema_version": "1.0",
-  "node_id": "rotasat-node-01",
+  "node_id": "farmealotu-node-01",
   "source": "physical",
   "scenario": null,
   "ts": "2026-11-14T20:15:00Z",
@@ -215,13 +215,13 @@ Error de esquema: 422 + detalle del campo</pre>
   </div>
 
   <h2>12.2 Borrador del resumen (inglés)</h2>
-  <div class="callout info small"><em>RotaSat is a farmer-centered decision-support tool for crop-rotation choices in Cuatro Cañadas, Santa Cruz, Bolivia, a soybean-dominated region recently hit by floods, drought and excess rain. A farmer enters the current rotation, irrigation and priorities (save water, protect soil, reduce risk). RotaSat combines NASA POWER daily data (precipitation, temperature, humidity, wind, solar radiation; FAO-56 reference evapotranspiration) with a sourced local crop knowledge base to compare four strategies: the current rotation, Soil-first, Water-first and Balanced. For each one it explains why it was suggested, the evidence with source, date and scale, the benefits, the information gaps and the questions for a local agronomist. Uncertainty comes from bootstrapping historical climate years. A low-cost ESP32 field node (soil moisture and temperature in three zones, plus air and light sensors) was first simulated with a physics-based digital twin forced with NASA POWER and in Wokwi, then built and calibrated. It shows the within-field variability that coarse satellite data averages out. The tool supports, and does not replace, farmer judgment and local expertise.</em></div>
+  <div class="callout info small"><em>FarmealoTu is a farmer-centered decision-support tool for crop-rotation choices in Cuatro Cañadas, Santa Cruz, Bolivia, a soybean-dominated region recently hit by floods, drought and excess rain. A farmer enters the current rotation, irrigation and priorities (save water, protect soil, reduce risk). FarmealoTu combines NASA POWER daily data (precipitation, temperature, humidity, wind, solar radiation; FAO-56 reference evapotranspiration) with a sourced local crop knowledge base to compare four strategies: the current rotation, Soil-first, Water-first and Balanced. For each one it explains why it was suggested, the evidence with source, date and scale, the benefits, the information gaps and the questions for a local agronomist. Uncertainty comes from bootstrapping historical climate years. A low-cost ESP32 field node (soil moisture and temperature in three zones, plus air and light sensors) was first simulated with a physics-based digital twin forced with NASA POWER and in Wokwi, then built and calibrated. It shows the within-field variability that coarse satellite data averages out. The tool supports, and does not replace, farmer judgment and local expertise.</em></div>
 
   <h2>12.3 Siete diapositivas</h2>
   <table class="t compact">
     <thead><tr><th style="width:4%">#</th><th style="width:22%">Diapositiva</th><th>Mensaje y contenido</th><th style="width:16%">Insumos de</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td>Título</td><td>RotaSat · reto Field Shift · equipo e integrantes</td><td>Kendra</td></tr>
+      <tr><td>1</td><td>Título</td><td>FarmealoTu · reto Field Shift · equipo e integrantes</td><td>Kendra</td></tr>
       <tr><td>2</td><td>El dilema del agricultor</td><td>Cuatro Cañadas: 318 mil ha de soya (2023); inundación de 2025 y sequía + exceso de lluvia en 2025–26. «¿Qué siembro después?»</td><td>Matías · Alvin</td></tr>
       <tr><td>3</td><td>La solución</td><td>Captura del Inicio y de la comparación; la promesa en una línea</td><td>Kendra</td></tr>
       <tr><td>4</td><td>Cómo funciona</td><td>NASA POWER → indicadores → reglas + MCDA + bootstrap → 4 estrategias explicadas (Figura 1 simplificada)</td><td>Alvin · Matías</td></tr>
@@ -257,7 +257,7 @@ Error de esquema: 422 + detalle del campo</pre>
     </tbody>
   </table>
   <div class="callout ok small"><span class="h">Frases de cierre</span>
-  «El satélite nos da el contexto y décadas de historia; el sensor nos da la verdad local.» · «RotaSat no le dice al agricultor qué hacer: le muestra opciones, la evidencia y qué preguntarle a su técnico.»</div>
+  «El satélite nos da el contexto y décadas de historia; el sensor nos da la verdad local.» · «FarmealoTu no le dice al agricultor qué hacer: le muestra opciones, la evidencia y qué preguntarle a su técnico.»</div>
 </div>
 
 <!-- ======================= 13 ======================= -->
@@ -312,7 +312,7 @@ Error de esquema: 422 + detalle del campo</pre>
 
   <h2>C. Comandos de arranque (Windows PowerShell)</h2>
 <pre># Backend
-cd rotasat\backend
+cd farmealotu\backend
 python -m venv .venv; .\.venv\Scripts\Activate.ps1
 pip install fastapi "uvicorn[standard]" pydantic requests numpy pandas pytest jsonschema
 pip freeze &gt; requirements.txt
@@ -320,7 +320,7 @@ uvicorn app.main:app --reload --port 8000          # OpenAPI en http://localhost
 pytest -q
 
 # Frontend
-cd rotasat
+cd farmealotu
 npm create vite@latest frontend -- --template react-ts
 cd frontend; npm install
 npm install react-router-dom recharts leaflet react-leaflet
@@ -328,7 +328,7 @@ npm install -D tailwindcss @tailwindcss/vite        # Tailwind v4: plugin en vit
 npm run dev                                          # http://localhost:5173
 
 # Simulación
-cd rotasat\hardware\simulation
+cd farmealotu\hardware\simulation
 pip install numpy pandas scipy matplotlib jsonschema requests pyyaml
 python -m scenarios.run --scenario S4 --out output\
 python replay.py --scenario S4 --speed 60 --api https://TU-URL/api/field-node/readings

@@ -248,11 +248,10 @@ Si el motor falla: **500** con `detail` en español; nunca se responde con datos
 {
   "data_status": {
     "last_observation_date": "2026-11-09", "last_successful_download": "…", "source": "NASA POWER (caché)",
-    "engine": "partial",                       // "ready" cuando exista analytics/physics.py (ET0)
-    "engine_detail": ["S_agua pendiente: falta la ET0 FAO-56 (physics.py)"],
+    "engine": "ready",                         // "partial" si faltara la ET0 (analytics/physics.py)
     "weights_received": {"water": 0.55, "soil": 0.25, "risk": 0.2},
     "years_used": "2015-16 → 2025-26 (11 años agrícolas)",
-    "et0": {"status": "unavailable", "reason": "physics.py (ET0 FAO-56 de Christian) todavía no integrado"},
+    "et0": {"status": "available", "reason": null},   // FAO-56 Penman–Monteith desde NASA POWER
     "uncertainty": {"method": "bootstrap de años agrícolas completos (nov→oct) con reemplazo", "n_iterations": 200,
                     "seed": 42, "years_per_iteration": 11, "pairwise_prob_better": {"E1>E0": 0.0}, "note": "…"},
     "assumptions": {"soil_weight_cover": {"value": 0.4, "note": "…", "evidence_status": "assumption"}},

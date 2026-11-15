@@ -73,7 +73,7 @@ recomiende rotaciones.
 
 ## Brand Commitments
 
-- **Nombre:** FarmealoTu. Nunca «RotaSat» en pantalla (puede quedar en identificadores históricos de contrato).
+- **Nombre:** FarmealoTu.
 - **Voz:** español sencillo con **voseo** («¿Qué sembrás?», «¿Tenés riego?», «Revisá con tu técnico»).
 - **Aviso visible:** «Esta herramienta apoya tu decisión; no reemplaza tu experiencia ni a tu técnico.»
 - **Identidad visual existente, a conservar** (trabajo de refinamiento): verdes de cultivo, tonos tierra, fondo
