@@ -318,6 +318,21 @@
           "default": null,
           "title": "Soil Moisture Raw"
         },
+        "soil_moisture_index_pct": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Índice RELATIVO del sensor (calibración de 2 puntos: seco al aire = 0, sumergido en agua = 100). NO es humedad volumétrica (VWC): no reemplaza a soil_moisture_vwc.",
+          "title": "Soil Moisture Index Pct"
+        },
         "soil_temp_c": {
           "anyOf": [
             {

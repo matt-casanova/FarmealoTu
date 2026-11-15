@@ -37,8 +37,8 @@ const unsigned long SEND_EVERY_MS = 10000;          // cada 10 s
 
 // Qué hay conectado HOY. Lo que no está conectado se manda como null (nunca un pin "al aire", que da basura).
 #define NUM_ZONES  1                                // cuántas macetas con humedad + DS18B20 (1 a 3)
-#define USE_DHT11  0                                // 1 cuando el DHT11 esté conectado
-#define USE_LDR    0                                // 1 cuando el LDR esté conectado
+#define USE_DHT11  1                                // 1 = DHT11 conectado
+#define USE_LDR    1                                // 1 = LDR conectado
 #define USE_BME680 0                                // 1 solo si hay un BME680 conectado
 
 // ======================= PINES =======================
@@ -69,6 +69,15 @@ DHT dht(PIN_DHT11, DHT11);
 // al arrancar se imprimen las direcciones; calentá una sonda con la mano para saber cuál es cuál y ajustá
 // este arreglo (índice de bus para la zona A, B, C).
 const int DS_INDEX_FOR_ZONE[3] = {0, 1, 2};
+
+// Calibración de 2 puntos de cada sensor de humedad (lecturas crudas de Mateo): seco al aire y sumergido en agua.
+// Da un ÍNDICE RELATIVO 0–100 (soil_moisture_index_pct), NO humedad volumétrica: soil_moisture_vwc sigue en null
+// hasta la calibración gravimétrica. Poner 0 en ambos para no calcular el índice de esa zona.
+const int HUM_RAW_AIRE[3] = {3450, 0, 0};          // sensor SECO al aire  → 0
+const int HUM_RAW_AGUA[3] = {1300, 0, 0};          // sensor en AGUA       → 100
+
+// LDR: en este divisor, valor crudo ALTO = MÁS luz. light_pct = crudo / 4095 × 100 (índice relativo, no lux).
+#define LDR_HIGH_IS_BRIGHT 1
 const char* ZONE_IDS[3] = {"A", "B", "C"};
 const int HUM_PINS[3] = {PIN_HUM_A, PIN_HUM_B, PIN_HUM_C};
 
@@ -166,8 +175,12 @@ void loop() {
 
     int raw = readAdcAvg(HUM_PINS[z]);
     zo["soil_moisture_raw"] = raw;
-    zo["soil_moisture_vwc"] = nullptr;          // sin calibración gravimétrica todavía: NO se inventa el %
+    zo["soil_moisture_vwc"] = nullptr;          // sin calibración gravimétrica todavía: NO se inventa la VWC
     zf.add("moisture_uncalibrated");
+    if (HUM_RAW_AIRE[z] != HUM_RAW_AGUA[z]) {    // índice relativo de 2 puntos (aire = 0, agua = 100)
+      float idx = 100.0f * (HUM_RAW_AIRE[z] - raw) / (float)(HUM_RAW_AIRE[z] - HUM_RAW_AGUA[z]);
+      zo["soil_moisture_index_pct"] = round(constrain(idx, 0.0f, 100.0f) * 10) / 10.0;
+    }
     if (raw <= 10 || raw >= 4085) zf.add("moisture_adc_out_of_range");   // cable suelto o saturado
 
     float tc = ds.getTempCByIndex(DS_INDEX_FOR_ZONE[z]);
@@ -204,7 +217,8 @@ void loop() {
   l["raw"] = ldrRaw;
   l["mv"] = analogReadMilliVolts(PIN_LDR);
   l["r_fixed_ohm"] = LDR_R_FIXED_OHM;
-  l["light_pct"] = nullptr;                    // índice relativo: se define tras ver el rango real (sombra/sol)
+  float lp = 100.0f * ldrRaw / 4095.0f;        // índice relativo 0–100 (no lux ni radiación)
+  l["light_pct"] = round((LDR_HIGH_IS_BRIGHT ? lp : 100.0f - lp) * 10) / 10.0;
   if (ldrRaw >= 4085) qflags.add("ldr_adc_saturated");
 #else
   external["ldr"] = nullptr;                   // todavía no conectado
@@ -226,7 +240,7 @@ void loop() {
 #endif
 
   JsonObject cal = doc["calibration"].to<JsonObject>();
-  cal["moisture_method"] = nullptr;            // "gravimetric_3pt" cuando se calibre
+  cal["moisture_method"] = "two_point_air_water_index";   // "gravimetric_3pt" cuando se calibre la VWC
   cal["date"] = nullptr;
 
   String body;

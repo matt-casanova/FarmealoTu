@@ -21,6 +21,10 @@ class Zone(BaseModel):
     id: str = Field(..., min_length=1, max_length=8, examples=["A"])
     soil_moisture_vwc: Optional[float] = Field(None, ge=0, le=1, description="m³/m³ (fracción 0–1)")
     soil_moisture_raw: Optional[int] = Field(None, ge=0, le=65535)
+    soil_moisture_index_pct: Optional[float] = Field(
+        None, ge=0, le=100,
+        description="Índice RELATIVO del sensor (calibración de 2 puntos: seco al aire = 0, sumergido en agua = 100). "
+                    "NO es humedad volumétrica (VWC): no reemplaza a soil_moisture_vwc.")
     soil_temp_c: Optional[float] = Field(None, ge=-40, le=85)
     flags: list[str] = Field(default_factory=list)
 

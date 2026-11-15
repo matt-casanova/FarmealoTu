@@ -28,6 +28,8 @@ def line(r: dict) -> str:
     def hum(z: dict) -> str:  # % calibrado si existe; si no, el valor crudo del ADC (sin calibrar)
         if z.get("soil_moisture_vwc") is not None:
             return _f(z["soil_moisture_vwc"] * 100, "{:4.1f}%")
+        if z.get("soil_moisture_index_pct") is not None:  # índice relativo de 2 puntos, NO VWC
+            return f"índ.{z['soil_moisture_index_pct']:.0f}%"
         return f"crudo {z['soil_moisture_raw']}" if z.get("soil_moisture_raw") is not None else "—"
     soil = "  ".join(f"{zid}:{hum(z)}/{_f(z.get('soil_temp_c'), '{:4.1f}°')}" for zid, z in sorted(zones.items()))
     ext = r.get("external") or {}
