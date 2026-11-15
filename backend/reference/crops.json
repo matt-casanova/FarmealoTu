@@ -1,0 +1,915 @@
+{
+  "schema_version": "1.0",
+  "description": "Base de cultivos de FarmealoTu para Cuatro Cañadas. Cada dato lleva source, url, year, evidence_status, note y verified_at. Sin fuente: value = null con el motivo en note.",
+  "campaigns": {
+    "summer": {
+      "name_es": "verano",
+      "start": "11-01",
+      "end": "04-30",
+      "evidence_status": "assumption",
+      "note": "Ventana de campaña de analytics/indicators.py (CAMPAIGN_DEFINITION). La siembra se supone al inicio de la ventana."
+    },
+    "winter": {
+      "name_es": "invierno",
+      "start": "05-01",
+      "end": "10-31",
+      "evidence_status": "assumption",
+      "note": "Ventana de campaña de analytics/indicators.py (CAMPAIGN_DEFINITION). La siembra se supone al inicio de la ventana."
+    }
+  },
+  "crops": [
+    {
+      "code": "soy",
+      "name_es": "soya",
+      "priority": true,
+      "synonyms": [
+        "soya",
+        "soja",
+        "soy"
+      ],
+      "family": {
+        "value": "Fabaceae",
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "Familia botánica.",
+        "verified_at": null
+      },
+      "seasons": {
+        "value": [
+          "summer"
+        ],
+        "source": "ANAPO — siembra directa y rotación de cultivos (jul-2024)",
+        "url": "https://anapobolivia.org/anapo-reafirma-la-produccion-sostenible-con-la-siembra-directa-y-la-rotacion-de-cultivos/",
+        "year": 2024,
+        "evidence_status": "documented",
+        "note": "ANAPO: campaña de verano con soya central; invierno con sorgo, maíz, girasol y trigo (también resumido en /api/context/cuatro-canadas).",
+        "verified_at": null
+      },
+      "fixes_n": {
+        "value": true,
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "Leguminosa: fija N de forma simbiótica. NO se concede un crédito fijo de N (regla 6): se menciona como beneficio cualitativo a validar.",
+        "verified_at": null
+      },
+      "residue_class": {
+        "value": "low",
+        "source": "FarmealoTu — Plan de Proyecto, NASA Space Apps 2026 (FarmealoTu_Plan_de_Proyecto.pdf)",
+        "url": "repo:FarmealoTu_Plan_de_Proyecto.pdf",
+        "year": 2026,
+        "evidence_status": "assumption",
+        "note": "SUPUESTO declarado (plan 3.6): no se encontró una fuente citable para la clase de residuo en Cuatro Cañadas. Criterio: cereales de grano grueso dejan más rastrojo que oleaginosas.",
+        "verified_at": null
+      },
+      "drought_tolerance": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "EcoCrop (FAO) no consultado en esta versión; no se cita de memoria.",
+        "verified_at": null
+      },
+      "heat_threshold_c": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "Sin umbral de calor del cultivo con fuente verificable: se usa el indicador meteorológico general (Tmáx > P90 del mes) y el componente de calor pesa la mitad (plan 3.6).",
+        "verified_at": null,
+        "unit": "°C"
+      },
+      "critical_stage": {
+        "stage": "mid",
+        "evidence_status": "derived",
+        "note": "Floración y llenado ≈ etapa media de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "harvest_window": {
+        "stage": "late",
+        "evidence_status": "derived",
+        "note": "Maduración y cosecha ≈ etapa final de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "kc_ini": {
+        "value": 0.4,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "kc_mid": {
+        "value": 1.15,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "kc_end": {
+        "value": 0.5,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "stage_days": {
+        "value": {
+          "ini": 15,
+          "dev": 15,
+          "mid": 40,
+          "late": 15
+        },
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 11, fila «Soybeans · Dec · Tropics». La elección de la fila es un SUPUESTO (la más parecida en región/fecha). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "cycle_days": {
+        "value": 85,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "derived",
+        "note": "Suma de las cuatro etapas de la Tabla 11. Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "root_depth_m": {
+        "value": [
+          0.6,
+          1.3
+        ],
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 22: profundidad máxima efectiva de raíces (rango). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "m"
+      }
+    },
+    {
+      "code": "maize",
+      "name_es": "maíz",
+      "priority": true,
+      "synonyms": [
+        "maiz",
+        "maíz",
+        "maize"
+      ],
+      "family": {
+        "value": "Poaceae",
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "Familia botánica.",
+        "verified_at": null
+      },
+      "seasons": {
+        "value": [
+          "winter"
+        ],
+        "source": "ANAPO — siembra directa y rotación de cultivos (jul-2024)",
+        "url": "https://anapobolivia.org/anapo-reafirma-la-produccion-sostenible-con-la-siembra-directa-y-la-rotacion-de-cultivos/",
+        "year": 2024,
+        "evidence_status": "documented",
+        "note": "ANAPO: campaña de verano con soya central; invierno con sorgo, maíz, girasol y trigo (también resumido en /api/context/cuatro-canadas).",
+        "verified_at": null
+      },
+      "fixes_n": {
+        "value": false,
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "No es leguminosa.",
+        "verified_at": null
+      },
+      "residue_class": {
+        "value": "high",
+        "source": "FarmealoTu — Plan de Proyecto, NASA Space Apps 2026 (FarmealoTu_Plan_de_Proyecto.pdf)",
+        "url": "repo:FarmealoTu_Plan_de_Proyecto.pdf",
+        "year": 2026,
+        "evidence_status": "assumption",
+        "note": "SUPUESTO declarado (plan 3.6): no se encontró una fuente citable para la clase de residuo en Cuatro Cañadas. Criterio: cereales de grano grueso dejan más rastrojo que oleaginosas.",
+        "verified_at": null
+      },
+      "drought_tolerance": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "EcoCrop (FAO) no consultado en esta versión; no se cita de memoria.",
+        "verified_at": null
+      },
+      "heat_threshold_c": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "Sin umbral de calor del cultivo con fuente verificable: se usa el indicador meteorológico general (Tmáx > P90 del mes) y el componente de calor pesa la mitad (plan 3.6).",
+        "verified_at": null,
+        "unit": "°C"
+      },
+      "critical_stage": {
+        "stage": "mid",
+        "evidence_status": "derived",
+        "note": "Floración y llenado ≈ etapa media de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "harvest_window": {
+        "stage": "late",
+        "evidence_status": "derived",
+        "note": "Maduración y cosecha ≈ etapa final de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "kc_ini": {
+        "value": 0.3,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "kc_mid": {
+        "value": 1.2,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "kc_end": {
+        "value": 0.35,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "derived",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). La tabla da 0.60 (cosecha húmeda) – 0.35 (secado en campo); se usa 0.35 (SUPUESTO: secado en campo). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "stage_days": {
+        "value": {
+          "ini": 20,
+          "dev": 35,
+          "mid": 40,
+          "late": 30
+        },
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 11, fila «Maize (grain) · June · Nigeria (humid)». La elección de la fila es un SUPUESTO (la más parecida en región/fecha). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "cycle_days": {
+        "value": 125,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "derived",
+        "note": "Suma de las cuatro etapas de la Tabla 11. Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "root_depth_m": {
+        "value": [
+          1.0,
+          1.7
+        ],
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 22: profundidad máxima efectiva de raíces (rango). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "m"
+      }
+    },
+    {
+      "code": "sorghum",
+      "name_es": "sorgo",
+      "priority": true,
+      "synonyms": [
+        "sorgo",
+        "sorghum"
+      ],
+      "family": {
+        "value": "Poaceae",
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "Familia botánica.",
+        "verified_at": null
+      },
+      "seasons": {
+        "value": [
+          "winter"
+        ],
+        "source": "ANAPO — siembra directa y rotación de cultivos (jul-2024)",
+        "url": "https://anapobolivia.org/anapo-reafirma-la-produccion-sostenible-con-la-siembra-directa-y-la-rotacion-de-cultivos/",
+        "year": 2024,
+        "evidence_status": "documented",
+        "note": "ANAPO: campaña de verano con soya central; invierno con sorgo, maíz, girasol y trigo (también resumido en /api/context/cuatro-canadas).",
+        "verified_at": null
+      },
+      "fixes_n": {
+        "value": false,
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "No es leguminosa.",
+        "verified_at": null
+      },
+      "residue_class": {
+        "value": "high",
+        "source": "FarmealoTu — Plan de Proyecto, NASA Space Apps 2026 (FarmealoTu_Plan_de_Proyecto.pdf)",
+        "url": "repo:FarmealoTu_Plan_de_Proyecto.pdf",
+        "year": 2026,
+        "evidence_status": "assumption",
+        "note": "SUPUESTO declarado (plan 3.6): no se encontró una fuente citable para la clase de residuo en Cuatro Cañadas. Criterio: cereales de grano grueso dejan más rastrojo que oleaginosas.",
+        "verified_at": null
+      },
+      "drought_tolerance": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "EcoCrop (FAO) no consultado en esta versión; no se cita de memoria.",
+        "verified_at": null
+      },
+      "heat_threshold_c": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "Sin umbral de calor del cultivo con fuente verificable: se usa el indicador meteorológico general (Tmáx > P90 del mes) y el componente de calor pesa la mitad (plan 3.6).",
+        "verified_at": null,
+        "unit": "°C"
+      },
+      "critical_stage": {
+        "stage": "mid",
+        "evidence_status": "derived",
+        "note": "Floración y llenado ≈ etapa media de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "harvest_window": {
+        "stage": "late",
+        "evidence_status": "derived",
+        "note": "Maduración y cosecha ≈ etapa final de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "kc_ini": {
+        "value": 0.3,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "kc_mid": {
+        "value": 1.05,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "derived",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). La tabla da 1.00–1.10; se usa el punto medio 1.05. Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "kc_end": {
+        "value": 0.55,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "stage_days": {
+        "value": {
+          "ini": 20,
+          "dev": 35,
+          "mid": 40,
+          "late": 30
+        },
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 11, fila «Sorghum (grain) · May/June · USA, Pakistán, Mediterráneo». La elección de la fila es un SUPUESTO (la más parecida en región/fecha). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "cycle_days": {
+        "value": 125,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "derived",
+        "note": "Suma de las cuatro etapas de la Tabla 11. Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "root_depth_m": {
+        "value": [
+          1.0,
+          2.0
+        ],
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 22: profundidad máxima efectiva de raíces (rango). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "m"
+      }
+    },
+    {
+      "code": "sunflower",
+      "name_es": "girasol",
+      "priority": true,
+      "synonyms": [
+        "girasol",
+        "sunflower"
+      ],
+      "family": {
+        "value": "Asteraceae",
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "Familia botánica.",
+        "verified_at": null
+      },
+      "seasons": {
+        "value": [
+          "winter"
+        ],
+        "source": "ANAPO — siembra directa y rotación de cultivos (jul-2024)",
+        "url": "https://anapobolivia.org/anapo-reafirma-la-produccion-sostenible-con-la-siembra-directa-y-la-rotacion-de-cultivos/",
+        "year": 2024,
+        "evidence_status": "documented",
+        "note": "ANAPO: campaña de verano con soya central; invierno con sorgo, maíz, girasol y trigo (también resumido en /api/context/cuatro-canadas).",
+        "verified_at": null
+      },
+      "fixes_n": {
+        "value": false,
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "No es leguminosa.",
+        "verified_at": null
+      },
+      "residue_class": {
+        "value": "low",
+        "source": "FarmealoTu — Plan de Proyecto, NASA Space Apps 2026 (FarmealoTu_Plan_de_Proyecto.pdf)",
+        "url": "repo:FarmealoTu_Plan_de_Proyecto.pdf",
+        "year": 2026,
+        "evidence_status": "assumption",
+        "note": "SUPUESTO declarado (plan 3.6): no se encontró una fuente citable para la clase de residuo en Cuatro Cañadas. Criterio: cereales de grano grueso dejan más rastrojo que oleaginosas.",
+        "verified_at": null
+      },
+      "drought_tolerance": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "EcoCrop (FAO) no consultado en esta versión; no se cita de memoria.",
+        "verified_at": null
+      },
+      "heat_threshold_c": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "Sin umbral de calor del cultivo con fuente verificable: se usa el indicador meteorológico general (Tmáx > P90 del mes) y el componente de calor pesa la mitad (plan 3.6).",
+        "verified_at": null,
+        "unit": "°C"
+      },
+      "critical_stage": {
+        "stage": "mid",
+        "evidence_status": "derived",
+        "note": "Floración y llenado ≈ etapa media de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "harvest_window": {
+        "stage": "late",
+        "evidence_status": "derived",
+        "note": "Maduración y cosecha ≈ etapa final de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "kc_ini": {
+        "value": 0.35,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "kc_mid": {
+        "value": 1.075,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "derived",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). La tabla da 1.00–1.15; se usa el punto medio 1.075. Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "kc_end": {
+        "value": 0.35,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "stage_days": {
+        "value": {
+          "ini": 25,
+          "dev": 35,
+          "mid": 45,
+          "late": 25
+        },
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 11, fila «Sunflower · April/May · Mediterráneo; California». La elección de la fila es un SUPUESTO (la más parecida en región/fecha). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "cycle_days": {
+        "value": 130,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "derived",
+        "note": "Suma de las cuatro etapas de la Tabla 11. Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "root_depth_m": {
+        "value": [
+          0.8,
+          1.5
+        ],
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 22: profundidad máxima efectiva de raíces (rango). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "m"
+      }
+    },
+    {
+      "code": "wheat",
+      "name_es": "trigo",
+      "priority": true,
+      "synonyms": [
+        "trigo",
+        "wheat"
+      ],
+      "family": {
+        "value": "Poaceae",
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "Familia botánica.",
+        "verified_at": null
+      },
+      "seasons": {
+        "value": [
+          "winter"
+        ],
+        "source": "ANAPO — siembra directa y rotación de cultivos (jul-2024)",
+        "url": "https://anapobolivia.org/anapo-reafirma-la-produccion-sostenible-con-la-siembra-directa-y-la-rotacion-de-cultivos/",
+        "year": 2024,
+        "evidence_status": "documented",
+        "note": "ANAPO: campaña de verano con soya central; invierno con sorgo, maíz, girasol y trigo (también resumido en /api/context/cuatro-canadas).",
+        "verified_at": null
+      },
+      "fixes_n": {
+        "value": false,
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "No es leguminosa.",
+        "verified_at": null
+      },
+      "residue_class": {
+        "value": "medium",
+        "source": "FarmealoTu — Plan de Proyecto, NASA Space Apps 2026 (FarmealoTu_Plan_de_Proyecto.pdf)",
+        "url": "repo:FarmealoTu_Plan_de_Proyecto.pdf",
+        "year": 2026,
+        "evidence_status": "assumption",
+        "note": "SUPUESTO declarado (plan 3.6): no se encontró una fuente citable para la clase de residuo en Cuatro Cañadas. Criterio: cereales de grano grueso dejan más rastrojo que oleaginosas.",
+        "verified_at": null
+      },
+      "drought_tolerance": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "EcoCrop (FAO) no consultado en esta versión; no se cita de memoria.",
+        "verified_at": null
+      },
+      "heat_threshold_c": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "Sin umbral de calor del cultivo con fuente verificable: se usa el indicador meteorológico general (Tmáx > P90 del mes) y el componente de calor pesa la mitad (plan 3.6).",
+        "verified_at": null,
+        "unit": "°C"
+      },
+      "critical_stage": {
+        "stage": "mid",
+        "evidence_status": "derived",
+        "note": "Floración y llenado ≈ etapa media de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "harvest_window": {
+        "stage": "late",
+        "evidence_status": "derived",
+        "note": "Maduración y cosecha ≈ etapa final de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "kc_ini": {
+        "value": 0.3,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "kc_mid": {
+        "value": 1.15,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "kc_end": {
+        "value": 0.325,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "derived",
+        "note": "FAO-56 Tabla 12 (Kc para clima subhúmedo, RHmin ≈ 45 %, u2 ≈ 2 m/s; sin ajuste climático). La tabla da 0.25–0.40 para trigo de primavera; se usa el punto medio 0.325. Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null
+      },
+      "stage_days": {
+        "value": {
+          "ini": 20,
+          "dev": 25,
+          "mid": 60,
+          "late": 30
+        },
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 11, fila «Wheat (spring) · November · India central». La elección de la fila es un SUPUESTO (la más parecida en región/fecha). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "cycle_days": {
+        "value": 135,
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "derived",
+        "note": "Suma de las cuatro etapas de la Tabla 11. Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "root_depth_m": {
+        "value": [
+          1.0,
+          1.5
+        ],
+        "source": "FAO-56: Crop evapotranspiration (Allen et al., 1998)",
+        "url": "https://www.fao.org/4/X0490E/x0490e00.htm",
+        "year": 1998,
+        "evidence_status": "documented",
+        "note": "FAO-56 Tabla 22: profundidad máxima efectiva de raíces (rango). Transcrito de memoria por el asistente (Claude) el 14-nov-2026: VERIFICAR contra la tabla antes de presentar. verified_at = null hasta que una persona lo coteje.",
+        "verified_at": null,
+        "unit": "m"
+      }
+    },
+    {
+      "code": "chia",
+      "name_es": "chía",
+      "priority": false,
+      "synonyms": [
+        "chia",
+        "chía"
+      ],
+      "family": {
+        "value": "Lamiaceae",
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "Familia botánica.",
+        "verified_at": null
+      },
+      "seasons": {
+        "value": [
+          "winter"
+        ],
+        "source": "FarmealoTu — Plan de Proyecto, NASA Space Apps 2026 (FarmealoTu_Plan_de_Proyecto.pdf)",
+        "url": "repo:FarmealoTu_Plan_de_Proyecto.pdf",
+        "year": 2026,
+        "evidence_status": "assumption",
+        "note": "SUPUESTO: la chía se siembra en invierno en Santa Cruz; ANAPO no la menciona en la rotación.",
+        "verified_at": null
+      },
+      "fixes_n": {
+        "value": false,
+        "source": "USDA ARS GRIN-Global Taxonomy",
+        "url": "https://npgsweb.ars-grin.gov/gringlobal/taxon/taxonomysimple",
+        "year": 2026,
+        "evidence_status": "documented",
+        "note": "No es leguminosa.",
+        "verified_at": null
+      },
+      "residue_class": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "Sin clase de residuo con fuente ni supuesto declarado.",
+        "verified_at": null
+      },
+      "drought_tolerance": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "EcoCrop (FAO) no consultado en esta versión; no se cita de memoria.",
+        "verified_at": null
+      },
+      "heat_threshold_c": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "Sin umbral de calor del cultivo con fuente verificable: se usa el indicador meteorológico general (Tmáx > P90 del mes) y el componente de calor pesa la mitad (plan 3.6).",
+        "verified_at": null,
+        "unit": "°C"
+      },
+      "critical_stage": {
+        "stage": "mid",
+        "evidence_status": "derived",
+        "note": "Floración y llenado ≈ etapa media de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "harvest_window": {
+        "stage": "late",
+        "evidence_status": "derived",
+        "note": "Maduración y cosecha ≈ etapa final de FAO-56 (Tabla 11), contada desde la fecha de siembra supuesta de la campaña."
+      },
+      "kc_ini": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "La chía no figura en la Tabla 12 de FAO-56.",
+        "verified_at": null
+      },
+      "kc_mid": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "La chía no figura en la Tabla 12 de FAO-56.",
+        "verified_at": null
+      },
+      "kc_end": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "La chía no figura en la Tabla 12 de FAO-56.",
+        "verified_at": null
+      },
+      "stage_days": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "La chía no figura en la Tabla 11 de FAO-56.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "cycle_days": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "Sin duración de etapas con fuente.",
+        "verified_at": null,
+        "unit": "días"
+      },
+      "root_depth_m": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "La chía no figura en la Tabla 22 de FAO-56.",
+        "verified_at": null,
+        "unit": "m"
+      }
+    },
+    {
+      "code": "fallow",
+      "name_es": "barbecho",
+      "priority": true,
+      "synonyms": [
+        "barbecho",
+        "descanso",
+        "fallow"
+      ],
+      "kind": "no_crop",
+      "seasons": {
+        "value": [
+          "winter"
+        ],
+        "source": "FarmealoTu — Plan de Proyecto, NASA Space Apps 2026 (FarmealoTu_Plan_de_Proyecto.pdf)",
+        "url": "repo:FarmealoTu_Plan_de_Proyecto.pdf",
+        "year": 2026,
+        "evidence_status": "assumption",
+        "note": "SUPUESTO: el barbecho se considera solo en invierno como alternativa a un cultivo; en verano la campaña principal es la soya.",
+        "verified_at": null
+      },
+      "note": "Sin cultivo: no hay ETc de cultivo (S_agua solo cuenta meses con cultivo). La cobertura del suelo en barbecho depende del rastrojo del cultivo anterior."
+    },
+    {
+      "code": "cover",
+      "name_es": "cultivo de cobertura",
+      "priority": false,
+      "synonyms": [
+        "cobertura",
+        "cultivo de cobertura",
+        "cover"
+      ],
+      "kind": "cover",
+      "seasons": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "Sin especie de cobertura definida ni ventana con fuente.",
+        "verified_at": null
+      },
+      "kc_mid": {
+        "value": null,
+        "source": null,
+        "url": null,
+        "year": null,
+        "evidence_status": "unavailable",
+        "note": "Sin especie definida: no hay Kc de FAO-56 aplicable.",
+        "verified_at": null
+      },
+      "note": "Se excluye de los candidatos hasta tener especie, Kc y ciclo con fuente (regla 5: la cobertura también consume agua)."
+    }
+  ]
+}

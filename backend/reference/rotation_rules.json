@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "description": "Reglas agronómicas del motor de FarmealoTu (plan, sección 3.5). Cada regla dice qué hace en el motor y por qué. Ninguna regla agrega puntos que no estén en las fórmulas de la sección 3.6.",
+  "source": "FarmealoTu — Plan de Proyecto, NASA Space Apps 2026, sección 3.5 (tabla de reglas)",
+  "url": "repo:FarmealoTu_Plan_de_Proyecto.pdf",
+  "year": 2026,
+  "rules": [
+    {
+      "id": "R1",
+      "text": "Evitar sucesiones incompatibles con la estación o con el agua disponible.",
+      "effect": "filter",
+      "applies_in": "engine/rules.py",
+      "detail": "Filtro de factibilidad: el cultivo debe tener la campaña entre sus campañas candidatas (crops.json) y su ciclo debe caber en la ventana de la campaña. En secano, un cultivo de alta demanda en invierno se marca con su motivo.",
+      "rationale": "Un cultivo fuera de su campaña o que no alcanza a cerrar el ciclo no es una opción defendible para el agricultor."
+    },
+    {
+      "id": "R2",
+      "text": "Penalizar la exposición a déficit hídrico en etapas críticas.",
+      "effect": "lowers_s_risk",
+      "applies_in": "engine/recommendation.py",
+      "detail": "p_seca = fracción de años con una racha seca mayor al umbral durante la etapa crítica (floración y llenado). Baja S_riesgo.",
+      "rationale": "La falta de agua en floración y llenado es cuando más afecta al cultivo; el indicador se calcula con la serie histórica de NASA POWER."
+    },
+    {
+      "id": "R3",
+      "text": "Valorar la cobertura y el residuo cuando las condiciones permiten mantenerlos.",
+      "effect": "raises_s_soil",
+      "applies_in": "engine/recommendation.py",
+      "detail": "Componentes C (meses cubiertos por cultivo o rastrojo) y R (clase de residuo) de S_suelo.",
+      "rationale": "Un suelo cubierto se protege mejor de la erosión y de la pérdida de humedad; ANAPO promueve la siembra directa con conservación del rastrojo."
+    },
+    {
+      "id": "R4",
+      "text": "Considerar la diversidad de familias y de cultivos.",
+      "effect": "raises_s_soil",
+      "applies_in": "engine/recommendation.py",
+      "detail": "Componente D (familias distintas) de S_suelo; repetir el mismo cultivo en las dos campañas resta la penalización por repetición.",
+      "rationale": "Alternar familias es un proxy de menor presión de plagas y enfermedades. La penalización es un SUPUESTO declarado."
+    },
+    {
+      "id": "R5",
+      "text": "No asumir que una cobertura siempre mejora: también consume agua.",
+      "effect": "raises_s_soil_and_lowers_s_water",
+      "applies_in": "engine/recommendation.py",
+      "detail": "Una cobertura suma meses cubiertos a S_suelo y su ETc se suma a la demanda en S_agua. Sin especie, Kc y ciclo con fuente, la cobertura no entra como candidata.",
+      "rationale": "Un cultivo de cobertura transpira: en una campaña seca puede competir por el agua del cultivo siguiente."
+    },
+    {
+      "id": "R6",
+      "text": "No conceder un crédito fijo de nitrógeno después de la soya.",
+      "effect": "qualitative_only",
+      "applies_in": "engine/recommendation.py",
+      "detail": "La fijación de N de una leguminosa se menciona como beneficio cualitativo a validar con el técnico; no suma puntos.",
+      "rationale": "El aporte real de N depende del suelo, del rendimiento y del manejo; no hay un valor local con fuente."
+    },
+    {
+      "id": "R7",
+      "text": "No asumir que cambiar la rotación elimina el riesgo de inundación.",
+      "effect": "fixed_limitation",
+      "applies_in": "app/routers/rotations.py",
+      "detail": "Mensaje fijo en limitations. La lluvia intensa se muestra como exposición meteorológica, no como predicción de inundación.",
+      "limitation_text": "Cambiar la rotación no elimina el riesgo de inundación: la lluvia intensa se muestra como exposición meteorológica, no como pronóstico de desborde.",
+      "rationale": "Las inundaciones de Cuatro Cañadas (p. ej., marzo de 2025) vienen del desborde del río Grande, que no depende de la rotación."
+    }
+  ]
+}
