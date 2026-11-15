@@ -1,0 +1,233 @@
+
+<!-- ======================= 6 ======================= -->
+<div class="section" id="s6">
+  <h1><span class="num">6</span>El prototipo físico (pequeño): nodo de campo de 3 zonas</h1>
+  <p class="lead">Tres macetas pequeñas con el mismo sustrato y distinta humedad, que representan tres zonas de un campo. En cada una hay un sensor de humedad y una sonda de temperatura enterrados; afuera, un pequeño mástil con BME680, DHT11 y LDR. Un ESP32 envía todo por Wi-Fi a la pestaña «Datos de terreno». El mensaje que transmite: <strong>un campo no es uniforme, y un píxel satelital de 9–50 km lo promedia todo</strong>.</p>
+
+  <div class="figure">
+  <svg viewBox="0 0 1000 345" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+    <!-- tray -->
+    <rect x="20" y="230" width="560" height="22" rx="4" fill="#c3c2b7"/>
+    <text x="300" y="300" text-anchor="middle" font-size="11" fill="#52514e">bandeja · mismo sustrato · misma compactación · sensores a ~6–8 cm</text>
+    <!-- pots -->
+    <g font-size="12">
+      <path d="M40 120 L180 120 L165 230 L55 230 Z" fill="#e8d9c4" stroke="#8a5a10" stroke-width="1.5"/>
+      <path d="M220 120 L360 120 L345 230 L235 230 Z" fill="#c9a77f" stroke="#8a5a10" stroke-width="1.5"/>
+      <path d="M400 120 L540 120 L525 230 L415 230 Z" fill="#8f6a45" stroke="#8a5a10" stroke-width="1.5"/>
+      <text x="110" y="273" text-anchor="middle" font-weight="700">Zona A · seca</text>
+      <text x="290" y="273" text-anchor="middle" font-weight="700">Zona B · media</text>
+      <text x="470" y="273" text-anchor="middle" font-weight="700">Zona C · húmeda</text>
+      <!-- sensors in pots -->
+      <g>
+        <rect x="85" y="95" width="12" height="100" rx="2" fill="#1c5cab" opacity="0.9"/><rect x="83" y="88" width="16" height="22" rx="2" fill="#0d366b"/>
+        <rect x="128" y="150" width="7" height="45" rx="3" fill="#52514e"/>
+        <rect x="265" y="95" width="12" height="100" rx="2" fill="#1c5cab" opacity="0.9"/><rect x="263" y="88" width="16" height="22" rx="2" fill="#0d366b"/>
+        <rect x="308" y="150" width="7" height="45" rx="3" fill="#52514e"/>
+        <rect x="445" y="95" width="12" height="100" rx="2" fill="#1c5cab" opacity="0.9"/><rect x="443" y="88" width="16" height="22" rx="2" fill="#0d366b"/>
+        <rect x="488" y="150" width="7" height="45" rx="3" fill="#52514e"/>
+      </g>
+      <text x="91" y="215" text-anchor="middle" font-size="10" fill="#fff">H1</text><text x="131" y="215" text-anchor="middle" font-size="10" fill="#fff">T1</text>
+      <text x="271" y="215" text-anchor="middle" font-size="10" fill="#fff">H2</text><text x="311" y="215" text-anchor="middle" font-size="10" fill="#fff">T2</text>
+      <text x="451" y="215" text-anchor="middle" font-size="10" fill="#fff">H3</text><text x="491" y="215" text-anchor="middle" font-size="10" fill="#fff">T3</text>
+    </g>
+    <!-- mast -->
+    <rect x="610" y="40" width="6" height="210" fill="#898781"/>
+    <rect x="585" y="30" width="56" height="28" rx="5" fill="#fff" stroke="#eb6834" stroke-width="1.5"/><text x="613" y="49" text-anchor="middle" font-size="10.5" font-weight="700" fill="#a8431b">LDR ↑</text>
+    <rect x="580" y="75" width="66" height="30" rx="5" fill="#fff" stroke="#eb6834" stroke-width="1.5"/><text x="613" y="95" text-anchor="middle" font-size="10.5" font-weight="700" fill="#a8431b">BME680</text>
+    <rect x="580" y="115" width="66" height="30" rx="5" fill="#fff" stroke="#eb6834" stroke-width="1.5"/><text x="613" y="135" text-anchor="middle" font-size="10.5" font-weight="700" fill="#a8431b">DHT11</text>
+    <path d="M560 70 Q600 20 660 70" fill="none" stroke="#898781" stroke-width="2"/>
+    <text x="680" y="62" font-size="10.5" fill="#52514e">sombra, ≥ 10 cm del ESP32</text>
+    <!-- esp32 -->
+    <rect x="700" y="150" width="140" height="80" rx="8" fill="#0d366b"/>
+    <text x="770" y="180" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">ESP32</text>
+    <text x="770" y="198" text-anchor="middle" font-size="10.5" fill="#cde2fb">protoboard + caja</text>
+    <text x="770" y="214" text-anchor="middle" font-size="10.5" fill="#cde2fb">power bank USB</text>
+    <!-- wifi -->
+    <path d="M870 165 q20 -20 40 0" fill="none" stroke="#1b7a3e" stroke-width="2"/><path d="M862 157 q28 -30 56 0" fill="none" stroke="#1b7a3e" stroke-width="2"/>
+    <text x="890" y="190" text-anchor="middle" font-size="10.5" fill="#14572d">Wi-Fi → API</text>
+    <rect x="860" y="205" width="125" height="50" rx="7" fill="#eaf2fc" stroke="#1c5cab"/>
+    <text x="922" y="226" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0d366b">App: Datos de</text>
+    <text x="922" y="241" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0d366b">terreno (FÍSICO)</text>
+    <!-- cables -->
+    <g stroke="#52514e" stroke-width="1.2" fill="none" stroke-dasharray="3 3">
+      <path d="M91 88 C91 20 700 10 720 150"/>
+      <path d="M271 88 C271 30 690 30 735 150"/>
+      <path d="M451 88 C451 45 680 50 750 150"/>
+      <path d="M646 90 C680 90 690 140 760 150"/>
+      <path d="M646 130 C670 130 690 150 775 150"/>
+      <path d="M641 44 C700 44 720 120 790 150"/>
+    </g>
+    <!-- legend -->
+    <g font-size="10.5">
+      <rect x="20" y="322" width="12" height="12" fill="#1c5cab"/><text x="38" y="332">H = humedad capacitiva v1.2 (electrónica sellada, encima del sustrato)</text>
+      <rect x="430" y="322" width="12" height="12" fill="#52514e"/><text x="448" y="332">T = sonda DS18B20 (bus común en GPIO 4)</text>
+      <rect x="700" y="322" width="12" height="12" fill="#eb6834"/><text x="718" y="332">sensores externos (aire y luz)</text>
+    </g>
+  </svg>
+  <div class="caption"><strong>Figura 4.</strong> Disposición del prototipo pequeño: 3 macetas de 0.5–1 L, de unos 10 cm de profundidad útil. Esquema, no a escala.</div>
+  </div>
+
+  <h2>6.1 Qué mide cada sensor y con qué dato NASA se relaciona</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:12%">Grupo</th><th style="width:17%">Sensor</th><th style="width:6%">Cant.</th><th style="width:25%">Qué mide</th><th>Dato NASA de referencia (solo como contexto, escalas muy distintas)</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="2"><strong>Internos</strong><br>(en la tierra)</td><td>💧 Humedad capacitiva v1.2</td><td class="c">3</td><td>Humedad volumétrica por zona (tras la calibración)</td><td>SMAP L4 (9 km, modelo + satélite) y GWETROOT de POWER (~50 km)</td></tr>
+      <tr><td>🌡️ DS18B20 impermeable</td><td class="c">3</td><td>Temperatura del suelo a ~6–8 cm por zona</td><td>Temperatura superficial (MODIS/ECOSTRESS), solo de forma cualitativa</td></tr>
+      <tr><td rowspan="3"><strong>Externos</strong><br>(fuera de la tierra)</td><td>🌦️ BME680</td><td class="c">1</td><td>T, HR y presión del aire; gas (resistencia relativa)</td><td>T2M, RH2M y presión de superficie de POWER; insumo de ET0</td></tr>
+      <tr><td>🌦️ DHT11</td><td class="c">1</td><td>T y HR del aire (redundancia para control de calidad)</td><td>T2M y RH2M de POWER</td></tr>
+      <tr><td>💡 LDR</td><td class="c">1</td><td>Intensidad de luz relativa</td><td>ALLSKY_SFC_SW_DWN (solo la forma del ciclo diario)</td></tr>
+    </tbody>
+  </table>
+  <div class="callout ok small"><span class="h">Qué demuestra y qué no</span>
+  <strong>Sí:</strong> la variabilidad entre zonas, la medición y el envío en vivo, la calibración de un sensor barato, el control de calidad por redundancia (BME680 frente a DHT11) y que simulación y realidad usan el mismo contrato. <strong>No:</strong> una validación estadística contra SMAP. Es una <strong>prueba de concepto a escala de laboratorio</strong> y no alimenta el motor de recomendación.</div>
+
+  <h2>6.2 Lista de materiales (BOM)</h2>
+  <div class="grid2">
+  <table class="t compact">
+    <thead><tr><th style="width:7%">☐</th><th style="width:10%">Cant.</th><th>Electrónica</th></tr></thead>
+    <tbody>
+      <tr><td>☐</td><td>1 (ideal 2)</td><td>ESP32 DevKit de 30 o 38 pines (el segundo es repuesto)</td></tr>
+      <tr><td>☐</td><td>3 (+1)</td><td>Sensor de humedad capacitivo v1.2 (no resistivo: se corroe)</td></tr>
+      <tr><td>☐</td><td>3</td><td>DS18B20 impermeable (sonda con cable)</td></tr>
+      <tr><td>☐</td><td>1</td><td>Resistencia de 4.7 kΩ (pull-up del bus 1-Wire)</td></tr>
+      <tr><td>☐</td><td>1</td><td>Módulo BME680 (3.3 V, I2C)</td></tr>
+      <tr><td>☐</td><td>1</td><td>Módulo DHT11 (con pull-up incluido; si es el sensor suelto, 10 kΩ)</td></tr>
+      <tr><td>☐</td><td>1</td><td>LDR (GL55xx) + resistencias de 1 k, 2.2 k, 4.7 k y 10 kΩ (R<sub>f</sub> se elige en S6)</td></tr>
+      <tr><td>☐</td><td>1</td><td>Protoboard + cables dupont (M-M, M-H)</td></tr>
+      <tr><td>☐</td><td>1</td><td>Power bank USB + cable de datos (no solo de carga)</td></tr>
+    </tbody>
+  </table>
+  <table class="t compact">
+    <thead><tr><th style="width:7%">☐</th><th>Montaje, calibración y herramientas</th></tr></thead>
+    <tbody>
+      <tr><td>☐</td><td>3 macetas pequeñas (0.5–1 L, profundidad ≥ 10 cm) + bandeja</td></tr>
+      <tr><td>☐</td><td>Sustrato homogéneo (el mismo en las 3 macetas)</td></tr>
+      <tr><td>☐</td><td>Termocontraíble o esmalte transparente para sellar la electrónica de los sensores capacitivos (secan en minutos; la silicona tarda horas)</td></tr>
+      <tr><td>☐</td><td>Palito o mástil + bridas para los sensores externos; cartulina para dar sombra</td></tr>
+      <tr><td>☐</td><td>Etiquetas H1–H3, T1–T3, A/B/C</td></tr>
+      <tr><td>☐</td><td>Balanza de cocina (0.1–1 g), vasitos, microondas, recipiente de volumen conocido</td></tr>
+      <tr><td>☐</td><td>Jeringa o vaso medidor (mL) para riegos de volumen conocido</td></tr>
+      <tr><td>☐</td><td>Celular con app luxómetro (referencia cualitativa del LDR)</td></tr>
+      <tr><td>☐</td><td>Multímetro, soldador y estaño, laptop con Arduino IDE / PlatformIO</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>6.3 Conexiones del ESP32</h2>
+  <div class="grid2">
+  <table class="t compact">
+    <thead><tr><th>Señal</th><th>Pin ESP32</th><th>Alimentación</th></tr></thead>
+    <tbody>
+      <tr><td>Humedad H1 (A)</td><td><strong>GPIO 34</strong> (ADC1, solo entrada)</td><td>3V3 · GND</td></tr>
+      <tr><td>Humedad H2 (B)</td><td><strong>GPIO 35</strong> (ADC1, solo entrada)</td><td>3V3 · GND</td></tr>
+      <tr><td>Humedad H3 (C)</td><td><strong>GPIO 32</strong> (ADC1)</td><td>3V3 · GND</td></tr>
+      <tr><td>LDR (divisor con R<sub>f</sub>)</td><td><strong>GPIO 33</strong> (ADC1)</td><td>LDR a 3V3 · R<sub>f</sub> a GND</td></tr>
+      <tr><td>3 × DS18B20 (T1–T3)</td><td><strong>GPIO 4</strong> (1-Wire, en paralelo)</td><td>3V3 · GND · 4.7 kΩ entre datos y 3V3</td></tr>
+      <tr><td>DHT11</td><td><strong>GPIO 27</strong> (digital)</td><td>3V3 · GND</td></tr>
+      <tr><td>BME680</td><td><strong>SDA 21 · SCL 22</strong> (I2C)</td><td>3V3 · GND · dirección 0x76 o 0x77</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn small"><span class="h">Reglas eléctricas</span>
+    <ul>
+      <li><strong>Las señales analógicas van solo a ADC1 (GPIO 32–39).</strong> El ADC2 deja de funcionar con el Wi-Fi activo. GPIO 27 se usa como pin digital, así que no tiene problema.</li>
+      <li>Hay que promediar 64 lecturas por sensor y usar <code>analogReadMilliVolts()</code>.</li>
+      <li>Todo va a 3.3 V. Medir la polaridad con el multímetro antes de energizar.</li>
+      <li>Correr un <em>I2C scanner</em> para saber si el BME680 está en 0x76 o 0x77.</li>
+      <li>Anotar la dirección de 64 bits de cada DS18B20 para rotular T1, T2 y T3.</li>
+      <li>Algunos clones del sensor capacitivo v1.2 tienen fallas de fábrica: probar cada unidad y guardar el repuesto.</li>
+      <li>El consumo lo domina el ESP32 con Wi-Fi. Un power bank común alcanza para la noche, pero hay que llevar uno de repuesto y desactivar el autoapagado si lo tiene.</li>
+    </ul>
+  </div>
+  </div>
+
+  <h2>6.4 Paso a paso de armado</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:4%">#</th><th style="width:22%">Paso</th><th>Cómo</th><th style="width:15%">Quién</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Prueba individual por serie</td><td>Humedad: valor raw al aire y con la punta en agua hasta la línea. DS18B20: dirección y temperatura de cada sonda. BME680: escaneo I2C y lectura de T/HR/P/gas. DHT11: T/HR. LDR: raw tapado, con luz ambiente y con la linterna del celular. Todo se anota en la hoja de registro</td><td>Mateo</td></tr>
+      <tr><td>2</td><td>Elegir R<sub>f</sub> del LDR</td><td>Con el resultado del escenario S6 (probablemente 1–2.2 kΩ), confirmando que la lectura en interiores quede en la zona media del ADC</td><td>Christian · Mateo</td></tr>
+      <tr><td>3</td><td>Sellar los sensores capacitivos</td><td>Cubrir con termocontraíble o esmalte la electrónica del borde superior. Solo entra al sustrato la parte con las pistas. Rotular H1, H2 y H3</td><td>Mateo</td></tr>
+      <tr><td>4</td><td>Preparar las macetas</td><td>Mezclar y pesar el sustrato, llenar las 3 macetas a la misma altura y con la misma compactación, y marcar la línea de profundidad. Fijar la humedad inicial agregando una masa de agua conocida: A poca, B media, C alta (sin encharcar)</td><td>Vanesa</td></tr>
+      <tr><td>5</td><td>Insertar los sensores</td><td>Sensor capacitivo vertical hasta la línea; DS18B20 a la misma profundidad y a 3–5 cm del capacitivo. Fijar los cables para que no tiren y no enrollar la sonda sobre el capacitivo</td><td>Mateo · Vanesa</td></tr>
+      <tr><td>6</td><td>Montar los externos</td><td>BME680 y DHT11 juntos, a la sombra y a 10 cm o más del ESP32 (la placa calienta). LDR mirando hacia arriba, sin obstáculos</td><td>Mateo</td></tr>
+      <tr><td>7</td><td>Cablear según 6.3</td><td>Primero GND y 3V3 con el multímetro, luego las señales. Prueba por serie antes de cerrar la caja</td><td>Mateo</td></tr>
+      <tr><td>8</td><td>Calibrar (6.6)</td><td>3 puntos gravimétricos por sensor de humedad y desfase de cada DS18B20 → <code>calibration.h</code></td><td>Vanesa · Mateo</td></tr>
+      <tr><td>9</td><td>Firmware real + red</td><td><code>SIMULATION = 0</code>, red del evento (o hotspot del celular), NTP y POST a la API. Verificar la insignia «Físico» en la app</td><td>Mateo</td></tr>
+      <tr><td>10</td><td>Prueba de punta a punta</td><td>Regar la zona A con V mL conocidos: su curva sube y B y C casi no cambian. Comparar con la predicción de S4. Dejar el nodo registrando toda la noche</td><td>Vanesa · Christian · Mateo</td></tr>
+    </tbody>
+  </table>
+
+  <h2>6.5 Protocolo experimental <span class="chip hw">Vanesa</span></h2>
+  <table class="t compact">
+    <thead><tr><th style="width:22%">Elemento</th><th>Definición</th></tr></thead>
+    <tbody>
+      <tr><td>Factor</td><td>Nivel de humedad inicial por zona (A baja, B media, C alta), con el mismo sustrato y la misma compactación</td></tr>
+      <tr><td>Tratamiento</td><td>Riego de volumen conocido V (por ejemplo, 50–100 mL) solo en la zona A en t<sub>0</sub>, registrado en la hoja (hora, volumen, persona)</td></tr>
+      <tr><td>Variables de respuesta</td><td>Δθ por zona tras el riego; tiempo de respuesta (t<sub>90</sub>, tiempo hasta el 90 % del salto); tasa de secado k por zona; diferencia de temperatura de suelo entre zonas</td></tr>
+      <tr><td>Control de calidad del aire</td><td>BME680 frente a DHT11: diferencia media, desviación estándar y límites de acuerdo (media ± 1.96 DE, al estilo Bland–Altman). Se espera que caigan dentro de la tolerancia combinada (~±3 °C, ~±8 % HR); si no, el sensor se marca como sospechoso</td></tr>
+      <tr><td>Luz</td><td>LDR frente al luxómetro del celular en 4–5 niveles de luz: correlación de rangos (cualitativa)</td></tr>
+      <tr><td>Contraste sim vs físico</td><td>Δθ medido frente a Δθ predicho (V/(A·Z)); curva de secado medida frente a la ajustada; se reporta el error, sin pretender una validación estadística</td></tr>
+      <tr><td>Registro</td><td>Hoja de laboratorio (<code>hardware/calibration/registro.csv</code>) con ts, acción, zona, volumen, observación y responsable, más fotos con hora</td></tr>
+    </tbody>
+  </table>
+
+  <h2>6.6 Calibración (obligatoria: sin ella, los números no significan nada)</h2>
+  <div class="grid2">
+    <div class="small">
+      <h3>Humedad: método gravimétrico de 3 puntos por sensor</h3>
+      <ol>
+        <li>Para cada sensor, en tres estados (seco, medio y saturado), se registra el promedio de lecturas raw.</li>
+        <li>Se toma una muestra de 20–30 g de sustrato junto al sensor y se pesa húmeda (m<sub>h</sub>).</li>
+        <li>Se seca en microondas en ciclos de 1 min, pesando entre ciclos, hasta peso constante (m<sub>s</sub>). Sin recipientes metálicos y sin quemar la muestra.</li>
+        <li>θ<sub>g</sub> = (m<sub>h</sub> − m<sub>s</sub>) / m<sub>s</sub>. Para pasar a volumétrica: θ<sub>v</sub> = θ<sub>g</sub> · ρ<sub>b</sub>/ρ<sub>w</sub>, con ρ<sub>b</sub> = masa seca / volumen de una muestra tomada con un recipiente de volumen conocido.</li>
+        <li>Se ajusta la curva raw → θ<sub>v</sub> de <strong>cada sensor por separado</strong> (lineal por tramos con los 3 puntos) y las constantes se cargan en <code>calibration.h</code>.</li>
+        <li>Se reporta el error del ajuste, aclarando que con 3 puntos el error es orientativo.</li>
+      </ol>
+    </div>
+    <div class="small">
+      <h3>Temperatura: desfase de los DS18B20</h3>
+      <ol>
+        <li>Las 3 sondas en el mismo vaso de agua a temperatura ambiente, durante 5 min.</li>
+        <li>Si hay un termómetro de referencia, se registra junto a ellas.</li>
+        <li>Desfase<sub>i</sub> = T<sub>i</sub> − mediana(T<sub>1</sub>, T<sub>2</sub>, T<sub>3</sub>) (o − T<sub>ref</sub>). Si supera 0.5 °C, se anota y se corrige en el firmware.</li>
+      </ol>
+      <h3>Plan B</h3>
+      <p>Sin microondas o sin tiempo: calibración relativa de 2 puntos (aire y agua) con la insignia «humedad relativa (sin calibración gravimétrica)». Nunca se muestra como «% volumétrico».</p>
+    </div>
+  </div>
+
+  <h2>6.7 Problemas típicos</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:30%">Problema</th><th style="width:30%">Causa probable</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td>Lecturas de humedad ruidosas</td><td>ADC del ESP32, cables largos</td><td>Promediar 64 lecturas, acortar cables, alimentación estable</td></tr>
+      <tr><td>La humedad deja de leer con el Wi-Fi</td><td>Pin del ADC2</td><td>Mover la señal a GPIO 32–39</td></tr>
+      <tr><td>DS18B20 marca −127 °C u 85 °C</td><td>Conexión o falta de la resistencia de 4.7 kΩ</td><td>Revisar el pull-up, el cable de datos y la alimentación</td></tr>
+      <tr><td>BME680 no aparece</td><td>Dirección I2C o cableado</td><td>Escanear el bus; probar 0x76 y 0x77; revisar SDA/SCL</td></tr>
+      <tr><td>T del aire demasiado alta</td><td>Calor del ESP32, sol directo o calentador de gas del BME680</td><td>Alejar y dar sombra; comparar con el DHT11; corregir el desfase</td></tr>
+      <tr><td>DHT11 devuelve NaN</td><td>Lecturas demasiado seguidas o pull-up</td><td>Leer cada 2 s o más; revisar el módulo</td></tr>
+      <tr><td>LDR siempre al máximo</td><td>R<sub>f</sub> demasiado grande</td><td>Bajar R<sub>f</sub> (resultado de S6)</td></tr>
+      <tr><td>Sin Wi-Fi en el evento</td><td>Red saturada o portal cautivo</td><td>Hotspot del celular; plan B: registro por serie y <code>replay.py</code></td></tr>
+      <tr><td>El power bank se apaga solo</td><td>Autoapagado por bajo consumo</td><td>Usar otro modelo o enviar con mayor frecuencia</td></tr>
+    </tbody>
+  </table>
+
+  <div class="grid2">
+    <div class="callout danger small"><span class="h">Advertencias honestas</span>
+      <ul>
+        <li>No se compara la maceta con SMAP de forma cuantitativa: un RMSE así no tendría sentido.</li>
+        <li>Solo habrá horas de datos: es una prueba de concepto del método.</li>
+        <li>Todo dato simulado se rotula «Simulado».</li>
+        <li>Cada sensor capacitivo se calibra por separado.</li>
+      </ul>
+    </div>
+    <div class="callout info small"><span class="h">Mejoras opcionales (solo si el nodo básico funciona)</span>
+      <ul>
+        <li>Dos profundidades por zona con un ADS1115 (ADC externo, menos ruido).</li>
+        <li>Panel solar + 18650 + <em>deep sleep</em> para autonomía.</li>
+        <li>Microbomba con relé y potencia de bombeo P = ρ·g·Q·H/η.</li>
+        <li>Registro en tarjeta SD como respaldo de la red.</li>
+      </ul>
+    </div>
+  </div>
+</div>

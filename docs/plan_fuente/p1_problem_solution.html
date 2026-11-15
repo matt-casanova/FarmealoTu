@@ -1,0 +1,428 @@
+
+<!-- ======================= 2 ======================= -->
+<div class="section" id="s2">
+  <h1><span class="num">2</span>El problema y el análisis del reto</h1>
+
+  <h2>2.1 El reto oficial, en nuestras palabras</h2>
+  <p>Los agricultores enfrentan temperaturas cambiantes, lluvias menos predecibles, escasez de agua, eventos extremos y suelos que pierden salud. Elegir qué cultivo sigue a otro (la <strong>rotación</strong>) se vuelve difícil. Un cultivo que mejora el suelo en un lugar puede consumir demasiada agua, traer enfermedades, no tener mercado o no encajar en la temporada de otro lugar.</p>
+  <p>El reto pide una herramienta (app, modelo o mapa interactivo) que combine datos NASA (SMAP, ECOSTRESS, GPM, Landsat, MODIS, NASA POWER, GRACE/GRACE-FO, SRTM) con suelo local, características de cultivos y prioridades del agricultor. Con eso, el agricultor debe poder explorar rotaciones que fortalezcan el suelo y lo adapten a condiciones cambiantes. Además, la herramienta puede:</p>
+  <ul>
+    <li>Mostrar cuándo el campo suele quedar desnudo, en qué estaciones el cultivo actual es más vulnerable y qué rotaciones podrían cortar ciclos de plagas, reducir la demanda de agua, mejorar la infiltración o dar ingresos extra.</li>
+    <li>Comparar <strong>al menos tres estrategias, incluida la actual</strong>. Para cada una debe explicar <em>por qué se sugiere, qué evidencia la respalda, qué beneficios tiene, qué información falta y qué riesgos requieren revisión local</em>.</li>
+    <li>Explicar términos científicos (evapotranspiración, anomalías de humedad, NDVI, helada, balance hídrico) y aclarar <strong>en qué se diferencia un satélite de una medición en tierra</strong>.</li>
+  </ul>
+
+  <h2>2.2 El problema concreto: Cuatro Cañadas, Santa Cruz, Bolivia</h2>
+  <p>Los agricultores de Cuatro Cañadas tienen que decidir qué sembrar en sucesión para reducir su exposición a la sequía, al exceso de lluvia, al deterioro del suelo y a las restricciones de producción. La agricultura de la zona es <strong>comercial, de granos y oleaginosas</strong>, con campañas de <strong>verano</strong> (la soya es central) y de <strong>invierno</strong> (sorgo, maíz, girasol y trigo participan en las rotaciones).</p>
+
+  <h3>Línea base municipal de producción, 2023 <span class="tag t-obs">Documentado</span></h3>
+  <table class="t compact">
+    <thead><tr><th>Cultivo</th><th class="r">Producción 2023 (t)</th><th class="r">Superficie 2023 (ha)</th><th class="r">% de la superficie de estos 7 cultivos <span class="tag t-der">Derivado</span></th><th class="r">t/ha implícito <span class="tag t-der">Derivado</span></th><th>Lectura</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Soya</strong></td><td class="r">811 959</td><td class="r">318 083</td><td class="r">69.4 %</td><td class="r">2.55</td><td>Cultivo predominante</td></tr>
+      <tr><td>Sorgo</td><td class="r">187 590</td><td class="r">93 955</td><td class="r">20.5 %</td><td class="r">2.00</td><td>Principal cultivo de rotación de invierno</td></tr>
+      <tr><td>Maíz</td><td class="r">73 199</td><td class="r">17 936</td><td class="r">3.9 %</td><td class="r">4.08</td><td>Alternativa documentada</td></tr>
+      <tr><td>Girasol</td><td class="r">18 589</td><td class="r">18 025</td><td class="r">3.9 %</td><td class="r">1.03</td><td>Alternativa documentada</td></tr>
+      <tr><td>Trigo</td><td class="r">14 978</td><td class="r">7 383</td><td class="r">1.6 %</td><td class="r">2.03</td><td>Alternativa documentada</td></tr>
+      <tr><td>Chía</td><td class="r">1 973</td><td class="r">2 592</td><td class="r">0.6 %</td><td class="r">0.76</td><td>Conocida, no prioritaria (faltan parámetros)</td></tr>
+      <tr><td>Arroz</td><td class="r">367</td><td class="r">171</td><td class="r">0.04 %</td><td class="r">2.15</td><td>Marginal</td></tr>
+    </tbody>
+  </table>
+  <p class="small"><strong>Fuente:</strong> Ministerio de Desarrollo Productivo y Economía Plural, <em>Santa Cruz Industrial y Productiva 2024</em>, fichas municipales, datos 2023 del INE/MDRyT (<a href="https://www.siip.produccion.gob.bo/noticias/files/2025-c2369-SANTA-CRUZ-V3-FM.pdf">siip.produccion.gob.bo</a>). Son la <strong>línea base municipal verificada para 2023</strong>: no son datos de 2026 ni parámetros predictivos para una finca. Las columnas derivadas solo sirven como control de coherencia. <strong>Re-tabulado desde el prompt: Matías verifica las cifras contra el PDF</strong> antes de cargarlas en <code>agricultural_context.json</code>.</p>
+
+  <div class="grid2">
+    <div class="box">
+      <h3>Paradigma productivo <span class="tag t-obs">Documentado</span></h3>
+      <ul class="small">
+        <li>ANAPO promueve la siembra directa y la conservación del rastrojo (jul-2024).</li>
+        <li>También promueve cultivos de cobertura, aunque su viabilidad depende del agua y del manejo.</li>
+        <li>Según ANAPO, el sorgo fue el <strong>67 %</strong> de la superficie de rotación de invierno en 2023. Es un dato <em>regional</em>, no exacto para Cuatro Cañadas.</li>
+        <li>No hay que asumir que todos rotan igual ni que todos tienen riego.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Riesgos evidenciados <span class="tag t-obs">Documentado</span></h3>
+      <ul class="small">
+        <li><strong>Mar-2025:</strong> se perdieron 1104 ha de soya por el desborde del río Grande; Cuatro Cañadas se declaró zona de desastre (El Deber).</li>
+        <li><strong>Campaña 2025–2026:</strong> sequía entre dic-2025 y ene-2026, seguida de exceso de lluvia en feb–mar-2026 (ANAPO, vía economy.com.bo).</li>
+        <li>Son <strong>dos riesgos distintos</strong>: falta de agua durante el desarrollo del cultivo y exceso de lluvia en etapas sensibles o en la cosecha.</li>
+        <li><strong>No son alertas actuales</strong>: las alertas de la app se calculan con datos fechados.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout info"><span class="h">El dilema del agricultor que RotaSat ayuda a explorar</span>
+  «Siembro soya en verano. ¿Qué pongo en invierno, o qué cambio de mi rotación, si este año tengo poca agua y quiero evitar pérdidas sin seguir gastando el suelo?» Las opciones locales documentadas son sorgo, maíz, girasol, trigo, barbecho o cobertura. Cada una tiene un costo distinto en agua, deja distinto residuo, aporta distinta diversidad y tiene distinta exposición al clima. Esa comparación es la que hacemos visible.</div>
+
+  <h2>2.3 Qué pide el reto y qué no pide</h2>
+  <div class="grid2">
+    <div class="box ok">
+      <h3>Sí pide</h3>
+      <ul class="small">
+        <li>Una herramienta que apoye una <strong>decisión de rotación</strong>.</li>
+        <li>Usar datos NASA junto con suelo, cultivos y prioridades.</li>
+        <li><strong>≥ 3 estrategias</strong> (incluida la actual) con 5 bloques: por qué, evidencia, beneficios, vacíos y riesgos para revisión local.</li>
+        <li>Honestidad sobre la incertidumbre y la necesidad de juicio local.</li>
+        <li>Lenguaje comprensible para agricultores.</li>
+      </ul>
+    </div>
+    <div class="box danger">
+      <h3>No pide (y no vamos a hacer)</h3>
+      <ul class="small">
+        <li>Predecir rendimientos exactos ni prometer ganancias.</li>
+        <li>Reemplazar al agrónomo, al análisis de suelo o a la visita técnica.</li>
+        <li>Cubrir todos los cultivos del mundo ni todas las regiones.</li>
+        <li>Dar «el» cultivo ideal sin comparación ni explicación.</li>
+        <li>Pronosticar inundaciones fluviales ni el clima.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>2.4 Lectura fina del enunciado → implicancias de diseño</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:34%">Lo que dice el enunciado</th><th style="width:30%">Cómo lo interpretamos</th><th>Qué implica para RotaSat</th></tr></thead>
+    <tbody>
+      <tr><td>«app, model, interactive map, or other decision-support tool»</td><td>El formato es libre; lo que importa es que apoye una decisión</td><td>App web móvil + motor + visor geoespacial</td></tr>
+      <tr><td>«NASA Earth observations + local soil information + crop characteristics + farmer priorities»</td><td>Cuatro insumos obligatorios</td><td>Pipeline NASA POWER, <code>crops.json</code> con fuentes, notas de suelo del agricultor y pesos ajustables</td></tr>
+      <tr><td>«compare at least three rotation strategies, including the existing rotation»</td><td>Requisito duro</td><td>E0 (actual) + E1, E2, E3. Si hay menos de 3 opciones defendibles, la app explica por qué</td></tr>
+      <tr><td>«why suggested, evidence, benefits, information gaps, risks»</td><td>Cinco bloques por estrategia</td><td><code>reasons</code>, <code>evidence</code>, <code>tradeoffs</code>, <code>missing_information</code>, <code>agronomist_questions</code></td></tr>
+      <tr><td>«times when fields are typically bare, seasons when current crops appear more vulnerable»</td><td>Calendario de exposición</td><td>Mapa de calor de riesgos (meses × años) y cobertura por mes en cada estrategia</td></tr>
+      <tr><td>«SI techniques» (el texto dice «SI»)</td><td>Técnicas de análisis estadístico e inteligencia aplicada</td><td>Motor determinista y explicable: reglas + MCDA + bootstrap. Declaramos qué hace cada parte y que <strong>no usamos un LLM para recomendar</strong></td></tr>
+      <tr><td>«harmonizing datasets with different spatial and temporal resolutions»</td><td>Llevar los datos a una escala común con honestidad</td><td>Agregación diaria → mensual y por campaña; etiqueta de escala (POWER ~50 km = «contexto regional»)</td></tr>
+      <tr><td>«clarify how satellite observations differ from ground-based measurements»</td><td>Explicarlo y, mejor aún, demostrarlo</td><td>Glosario en la UI + <strong>nodo de campo de 3 zonas</strong>, que muestra la variabilidad que el satélite promedia</td></tr>
+      <tr><td>«interactive maps, timelines, overlays, scenario sliders» (opcional)</td><td>Suben la creatividad y el impacto</td><td>Visor de 5 capas isométricas, deslizadores de prioridades y escenarios simulados del nodo</td></tr>
+      <tr><td>«does not replace farmer judgment or local agricultural expertise»</td><td>La humildad es un requisito de diseño</td><td>Avisos permanentes, preguntas para el agrónomo y la confianza nunca se rotula «alta» con datos solo regionales</td></tr>
+    </tbody>
+  </table>
+
+  <h2>2.5 Cómo nos evalúa el jurado</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:14%">Criterio</th><th style="width:32%">Qué buscan</th><th>Qué vamos a mostrar</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Impacto</strong></td><td>Potencial de beneficiar a muchas personas</td><td>Un caso real (Cuatro Cañadas, 318 mil ha de soya en 2023) con riesgos documentados (inundación de 2025, sequía y exceso de lluvia en 2025–26) y un camino para escalar a otros municipios</td></tr>
+      <tr><td><strong>Creatividad</strong></td><td>Uso ingenioso de los datos</td><td>Comparación explicable con incertidumbre por bootstrap; visor isométrico; <strong>gemelo digital forzado con NASA POWER que se valida con un nodo físico</strong></td></tr>
+      <tr><td><strong>Validez</strong></td><td>Rigor científico y técnico</td><td>FAO-56 Penman–Monteith, fórmulas documentadas, pruebas A–N, calibración gravimétrica y límites declarados</td></tr>
+      <tr><td><strong>Relevancia</strong></td><td>Que responda al reto</td><td>Matriz de cumplimiento (2.6): ≥ 3 estrategias, 5 bloques, apoyo sin reemplazo</td></tr>
+      <tr><td><strong>Presentación</strong></td><td>Comunicar con claridad</td><td>Historia de un agricultor, demo en vivo con riego de una zona, 7 diapositivas o 30 s y README limpio</td></tr>
+    </tbody>
+  </table>
+
+  <h2>2.6 Matriz de cumplimiento</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:5%">ID</th><th style="width:27%">Requisito</th><th style="width:7%">Prio.</th><th>Cómo lo cumplimos</th><th style="width:19%">Responsable</th></tr></thead>
+    <tbody>
+      <tr><td>R1</td><td>Herramienta de apoyo a la decisión</td><td>MUST</td><td>App web + API REST + motor explicable</td><td>Matías · Kendra</td></tr>
+      <tr><td>R2</td><td>Datos NASA + suelo local + cultivos + prioridades</td><td>MUST</td><td>NASA POWER en caché; <code>crops.json</code>; notas de suelo del agricultor; pesos ajustables</td><td>Alvin · Matías · Kendra</td></tr>
+      <tr><td>R3</td><td>≥ 3 estrategias, incluida la actual</td><td>MUST</td><td>E0 Actual + E1 Suelo + E2 Agua + E3 Equilibrada</td><td>Matías</td></tr>
+      <tr><td>R4</td><td>Por qué · evidencia · beneficios · vacíos · riesgos</td><td>MUST</td><td>Tarjeta de estrategia con campos trazables y botón «¿Por qué esta opción?»</td><td>Matías · Kendra</td></tr>
+      <tr><td>R5</td><td>Apoya, no reemplaza, el juicio local</td><td>MUST</td><td>Avisos permanentes, preguntas para el agrónomo y política de confianza</td><td>Kendra · Matías</td></tr>
+      <tr><td>R6</td><td>Suelo desnudo y vulnerabilidad estacional</td><td>SHOULD</td><td>Mapa de calor de riesgos por mes y cobertura mensual por estrategia (NDVI solo si hay serie real descargada)</td><td>Alvin · Kendra</td></tr>
+      <tr><td>R7</td><td>Armonizar resoluciones</td><td>SHOULD</td><td>Agregación temporal común y etiqueta de escala espacial en cada dato</td><td>Alvin</td></tr>
+      <tr><td>R8</td><td>Explicar la incertidumbre y la validación local</td><td>SHOULD</td><td>Bootstrap por años (P10–P90, estabilidad) y módulo 04</td><td>Matías · Kendra</td></tr>
+      <tr><td>R9</td><td>Términos científicos y satélite vs terreno</td><td>SHOULD</td><td>Glosario y botones «¿Qué significa?» + nodo de campo (simulado y físico)</td><td>Kendra · Vanesa · Christian · Mateo</td></tr>
+      <tr><td>R10</td><td>Prioridades y restricciones del usuario</td><td>SHOULD</td><td>Flujo de 5 preguntas, pesos, cultivos excluidos y riego</td><td>Kendra · Matías</td></tr>
+      <tr><td>R11</td><td>Mapas, líneas de tiempo, capas, escenarios</td><td>COULD</td><td>Visor de 5 capas (Leaflet + CSS isométrico) y escenarios S1–S6 del gemelo digital</td><td>Kendra · Alvin · Christian</td></tr>
+      <tr><td>R12</td><td>Vulnerabilidades a escala de campo</td><td>COULD</td><td>Nodo de 3 zonas: diferencias de humedad y temperatura dentro de un «campo»</td><td>Vanesa · Christian · Mateo</td></tr>
+      <tr><td>R13</td><td>Explicar fijadores de N, coberturas, raíz profunda, tolerancia a sequía</td><td>COULD</td><td>Fichas breves en <code>crops.json</code>, mostradas en la UI</td><td>Matías · Kendra</td></tr>
+      <tr><td>R14</td><td>Requisitos de envío de Space Apps</td><td>MUST</td><td>Checklist de la sección 12</td><td>Alvin</td></tr>
+    </tbody>
+  </table>
+
+  <h2>2.7 Errores típicos que vamos a evitar</h2>
+  <div class="grid2 small avoid">
+    <ul>
+      <li>Un tablero bonito de datos NASA <strong>sin recomendación de rotación</strong>.</li>
+      <li>Un único «mejor cultivo», sin comparación ni explicación.</li>
+      <li>Promesas de rendimiento o ganancias sin datos.</li>
+      <li>Depender de descargas NASA en vivo durante la demo (se precalcula y se guarda en caché).</li>
+    </ul>
+    <ul>
+      <li>Mapas «de alta resolución» fabricados a partir de una sola celda de POWER.</li>
+      <li>Presentar datos simulados como mediciones.</li>
+      <li>Comparar cuantitativamente una maceta con un píxel de SMAP de 9 km.</li>
+      <li>Dejar el formulario, el video y las referencias para los últimos 30 minutos.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ======================= 3 ======================= -->
+<div class="section" id="s3">
+  <h1><span class="num">3</span>La solución: RotaSat</h1>
+  <p class="lead">RotaSat ayuda a un agricultor de Cuatro Cañadas a decidir qué sembrar después. Compara su rotación actual con tres alternativas usando datos NASA y una base agrícola local con fuentes, y le dice con honestidad cuánto confiar en cada opción y qué consultar con su agrónomo.</p>
+
+  <h2>3.1 Para quién</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:24%">Usuario</th><th style="width:36%">Necesidad</th><th>Qué le entrega RotaSat</th></tr></thead>
+    <tbody>
+      <tr><td>Agricultor/a de granos y oleaginosas</td><td>Decidir la próxima siembra con clima incierto, poco tiempo y sin formación técnica</td><td>Una acción concreta a revisar, 4 estrategias comparables en español sencillo y advertencias con fecha</td></tr>
+      <tr><td>Técnico/a o agrónomo/a (ANAPO, cooperativas)</td><td>Revisar rápido el contexto climático de un predio</td><td>Evidencia trazable, vacíos explícitos y preguntas concretas para la visita</td></tr>
+      <tr><td>Municipio / asociación</td><td>Entender riesgos de la zona</td><td>Mapa de calor de riesgos y estado de los datos NASA (extensión futura: varios puntos)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3.2 Arquitectura</h2>
+  <div class="figure">
+  <svg viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+      <marker id="aro" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#eb6834"/></marker>
+    </defs>
+    <!-- column titles -->
+    <g font-size="13" font-weight="700" fill="#0d366b">
+      <text x="80" y="22" text-anchor="middle">1 · Fuentes</text>
+      <text x="275" y="22" text-anchor="middle">2 · Ingesta y caché</text>
+      <text x="470" y="22" text-anchor="middle">3 · Indicadores</text>
+      <text x="665" y="22" text-anchor="middle">4 · Motor</text>
+      <text x="890" y="22" text-anchor="middle">5 · API y app</text>
+    </g>
+    <!-- sources -->
+    <g font-size="11.5">
+      <rect x="10" y="40" width="140" height="44" rx="7" fill="#dcefe3" stroke="#1b7a3e"/><text x="80" y="58" text-anchor="middle" font-weight="700" fill="#14572d">NASA POWER</text><text x="80" y="74" text-anchor="middle" fill="#14572d">P0 · diario + horario</text>
+      <rect x="10" y="92" width="140" height="44" rx="7" fill="#f4f3ef" stroke="#898781"/><text x="80" y="110" text-anchor="middle" font-weight="700" fill="#52514e">NASA GIBS</text><text x="80" y="126" text-anchor="middle" fill="#52514e">P1 · teselas visor</text>
+      <rect x="10" y="144" width="140" height="44" rx="7" fill="#f4f3ef" stroke="#898781" stroke-dasharray="4 3"/><text x="80" y="162" text-anchor="middle" font-weight="700" fill="#52514e">SMAP L4 · IMERG</text><text x="80" y="178" text-anchor="middle" fill="#52514e">P2 · si hay archivos</text>
+      <rect x="10" y="196" width="140" height="44" rx="7" fill="#f4f3ef" stroke="#898781" stroke-dasharray="4 3"/><text x="80" y="214" text-anchor="middle" font-weight="700" fill="#52514e">NDVI MODIS/VIIRS</text><text x="80" y="230" text-anchor="middle" fill="#52514e">P1 · serie descargada</text>
+      <rect x="10" y="256" width="140" height="44" rx="7" fill="#eaf2fc" stroke="#2a78d6"/><text x="80" y="274" text-anchor="middle" font-weight="700" fill="#1c5cab">Base agrícola local</text><text x="80" y="290" text-anchor="middle" fill="#1c5cab">3 JSON con fuentes</text>
+      <rect x="10" y="308" width="140" height="44" rx="7" fill="#ece6fb" stroke="#6250d6"/><text x="80" y="326" text-anchor="middle" font-weight="700" fill="#4a3aa7">Agricultor</text><text x="80" y="342" text-anchor="middle" fill="#4a3aa7">rotación, riego, pesos</text>
+      <rect x="10" y="420" width="140" height="58" rx="7" fill="#fdeee7" stroke="#eb6834"/><text x="80" y="440" text-anchor="middle" font-weight="700" fill="#a8431b">Nodo de campo</text><text x="80" y="455" text-anchor="middle" fill="#a8431b">sim · Wokwi · físico</text><text x="80" y="470" text-anchor="middle" fill="#a8431b">ESP32, 3 zonas</text>
+    </g>
+    <!-- ingest -->
+    <g font-size="11.5">
+      <rect x="200" y="40" width="150" height="148" rx="8" fill="#ffffff" stroke="#2a78d6" stroke-width="1.5"/>
+      <text x="275" y="60" text-anchor="middle" font-weight="700" fill="#1c5cab">pipeline/</text>
+      <text x="275" y="80" text-anchor="middle">power.py · smap.py</text>
+      <text x="275" y="96" text-anchor="middle">imerg.py</text>
+      <text x="275" y="118" text-anchor="middle" fill="#52514e">validación · −999→null</text>
+      <text x="275" y="134" text-anchor="middle" fill="#52514e">unidades · metadatos</text>
+      <text x="275" y="150" text-anchor="middle" fill="#52514e">reintentos · caché JSON</text>
+      <text x="275" y="174" text-anchor="middle" font-size="10.5" fill="#1c5cab">Alvin</text>
+      <rect x="200" y="256" width="150" height="96" rx="8" fill="#ffffff" stroke="#2a78d6" stroke-width="1.5"/>
+      <text x="275" y="276" text-anchor="middle" font-weight="700" fill="#1c5cab">reference/</text>
+      <text x="275" y="294" text-anchor="middle">crops.json</text>
+      <text x="275" y="309" text-anchor="middle">rotation_rules.json</text>
+      <text x="275" y="324" text-anchor="middle">agricultural_context.json</text>
+      <text x="275" y="342" text-anchor="middle" font-size="10.5" fill="#1c5cab">Matías</text>
+    </g>
+    <!-- indicators -->
+    <g font-size="11.5">
+      <rect x="395" y="40" width="150" height="148" rx="8" fill="#ffffff" stroke="#2a78d6" stroke-width="1.5"/>
+      <text x="470" y="60" text-anchor="middle" font-weight="700" fill="#1c5cab">analytics/</text>
+      <text x="470" y="80" text-anchor="middle">indicators.py</text>
+      <text x="470" y="96" text-anchor="middle">physics.py (ET0)</text>
+      <text x="470" y="118" text-anchor="middle" fill="#52514e">racha seca · anomalía</text>
+      <text x="470" y="134" text-anchor="middle" fill="#52514e">calor · lluvia &gt; P95</text>
+      <text x="470" y="150" text-anchor="middle" fill="#52514e">ET0 FAO-56 · balance</text>
+      <text x="470" y="174" text-anchor="middle" font-size="10.5" fill="#1c5cab">Alvin · Christian (ET0)</text>
+    </g>
+    <!-- engine -->
+    <g font-size="11.5">
+      <rect x="590" y="40" width="150" height="312" rx="8" fill="#ffffff" stroke="#2a78d6" stroke-width="1.5"/>
+      <text x="665" y="60" text-anchor="middle" font-weight="700" fill="#1c5cab">engine/ + uncertainty</text>
+      <text x="665" y="84" text-anchor="middle">rules.py</text>
+      <text x="665" y="100" text-anchor="middle" fill="#52514e">factibilidad · 7 reglas</text>
+      <text x="665" y="124" text-anchor="middle">recommendation.py</text>
+      <text x="665" y="140" text-anchor="middle" fill="#52514e">candidatos 12 meses</text>
+      <text x="665" y="156" text-anchor="middle" fill="#52514e">S_agua · S_suelo · S_riesgo</text>
+      <text x="665" y="172" text-anchor="middle" fill="#52514e">MCDA con pesos</text>
+      <text x="665" y="188" text-anchor="middle" fill="#52514e">E0 · E1 · E2 · E3</text>
+      <text x="665" y="212" text-anchor="middle">uncertainty.py</text>
+      <text x="665" y="228" text-anchor="middle" fill="#52514e">bootstrap 200 años</text>
+      <text x="665" y="244" text-anchor="middle" fill="#52514e">P10 · P50 · P90</text>
+      <text x="665" y="268" text-anchor="middle">explicaciones</text>
+      <text x="665" y="284" text-anchor="middle" fill="#52514e">por qué · evidencia</text>
+      <text x="665" y="300" text-anchor="middle" fill="#52514e">vacíos · preguntas</text>
+      <text x="665" y="336" text-anchor="middle" font-size="10.5" fill="#1c5cab">Matías</text>
+    </g>
+    <!-- API & app -->
+    <g font-size="11.5">
+      <rect x="790" y="40" width="200" height="120" rx="8" fill="#eaf2fc" stroke="#1c5cab" stroke-width="1.5"/>
+      <text x="890" y="60" text-anchor="middle" font-weight="700" fill="#0d366b">FastAPI REST</text>
+      <text x="890" y="80" text-anchor="middle">/api/indicators · /nasa/status</text>
+      <text x="890" y="96" text-anchor="middle">/rotations/compare</text>
+      <text x="890" y="112" text-anchor="middle">/map/layers · /sources</text>
+      <text x="890" y="128" text-anchor="middle">/field-node/readings</text>
+      <text x="890" y="148" text-anchor="middle" font-size="10.5" fill="#1c5cab">Matías · Alvin</text>
+      <rect x="790" y="190" width="200" height="162" rx="8" fill="#eaf2fc" stroke="#1c5cab" stroke-width="1.5"/>
+      <text x="890" y="210" text-anchor="middle" font-weight="700" fill="#0d366b">App React (móvil)</text>
+      <text x="890" y="230" text-anchor="middle">Inicio + entrada de 5 preguntas</text>
+      <text x="890" y="246" text-anchor="middle">01 Comparar</text>
+      <text x="890" y="262" text-anchor="middle">02 Ventajas y desventajas</text>
+      <text x="890" y="278" text-anchor="middle">03 Riesgos · 04 Incertidumbre</text>
+      <text x="890" y="294" text-anchor="middle">Visor geoespacial (5 capas)</text>
+      <text x="890" y="310" text-anchor="middle">Datos de terreno</text>
+      <text x="890" y="340" text-anchor="middle" font-size="10.5" fill="#1c5cab">Kendra</text>
+    </g>
+    <!-- arrows main -->
+    <g stroke="#52514e" stroke-width="1.6" fill="none">
+      <path d="M150 62 H200" marker-end="url(#ar)"/>
+      <path d="M150 166 H200" marker-end="url(#ar)"/>
+      <path d="M150 218 C175 218 175 180 200 180" marker-end="url(#ar)"/>
+      <path d="M150 278 H200" marker-end="url(#ar)"/>
+      <path d="M350 114 H395" marker-end="url(#ar)"/>
+      <path d="M545 114 H590" marker-end="url(#ar)"/>
+      <path d="M350 304 H590" marker-end="url(#ar)"/>
+      <path d="M150 330 C400 380 560 340 590 330" marker-end="url(#ar)"/>
+      <path d="M740 100 H790" marker-end="url(#ar)"/>
+      <path d="M890 160 V190" marker-end="url(#ar)"/>
+      <path d="M150 114 H178 V31 H880 V38" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+    </g>
+    <!-- field node path -->
+    <g stroke="#eb6834" stroke-width="1.8" fill="none">
+      <path d="M150 449 H760 C800 449 800 140 790 132" marker-end="url(#aro)"/>
+    </g>
+    <text x="455" y="440" text-anchor="middle" font-size="11" fill="#a8431b">POST /api/field-node/readings (JSON v1: internos + externos)</text>
+    <text x="455" y="470" text-anchor="middle" font-size="11" fill="#a8431b">Alimenta solo la pestaña «Datos de terreno»: no entra al motor en el MVP</text>
+    <text x="455" y="500" text-anchor="middle" font-size="11" fill="#a8431b">Christian (simulación) · Mateo (Wokwi y físico) · Vanesa (calibración y datos)</text>
+    <line x1="455" y1="300" x2="455" y2="420" stroke="#eb6834" stroke-dasharray="3 4" stroke-width="1.2"/>
+    <text x="462" y="390" font-size="10.5" fill="#a8431b">physics.py (ET0)</text>
+    <text x="462" y="404" font-size="10.5" fill="#a8431b">compartido con el gemelo</text>
+    <!-- legend -->
+    <g font-size="10.5">
+      <line x1="590" y1="530" x2="620" y2="530" stroke="#52514e" stroke-width="1.6"/><text x="626" y="534" fill="#52514e">flujo de datos de la app</text>
+      <line x1="760" y1="530" x2="790" y2="530" stroke="#eb6834" stroke-width="1.8"/><text x="796" y="534" fill="#a8431b">flujo del nodo de campo</text>
+      <rect x="10" y="520" width="16" height="12" rx="3" fill="#f4f3ef" stroke="#898781" stroke-dasharray="4 3"/><text x="32" y="531" fill="#52514e">opcional (P2): solo con datos reales descargados</text>
+    </g>
+  </svg>
+  <div class="caption"><strong>Figura 1.</strong> Arquitectura de RotaSat. El navegador nunca consulta NASA directamente; la ingesta histórica corre antes y la comparación funciona sobre datos ya procesados. GIBS llega al visor como teselas, a través de los metadatos de <code>/api/map/layers</code>.</div>
+  </div>
+
+  <div class="grid2 small">
+    <div class="callout info"><span class="h">Principios técnicos</span>
+      <ul>
+        <li>Algoritmos <strong>deterministas, explicables y comprobables</strong>, sin LLM ni ML supervisado para recomendar.</li>
+        <li>La <strong>ingesta</strong> (lenta, previa) está separada de la <strong>consulta</strong> (rápida, interactiva); cambiar las prioridades no llama a NASA.</li>
+        <li>Las credenciales de Earthdata, si se usan, quedan en el backend.</li>
+      </ul>
+    </div>
+    <div class="callout warn"><span class="h">Por qué no usamos ML supervisado</span>
+      No hay suficientes datos locales de rendimiento, costos y rotaciones etiquetadas para entrenar y validar un predictor confiable en 24 h. Un motor de reglas con MCDA y bootstrap es auditable, y eso suma en <strong>Validez</strong>.
+    </div>
+  </div>
+
+  <h2>3.3 Datos: qué usamos, con qué prioridad y quién</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:15%">Fuente</th><th style="width:6%">Prio.</th><th style="width:27%">Variables y uso</th><th style="width:16%">Escala</th><th>Regla de uso</th><th style="width:9%">Dueño</th></tr></thead>
+    <tbody>
+      <tr><td><strong>NASA POWER</strong> (API REST, sin clave, comunidad AG)</td><td>P0</td><td>T2M, T2M_MAX, T2M_MIN, PRECTOTCORR, RH2M, WS2M, ALLSKY_SFC_SW_DWN. GWETROOT se prueba por separado. Indicadores, ET0 y forzante del gemelo digital</td><td>Celda de ~0.5° × 0.625° (~50–60 km), diaria y horaria</td><td>Histórico 2015–2025; reciente desde 2026-01-01 hasta la última fecha válida detectada. Caché obligatoria. Etiqueta «contexto regional»</td><td>Alvin</td></tr>
+      <tr><td><strong>NASA GIBS</strong> (WMTS)</td><td>P1</td><td>Teselas para el visor (vegetación, precipitación, humedad), solo con identificadores verificados en GetCapabilities</td><td>Según la capa</td><td>Nunca una URL inventada. Si una capa no es válida: «Información regional» o «Datos no disponibles»</td><td>Alvin</td></tr>
+      <tr><td><strong>NDVI</strong> (MODIS/VIIRS)</td><td>P1</td><td>Serie del punto piloto, si ya está descargada (AppEEARS)</td><td>250–500 m, 16 días</td><td>NDVI bajo sugiere baja cobertura, pero no prueba barbecho sin calendario</td><td>Alvin</td></tr>
+      <tr><td><strong>SMAP L4</strong> (SPL4SMGP v8)</td><td>P2</td><td>Humedad superficial y de la zona radicular (estimación modelo + satélite)</td><td>~9 km, cada 3 h</td><td>Adaptador opcional con archivos ya descargados; requiere Earthdata Login. Nunca «sensor de la finca»</td><td>Alvin</td></tr>
+      <tr><td><strong>GPM IMERG</strong></td><td>P2</td><td>Precipitación de mayor resolución (Final: histórico; Early/Late: reciente)</td><td>0.1° (~10 km)</td><td>No mezclar productos; mm/h → mm acumulados. Si se atrasa, se usa POWER y se declara</td><td>Alvin</td></tr>
+      <tr><td>SRTM · ECOSTRESS · GRACE-FO · SoilGrids</td><td>Fuera del camino crítico</td><td>Relieve, temperatura superficial, agua regional, suelo</td><td>30 m / 70 m / cientos de km / 250 m</td><td>Solo si hay datos previamente obtenidos y verificados. SoilGrids no es un requisito (su API presentó interrupciones)</td><td>—</td></tr>
+      <tr><td><strong>Base agrícola local</strong></td><td>P0</td><td>Cultivos, familias, estaciones, Kc (FAO-56), restricciones, reglas, contexto municipal</td><td>Municipal / regional</td><td>Cada entrada lleva <code>source_url</code>, <code>reference_year</code>, <code>verified_at</code>, <code>geographic_scope</code> y <code>evidence_status</code>. Sin fuente: <code>null</code></td><td>Matías</td></tr>
+      <tr><td><strong>Nodo de campo</strong></td><td>Extensión</td><td>Humedad y temperatura del suelo por zona; aire (BME680, DHT11); luz (LDR)</td><td>Puntual, cada 1–10 min</td><td>Siempre con <code>source</code>: simulated, wokwi o physical</td><td>Vanesa · Christian · Mateo</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3.4 Indicadores calculados <span class="tag t-der">Derivado</span></h2>
+  <table class="t compact">
+    <thead><tr><th style="width:17%">Indicador</th><th style="width:37%">Definición / fórmula</th><th style="width:9%">Unidad</th><th>Notas y límites</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Racha seca máxima</strong> (CDD)</td><td>Máximo número de días consecutivos con P<sub>día</sub> &lt; umbral (1 mm/día por defecto, configurable)</td><td>días</td><td>Por campaña o por etapa del cultivo; se calcula por año climático para el bootstrap</td></tr>
+      <tr><td><strong>Anomalía de lluvia</strong></td><td>anomalía % = 100 · (P<sub>actual</sub> − P̄<sub>hist</sub>) / P̄<sub>hist</sub>, con períodos estacionales equivalentes</td><td>%</td><td>Si P̄<sub>hist</sub> = 0, el resultado es «no definido» (nunca se divide entre cero). P̄ = media 2015–2025 del mismo período</td></tr>
+      <tr><td><strong>Días de calor</strong></td><td>Σ [T<sub>máx,día</sub> &gt; umbral<sub>cultivo, etapa</sub>]</td><td>días</td><td>El umbral debe tener fuente. Si falta, se usa un indicador meteorológico general (T<sub>máx</sub> &gt; P90 histórico del mes), rotulado así y <strong>sin afirmar daño al cultivo</strong></td></tr>
+      <tr><td><strong>Lluvia intensa</strong></td><td>Días con P<sub>día</sub> &gt; P95 histórico de los días húmedos (≥ 1 mm) del mismo mes</td><td>días</td><td>Indicador de exposición meteorológica, <strong>no</strong> predicción de inundación fluvial</td></tr>
+      <tr><td><strong>ET0</strong> FAO-56 Penman–Monteith</td><td>ET0 = [0.408 Δ (R<sub>n</sub> − G) + γ (900/(T+273)) u<sub>2</sub> (e<sub>s</sub> − e<sub>a</sub>)] / [Δ + γ (1 + 0.34 u<sub>2</sub>)]</td><td>mm/día</td><td>R<sub>n</sub> se obtiene de ALLSKY_SFC_SW_DWN (albedo 0.23 + onda larga neta con T<sub>máx</sub>, T<sub>mín</sub>, e<sub>a</sub>, R<sub>so</sub>); u<sub>2</sub> = WS2M; P sale de la elevación que devuelve POWER; G ≈ 0 diario. Si falta una variable: ET0 = <code>unavailable</code></td></tr>
+      <tr><td><strong>Demanda del cultivo</strong></td><td>ET<sub>c</sub> = K<sub>c</sub>(etapa) · ET0</td><td>mm</td><td>K<sub>c</sub> ini/med/fin de la Tabla 12 de FAO-56 para soya, sorgo, maíz, girasol y trigo. Sin K<sub>c</sub>: no se calcula</td></tr>
+      <tr><td><strong>Lluvia efectiva</strong></td><td>P<sub>ef</sub> mensual = 0.8 P − 25 si P &gt; 75 mm; 0.6 P − 10 si P ≤ 75 mm (mínimo 0)</td><td>mm</td><td>Método empírico FAO (Brouwer y Heibloem, 1986), declarado como <span class="tag t-sup">Supuesto</span>. Lluvia total ≠ lluvia efectiva</td></tr>
+      <tr><td><strong>Balance hídrico</strong></td><td>balance = P<sub>ef</sub> − ET<sub>c</sub> por mes y campaña</td><td>mm</td><td>Solo cuando P<sub>ef</sub> y ET<sub>c</sub> están disponibles; en otro caso se marca «insuficiente»</td></tr>
+      <tr><td>GWETROOT</td><td>Humedad relativa modelada en la zona radicular (0–1)</td><td>adim.</td><td>Solo como contexto hídrico regional, si el catálogo vigente lo devuelve</td></tr>
+    </tbody>
+  </table>
+  <p class="small"><strong>Armonización temporal:</strong> los datos diarios se agregan a mensual y a campaña (verano / invierno), con las ventanas de siembra y cosecha de <code>crops.json</code> (con fuente; sin fuente se rotulan <span class="tag t-sup">Supuesto</span> y se muestran al usuario). <strong>Armonización espacial:</strong> cada dato lleva su escala; un valor de POWER es «contexto regional (~50 km)», nunca «tu campo».</p>
+</div>
+
+<div>
+  <h2>3.5 Motor de recomendación</h2>
+  <h3>Entradas</h3>
+  <p>Ubicación (punto piloto por defecto), cultivo actual y anterior, rotación actual (barbecho incluido), cultivos que puede o no puede sembrar, riego (sí / no / a veces / no sé), problemas de suelo conocidos, prioridades (agua, suelo, riesgo) y, opcionalmente, costos y precios que aporte el agricultor (estos se muestran de forma cualitativa). Todas llevan <span class="tag t-agr">Del agricultor</span>. <strong>No se infiere información agronómica que el agricultor no dio.</strong></p>
+
+  <h3>Generación de estrategias (horizonte de 12 meses: campaña de verano + campaña de invierno)</h3>
+  <ol>
+    <li><strong>Candidatos:</strong> soya, sorgo, maíz, girasol y trigo; barbecho y cobertura <em>solo si hay reglas y parámetros válidos</em>. La chía figura como cultivo conocido, sin prioridad.</li>
+    <li><strong>Filtros de factibilidad</strong> (<code>rules.py</code>): estación compatible, agua (por ejemplo, alta demanda en una campaña seca con secano se marca o se excluye), duración del ciclo dentro de la ventana, cultivos excluidos por el agricultor y parámetros conocidos. Cada exclusión guarda su motivo.</li>
+    <li><strong>Puntuación</strong> de cada secuencia factible: S<sub>agua</sub>, S<sub>suelo</sub> y S<sub>riesgo</sub> (ver 3.6).</li>
+    <li><strong>Selección de perfiles</strong>, exigiendo secuencias distintas entre sí:
+      <ul>
+        <li><strong>E0 Actual</strong>: la rotación del agricultor, que se evalúa igual que las demás.</li>
+        <li><strong>E1 Cuidar suelo</strong>: la de mayor S<sub>suelo</sub>; si empatan, gana la de mayor S<sub>agua</sub>.</li>
+        <li><strong>E2 Cuidar agua</strong>: la de mayor S<sub>agua</sub>; si empatan, gana la de mayor S<sub>riesgo</sub>.</li>
+        <li><strong>E3 Equilibrada</strong>: la que maximiza el <em>mínimo</em> de las tres subpuntuaciones (criterio maximin). Es el compromiso más parejo y se explica en una frase.</li>
+      </ul>
+    </li>
+    <li><strong>Ranking final</strong> con los pesos del agricultor → <code>recommended_strategy_id</code>.</li>
+    <li>Si hay <strong>menos de tres opciones defendibles</strong>, no se inventan: la respuesta lo dice y explica qué filtro las eliminó.</li>
+  </ol>
+
+  <h3>Reglas agronómicas (<code>rotation_rules.json</code>, cada una con explicación y fundamento)</h3>
+  <table class="t compact">
+    <thead><tr><th style="width:4%">#</th><th style="width:40%">Regla</th><th>Efecto en el motor</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Evitar sucesiones incompatibles con la estación o con el agua disponible</td><td>Filtro de factibilidad, con el motivo registrado</td></tr>
+      <tr><td>2</td><td>Penalizar la exposición a déficit hídrico en etapas críticas</td><td>Baja S<sub>riesgo</sub> (probabilidad de racha seca en floración o llenado)</td></tr>
+      <tr><td>3</td><td>Valorar la cobertura y el residuo cuando las condiciones permiten mantenerlos</td><td>Sube S<sub>suelo</sub> (meses cubiertos, clase de residuo)</td></tr>
+      <tr><td>4</td><td>Considerar la diversidad de familias y de cultivos</td><td>Sube S<sub>suelo</sub>; repetir el mismo cultivo penaliza (proxy de plagas)</td></tr>
+      <tr><td>5</td><td>No asumir que una cobertura siempre mejora: también consume agua</td><td>La cobertura suma a S<sub>suelo</sub> y su ET<sub>c</sub> resta a S<sub>agua</sub></td></tr>
+      <tr><td>6</td><td>No conceder un crédito fijo de nitrógeno después de la soya</td><td>Se menciona como beneficio cualitativo, a validar; no suma puntos fijos</td></tr>
+      <tr><td>7</td><td>No asumir que cambiar la rotación elimina el riesgo de inundación</td><td>Mensaje fijo en <code>limitations</code>; la lluvia intensa se muestra como exposición</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3.6 Puntuación multicriterio (MCDA)</h2>
+  <div class="callout info"><span class="h">Fórmula general</span>
+  <strong>Score(R) = w<sub>agua</sub>·S<sub>agua</sub> + w<sub>suelo</sub>·S<sub>suelo</sub> + w<sub>riesgo</sub>·S<sub>riesgo</sub></strong>, con w<sub>agua</sub> + w<sub>suelo</sub> + w<sub>riesgo</sub> = 1. Pesos iniciales: <strong>0.40 / 0.35 / 0.25</strong> <span class="tag t-sup">Supuesto</span>. Son preferencias de producto, no pesos validados científicamente, y el agricultor los cambia en la interfaz. El puntaje es <strong>relativo entre opciones, no una probabilidad de éxito</strong>: la UI lo explica junto a cada barra.</div>
+  <table class="t compact">
+    <thead><tr><th style="width:12%">Subpuntuación</th><th style="width:44%">Fórmula (0–100)</th><th>Qué significa y límites</th></tr></thead>
+    <tbody>
+      <tr><td><strong>S<sub>agua</sub></strong></td><td>100 · Σ<sub>meses con cultivo</sub> min(P<sub>ef</sub>, ET<sub>c</sub>) / Σ ET<sub>c</sub></td><td>Porcentaje de la demanda hídrica de los cultivos que cubre la lluvia efectiva del período. Con riego «sí», se informa aparte y no se suma como agua gratuita. Sin K<sub>c</sub> o sin ET0: «insuficiente»</td></tr>
+      <tr><td><strong>S<sub>suelo</sub></strong></td><td>100 · (0.4·C + 0.3·R + 0.3·D) − penalización por repetición<br>C = meses cubiertos (cultivo o rastrojo) / 12<br>R = clase de residuo (alto 1 · medio 0.5 · bajo 0.2)<br>D = (familias distintas − 1) / (n.º de campañas − 1)</td><td>Cobertura, residuo y diversidad. Los subpesos 0.4/0.3/0.3 y las clases de residuo son <span class="tag t-sup">Supuesto</span>; la clase de residuo de cada cultivo debe tener fuente en <code>crops.json</code></td></tr>
+      <tr><td><strong>S<sub>riesgo</sub></strong></td><td>100 · (1 − E), donde E es el promedio de los componentes disponibles:<br>p<sub>seca</sub> = fracción de años con racha seca &gt; umbral en la etapa crítica<br>p<sub>calor</sub> = fracción de días de calor en floración<br>p<sub>lluvia</sub> = fracción de años con ≥ 1 día &gt; P95 en la ventana de cosecha</td><td>Un valor alto indica menor exposición histórica. El umbral de racha seca (por ejemplo, 15 días) es <span class="tag t-sup">Supuesto</span> configurable. Con un umbral de calor genérico, el componente pesa la mitad y se rotula</td></tr>
+    </tbody>
+  </table>
+  <p class="small"><strong>Política de datos faltantes:</strong> si un criterio no se puede calcular para una estrategia, se marca «insuficiente» y su peso se reparte proporcionalmente entre los criterios válidos. La tarjeta muestra la insignia «puntaje parcial» y el criterio faltante aparece en <code>missing_information</code>. Si falta S<sub>agua</sub> para todas las estrategias, no hay ranking global: solo comparación cualitativa. <strong>Economía:</strong> se muestra como criterio cualitativo («sin datos de precios; consultá con tu técnico»). No se estiman ganancias.</p>
+
+  <h2>3.7 Incertidumbre: bootstrap por años climáticos</h2>
+  <div class="grid2">
+    <div>
+      <ol class="small">
+        <li>Años disponibles: 2015–2025 (11 años completos de POWER).</li>
+        <li>Se remuestrean <strong>años completos</strong> con reemplazo (11 por iteración), nunca días sueltos.</li>
+        <li>Se hacen <strong>200 iteraciones</strong> con semilla fija (<code>seed = 42</code>), así el resultado es reproducible.</li>
+        <li>En cada iteración se recalculan los indicadores, S<sub>agua</sub>, S<sub>suelo</sub>, S<sub>riesgo</sub> y el Score de cada estrategia.</li>
+        <li>Salidas: mediana, P10 y P90 por estrategia; <strong>estabilidad del ranking</strong> (% de iteraciones en que cada estrategia queda primera); P(A &gt; B) por pares.</li>
+      </ol>
+    </div>
+    <div class="callout warn small"><span class="h">Cómo se comunica</span>
+      <p>P10–P90 es el <strong>rango de variabilidad del modelo bajo remuestreo histórico</strong>. No es una garantía de rendimiento ni un pronóstico meteorológico.</p>
+      <p><strong>Política de confianza:</strong> con datos solo regionales y parámetros genéricos, el máximo es <strong>«media»</strong>, y la app lo justifica. «Baja» corresponde a estabilidad &lt; 0.5, a un criterio faltante o a la ausencia de información de suelo. Cuando faltan análisis de suelo o parámetros locales, se muestra la incertidumbre adicional en texto.</p>
+    </div>
+  </div>
+
+  <h2>3.8 Las cuatro estrategias y su tarjeta</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:15%">Estrategia</th><th style="width:28%">Objetivo</th><th style="width:27%">Regla de selección</th><th>Ejemplo de mensaje <span class="tag t-ilu">Ilustrativo</span></th></tr></thead>
+    <tbody>
+      <tr><td><strong>E0 Actual</strong></td><td>Línea base: lo que hace hoy el agricultor (p. ej., soya → sorgo)</td><td>Entrada del agricultor, evaluada con las mismas fórmulas</td><td>«Tu rotación actual cubre [N] meses el suelo; en [mes] queda más expuesta a rachas secas.»</td></tr>
+      <tr><td><strong>E1 Cuidar suelo</strong></td><td>Más cobertura, más residuo y más diversidad</td><td>Máxima S<sub>suelo</sub> entre las factibles</td><td>«Protege más el suelo, pero puede necesitar más agua en invierno.»</td></tr>
+      <tr><td><strong>E2 Cuidar agua</strong></td><td>Que la demanda hídrica coincida con la oferta estacional</td><td>Máxima S<sub>agua</sub> entre las factibles</td><td>«Pide menos agua en la época seca; deja menos residuo.»</td></tr>
+      <tr><td><strong>E3 Equilibrada</strong></td><td>Compromiso entre agua, suelo y riesgo</td><td>Maximin de las tres subpuntuaciones</td><td>«No es la mejor en nada, pero tampoco es débil en ningún criterio.»</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Campos de cada tarjeta (respuesta de <code>POST /api/rotations/compare</code>)</h3>
+  <table class="t compact">
+    <thead><tr><th style="width:22%">Campo</th><th style="width:28%">Bloque del reto</th><th>Contenido (generado desde indicadores y reglas reales, nunca texto aleatorio)</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code>, <code>name</code>, <code>sequence</code></td><td>—</td><td>E0–E3, nombre visible y secuencia de cultivos por campaña</td></tr>
+      <tr><td><code>score</code>, <code>criteria</code></td><td>Beneficios (cuantitativos)</td><td>Score mediano y S<sub>agua</sub>, S<sub>suelo</sub>, S<sub>riesgo</sub> con unidades de origen (mm, meses, %)</td></tr>
+      <tr><td><code>uncertainty</code></td><td>Confianza</td><td>P10, P50, P90, estabilidad del ranking, nivel de confianza y su motivo</td></tr>
+      <tr><td><code>reasons</code></td><td><strong>Por qué se sugiere</strong></td><td>Ejemplo: «Mejor en suelo (72 vs 55 de tu rotación) porque mantiene cobertura 10 de 12 meses.»</td></tr>
+      <tr><td><code>evidence[]</code></td><td><strong>Evidencia</strong></td><td>Indicador, valor, unidad, fuente, período, escala y <code>evidence_status</code></td></tr>
+      <tr><td><code>tradeoffs</code></td><td><strong>Beneficios y riesgos</strong></td><td>Ventaja principal, desventaja principal y riesgo principal, en frases sencillas</td></tr>
+      <tr><td><code>missing_information[]</code></td><td><strong>Vacíos de información</strong></td><td>Ejemplos: «Sin análisis de suelo», «Sin SMAP para este período», «Umbral de calor genérico»</td></tr>
+      <tr><td><code>agronomist_questions[]</code></td><td><strong>Riesgos para revisión local</strong></td><td>2–3 preguntas concretas, generadas desde los vacíos y las reglas activadas</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout danger small"><span class="h">Fuera de alcance (lo decimos en la app, en el README y en el formulario)</span>
+  Predicción de rendimientos o precios; calendarios exactos de riego o fertilización; pronóstico de plagas o de inundaciones; recomendaciones fuera de Cuatro Cañadas; reemplazar el análisis de suelo o la visita técnica.</div>
+</div>

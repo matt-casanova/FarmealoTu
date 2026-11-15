@@ -1,0 +1,361 @@
+
+<!-- ======================= 4 ======================= -->
+<div class="section" id="s4">
+  <h1><span class="num">4</span>La aplicación</h1>
+  <p class="lead">La app está hecha para quien trabaja con experiencia de campo, no para analistas. Su pantalla principal responde de inmediato una pregunta: <strong>«¿Qué conviene revisar antes de mi próxima siembra?»</strong></p>
+
+  <h2>4.1 Principios de diseño (agricultores primero)</h2>
+  <div class="grid2 small">
+    <ul>
+      <li><strong>Mobile-first</strong>: botones grandes, uso con una mano y texto de 16 px o más.</li>
+      <li><strong>Alto contraste</strong> y español sencillo, con voseo local («¿Qué sembrás?», «Revisá con tu técnico»).</li>
+      <li><strong>Semáforo de tres niveles, siempre con texto</strong>: nunca depende solo del color.</li>
+      <li>«<strong>Datos actualizados al: [fecha real]</strong>», distinguiendo histórico de reciente.</li>
+    </ul>
+    <ul>
+      <li>Ningún ejemplo no calculado aparece como alerta actual.</li>
+      <li>Cada número tiene un botón «¿Qué significa?» con fuente, fecha, unidad y escala.</li>
+      <li>Aviso permanente: «Esta herramienta apoya tu decisión; no reemplaza tu experiencia ni a tu técnico.»</li>
+      <li>Sin autenticación, pagos ni chatbots.</li>
+    </ul>
+  </div>
+
+  <h2>4.2 Mapa de pantallas</h2>
+  <div class="figure">
+  <svg viewBox="0 0 1000 250" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+    <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker></defs>
+    <g font-size="12">
+      <rect x="10" y="80" width="150" height="80" rx="10" fill="#eaf2fc" stroke="#1c5cab" stroke-width="1.5"/>
+      <text x="85" y="108" text-anchor="middle" font-weight="700" fill="#0d366b">Inicio</text>
+      <text x="85" y="126" text-anchor="middle" font-size="10.5">«Mi campo — Cuatro Cañadas»</text>
+      <text x="85" y="142" text-anchor="middle" font-size="10.5">acción + alertas con fecha</text>
+      <rect x="210" y="80" width="150" height="80" rx="10" fill="#ece6fb" stroke="#6250d6" stroke-width="1.5"/>
+      <text x="285" y="108" text-anchor="middle" font-weight="700" fill="#4a3aa7">Entrada (5 preguntas)</text>
+      <text x="285" y="126" text-anchor="middle" font-size="10.5">chips + texto libre</text>
+      <text x="285" y="142" text-anchor="middle" font-size="10.5">editable antes y después</text>
+      <rect x="410" y="80" width="150" height="80" rx="10" fill="#eaf2fc" stroke="#1c5cab" stroke-width="1.5"/>
+      <text x="485" y="108" text-anchor="middle" font-weight="700" fill="#0d366b">Resultado</text>
+      <text x="485" y="126" text-anchor="middle" font-size="10.5">tarjeta principal</text>
+      <text x="485" y="142" text-anchor="middle" font-size="10.5">+ «Comparar opciones»</text>
+      <g>
+        <rect x="620" y="10" width="170" height="44" rx="8" fill="#fff" stroke="#2a78d6"/><text x="705" y="37" text-anchor="middle">01 Comparar formas de sembrar</text>
+        <rect x="620" y="62" width="170" height="44" rx="8" fill="#fff" stroke="#2a78d6"/><text x="705" y="89" text-anchor="middle">02 Ventajas y desventajas</text>
+        <rect x="620" y="114" width="170" height="44" rx="8" fill="#fff" stroke="#2a78d6"/><text x="705" y="141" text-anchor="middle">03 Conocer los riesgos</text>
+        <rect x="620" y="166" width="170" height="44" rx="8" fill="#fff" stroke="#2a78d6"/><text x="705" y="193" text-anchor="middle">04 ¿Qué tan segura es?</text>
+        <rect x="820" y="36" width="170" height="54" rx="8" fill="#f4f3ef" stroke="#52514e"/><text x="905" y="59" text-anchor="middle" font-weight="700">Explorar mi zona</text><text x="905" y="76" text-anchor="middle" font-size="10.5">visor de 5 capas</text>
+        <rect x="820" y="130" width="170" height="54" rx="8" fill="#fdeee7" stroke="#eb6834"/><text x="905" y="153" text-anchor="middle" font-weight="700" fill="#a8431b">Datos de terreno</text><text x="905" y="170" text-anchor="middle" font-size="10.5" fill="#a8431b">nodo sim / físico</text>
+      </g>
+    </g>
+    <g stroke="#52514e" stroke-width="1.6" fill="none">
+      <path d="M160 120 H210" marker-end="url(#a2)"/>
+      <path d="M360 120 H410" marker-end="url(#a2)"/>
+      <path d="M560 120 C590 120 590 32 620 32" marker-end="url(#a2)"/>
+      <path d="M560 120 C590 120 590 84 620 84" marker-end="url(#a2)"/>
+      <path d="M560 120 C590 120 590 136 620 136" marker-end="url(#a2)"/>
+      <path d="M560 120 C590 120 590 188 620 188" marker-end="url(#a2)"/>
+      <path d="M790 32 C805 32 805 63 820 63" marker-end="url(#a2)"/>
+      <path d="M790 188 C805 188 805 157 820 157" marker-end="url(#a2)"/>
+      <path d="M85 160 C85 235 485 235 485 160" stroke-dasharray="4 4" marker-end="url(#a2)"/>
+    </g>
+    <text x="285" y="232" text-anchor="middle" font-size="10.5" fill="#52514e">cambiar respuestas o pesos → se recalcula la comparación (sin volver a llamar a NASA)</text>
+  </svg>
+  <div class="caption"><strong>Figura 2.</strong> Flujo de pantallas. Desde cualquier pantalla se vuelve al Inicio; la entrada se puede editar en todo momento.</div>
+  </div>
+
+  <h2>4.3 Pantalla principal (en este orden)</h2>
+  <ol class="small">
+    <li>Encabezado <strong>«Mi campo — Cuatro Cañadas»</strong> y «Datos actualizados al: [fecha]».</li>
+    <li><strong>Tarjeta principal</strong> con una acción concreta, sacada del resultado real. Ejemplos de forma: «Conviene revisar una alternativa con menor demanda de agua.» · «Falta información sobre tu suelo para recomendar con mayor seguridad.»</li>
+    <li><strong>Advertencias relevantes</strong> con su fecha. Ejemplo: «Las lluvias de este período están por debajo de lo habitual (−32 %, ene–oct 2026, NASA POWER)». <span class="tag t-ilu">Ilustrativo</span></li>
+    <li>Botón grande <strong>«Comparar opciones de siembra»</strong>.</li>
+    <li>Accesos a los <strong>4 módulos</strong>.</li>
+    <li>Acceso secundario <strong>«Ver datos de mi zona»</strong> (visor geoespacial) y «Datos de terreno».</li>
+  </ol>
+
+  <h2>4.4 Entrada conversacional y reconocimiento de cultivos</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:5%">#</th><th style="width:30%">Pregunta</th><th style="width:33%">Tipo de respuesta</th><th>Se guarda como</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>¿Qué sembrás actualmente?</td><td>Texto abierto + chips: Soya, Maíz, Sorgo, Girasol, Trigo, Otro</td><td><code>current_crop</code></td></tr>
+      <tr><td>2</td><td>¿Qué sembraste antes?</td><td>Texto abierto + chips + «Barbecho / descanso»</td><td><code>previous_crop</code> → <code>current_rotation</code></td></tr>
+      <tr><td>3</td><td>¿Qué te preocupa más?</td><td>Botones grandes: Falta de agua · Cuidar suelo · Evitar pérdidas · Quiero equilibrar</td><td>Pesos de partida (por ejemplo, «Falta de agua» → agua 0.55)</td></tr>
+      <tr><td>4</td><td>¿Tenés riego?</td><td>Sí / No / A veces / No sé</td><td><code>constraints.irrigation</code></td></tr>
+      <tr><td>5</td><td>¿Querés contar algo de tu terreno?</td><td>Texto libre, opcional</td><td><code>notes</code> (se muestran tal cual y no se interpretan agronómicamente)</td></tr>
+    </tbody>
+  </table>
+  <p class="small"><strong>Parser verificable</strong> (diccionario de sinónimos en <code>crops.json</code>): soya, soja, soy → <code>soy</code> · maíz, maiz → <code>maize</code> · sorgo → <code>sorghum</code> · girasol → <code>sunflower</code> · trigo → <code>wheat</code> · barbecho, descanso → <code>fallow</code>. Se normalizan mayúsculas y tildes. Si el término no se reconoce, la app pide elegir de la lista; <strong>nunca adivina</strong>. Ejemplo de frase admitida: «Estoy sembrando soya y antes tenía sorgo. Este año tengo poca agua y quiero evitar pérdidas.»</p>
+
+  <h2>4.5 Los cuatro módulos (obligatorios y funcionales)</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:17%">Módulo</th><th style="width:44%">Contenido</th><th style="width:20%">Datos (API)</th><th>Hecho cuando…</th></tr></thead>
+    <tbody>
+      <tr><td><strong>01 · Comparar formas de sembrar</strong><br><code>Compare.tsx</code></td><td>Actual + hasta 3 candidatas. Cada tarjeta lleva la secuencia de cultivos, barras horizontales (agua, suelo, riesgo y total) con la leyenda «puntaje relativo entre opciones, no probabilidad de éxito», la ventaja más importante, la desventaja más importante, el riesgo principal y el botón «¿Por qué esta opción?»</td><td><code>POST /api/rotations/compare</code></td><td>Cambiar los pesos recalcula y el orden puede cambiar de forma reproducible (prueba C)</td></tr>
+      <tr><td><strong>02 · Ventajas y desventajas</strong><br><code>Tradeoffs.tsx</code></td><td>Primero frases sencillas («Protege más el suelo, pero puede necesitar más agua»). Luego, en la sección plegable «Ver comparación técnica», un radar de agua/suelo/riesgo (criterios adicionales solo si hay datos). El radar nunca va primero</td><td><code>strategies[].tradeoffs</code>, <code>criteria</code></td><td>Las frases salen de los valores reales; el radar está plegado por defecto</td></tr>
+      <tr><td><strong>03 · Conocer los riesgos</strong><br><code>Risks.tsx</code></td><td>Riesgos por temporada: sequía, calor, exceso de lluvia y baja cobertura (solo con evidencia). <strong>Mapa de calor de meses × años</strong> (2015–2026) coloreado por el indicador elegido; al tocar una celda aparecen período, valor, unidad y fuente. No hay mapas espaciales fabricados</td><td><code>GET /api/indicators</code> (grilla mensual)</td><td>Cada celda es trazable; la escala de color tiene leyenda y texto</td></tr>
+      <tr><td><strong>04 · ¿Qué tan segura es esta comparación?</strong><br><code>Uncertainty.tsx</code></td><td>Barra de rango P10–P90 por estrategia, con la mediana marcada, en lenguaje cotidiano. Listas de: qué viene de NASA, qué dio el agricultor, qué datos faltan, los supuestos principales y qué debería confirmar un agrónomo</td><td><code>uncertainty</code>, <code>evidence</code>, <code>missing_information</code>, <code>limitations</code></td><td>Se entiende la diferencia entre dos estrategias; nunca dice «confianza alta» solo con datos regionales</td></tr>
+    </tbody>
+  </table>
+
+  <h2>4.6 Visor geoespacial «Explorar mi zona» (<code>GeoViewer.tsx</code>)</h2>
+  <p><strong>Diseño:</strong> «Mission Terminal» geoespacial con un <strong>mapa 2D principal en Leaflet</strong> (punto piloto y punto del agricultor) y <strong>5 capas apiladas en perspectiva isométrica con CSS transforms</strong> (<code>rotateX(55deg) rotateZ(−45deg)</code> más un desplazamiento vertical por capa), sin motor 3D. La pila isométrica sirve para navegar y entender; <strong>no compromete la exactitud</strong>.</p>
+  <table class="t compact">
+    <thead><tr><th style="width:12%">Capa</th><th style="width:30%">Origen esperado</th><th style="width:28%">Estado si no hay ráster válido</th><th>Cada capa muestra</th></tr></thead>
+    <tbody>
+      <tr><td>1 · Lluvia</td><td>POWER (punto); IMERG o GIBS si la capa está verificada</td><td>«Información regional» (valor POWER del punto)</td><td rowspan="5">Fuente real, fecha, escala espacial, leyenda, interpretación agrícola sencilla y botón «¿Qué significa?». <strong>Nunca</strong> texturas ni cuadrículas que simulen mediciones inexistentes</td></tr>
+      <tr><td>2 · Humedad del suelo</td><td>SMAP L4 con datos válidos; GWETROOT como contexto</td><td>«Datos no disponibles» o «Información regional»</td></tr>
+      <tr><td>3 · Calor</td><td>POWER (contexto regional); ECOSTRESS si hay escenas</td><td>«Información regional»</td></tr>
+      <tr><td>4 · Vegetación</td><td>MODIS/VIIRS NDVI vía GIBS (identificador verificado)</td><td>«Datos no disponibles»</td></tr>
+      <tr><td>5 · Agua</td><td>Balance hídrico derivado (P<sub>ef</sub> − ET<sub>c</sub>)</td><td>«Información regional». <strong>No es un mapa de inundación observada</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h2>4.7 Pestaña «Datos de terreno» (<code>FieldData.tsx</code>)</h2>
+  <div class="grid2 small">
+    <ul>
+      <li><strong>Tres tarjetas de zona</strong> (A seca, B media, C húmeda) con humedad volumétrica (%), temperatura del suelo (°C) y hora de la última lectura.</li>
+      <li><strong>Series de tiempo</strong>: una línea de humedad por zona con los riegos marcados; la temperatura del suelo va en un segundo gráfico (nunca en doble eje).</li>
+      <li><strong>Tarjeta de aire</strong>: BME680 (T, HR, presión, gas), DHT11 (T, HR), su diferencia (control de calidad) y la luz relativa del LDR.</li>
+    </ul>
+    <ul>
+      <li><strong>Insignia de origen</strong> siempre visible: <span class="tag t-sim">Simulado</span> · <span class="tag t-sim">Wokwi</span> · <span class="tag t-obs">Físico</span>, más la insignia de calibración («humedad calibrada con 3 puntos»).</li>
+      <li><strong>Banda de contexto NASA</strong> con T2M/RH2M de POWER del mismo día, rotulada «Dato regional (~50 km): contexto, no tu campo». Comparación cualitativa.</li>
+      <li>Aviso: «Estos datos no cambian la recomendación en esta versión».</li>
+    </ul>
+  </div>
+
+  <h2>4.8 API (FastAPI, OpenAPI en <code>/docs</code>, CORS para el frontend)</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:34%">Endpoint</th><th>Qué hace</th><th style="width:11%">Dueño</th></tr></thead>
+    <tbody>
+      <tr><td><code>GET /api/health</code></td><td>Verifica el servidor</td><td>Matías</td></tr>
+      <tr><td><code>GET /api/context/cuatro-canadas</code></td><td>Cultivos documentados, riesgos históricos, prácticas, referencias y años de origen</td><td>Matías</td></tr>
+      <tr><td><code>GET /api/nasa/status</code></td><td>Disponibilidad por fuente, última descarga exitosa, última fecha con observaciones, versión del producto y uso de caché</td><td>Alvin</td></tr>
+      <tr><td><code>GET /api/indicators?lat&amp;lon&amp;period</code></td><td>Indicadores calculados con unidades, procedencia y calidad (n.º de días válidos, % faltante); grilla mensual para el mapa de calor</td><td>Alvin</td></tr>
+      <tr><td><code>POST /api/rotations/compare</code></td><td>Estrategias, puntuaciones, incertidumbre y explicaciones. Responde <code>site</code>, <code>data_status</code>, <code>alerts</code>, <code>strategies</code>, <code>recommended_strategy_id</code> y <code>limitations</code></td><td>Matías</td></tr>
+      <tr><td><code>GET /api/map/layers</code></td><td>Capas disponibles y sus metadatos. <strong>Nunca una URL de teselas inventada</strong></td><td>Alvin</td></tr>
+      <tr><td><code>GET /api/sources</code></td><td>Bibliografía y catálogo de fuentes</td><td>Matías</td></tr>
+      <tr><td><code>POST /api/field-node/readings</code></td><td>Recibe una lectura del nodo (JSON v1, sección 9), la valida (422 si no cumple), le pone hora de servidor si falta y la guarda (SQLite)</td><td>Matías</td></tr>
+      <tr><td><code>GET /api/field-node/readings?node_id&amp;source&amp;since</code></td><td>Serie de lecturas para la pestaña «Datos de terreno»</td><td>Matías</td></tr>
+      <tr><td><code>GET /api/field-node/status</code></td><td>Último contacto, origen, calibración y banderas de calidad recientes</td><td>Matías</td></tr>
+    </tbody>
+  </table>
+  <pre>POST /api/rotations/compare
+{"site": {"lat": -17.2374, "lon": -62.2427},
+ "current_rotation": ["soy", "sorghum"],
+ "priorities": {"water": 0.40, "soil": 0.35, "risk": 0.25},
+ "constraints": {"irrigation": "rainfed", "excluded_crops": []},
+ "notes": "Mi terreno suele secarse en invierno"}</pre>
+
+  <h2>4.9 Repositorio (monorepo) y dueños</h2>
+  <div class="grid2">
+<pre>rotasat/
+├─ README.md · .env.example · LICENSE
+├─ shared/
+│  └─ sensor_reading.schema.json  Matías·Mateo
+├─ backend/
+│  ├─ app/main.py · app/schemas.py         Matías
+│  ├─ pipeline/power.py · smap.py · imerg.py  Alvin
+│  ├─ analytics/indicators.py                 Alvin
+│  ├─ analytics/physics.py      (ET0)     Christian
+│  ├─ analytics/uncertainty.py            Matías
+│  ├─ engine/recommendation.py · rules.py Matías
+│  ├─ reference/crops.json · rotation_rules.json
+│  │            · agricultural_context.json  Matías
+│  ├─ data/cache/   (POWER en JSON, se versiona)
+│  ├─ data/field_node.sqlite  (no se versiona)
+│  ├─ tests/ (A–E, contrato)    Alvin · Matías
+│  └─ requirements.txt</pre>
+<pre>├─ frontend/                               Kendra
+│  ├─ src/pages/Home.tsx · Compare.tsx · Tradeoffs.tsx
+│  │   · Risks.tsx · Uncertainty.tsx · GeoViewer.tsx
+│  │   · FieldData.tsx
+│  ├─ src/components/  (tarjetas, barras, semáforo,
+│  │   heatmap, rango P10–P90, insignias)
+│  ├─ src/services/api.ts
+│  └─ package.json
+└─ hardware/
+   ├─ simulation/     (gemelo digital)   Christian
+   │   models/ · scenarios/ · forcing/ · output/
+   │   export.py · replay.py · fit.py · README.md
+   ├─ firmware/rotasat_node/  (ESP32)    Mateo
+   ├─ wokwi/diagram.json · wokwi.toml    Mateo
+   ├─ calibration/  protocolo + datos    Vanesa
+   └─ docs/  BOM · pinout · fotos · informe  Vanesa</pre>
+  </div>
+  <p class="small"><strong>Reglas de Git:</strong> desarrollo en trunk (<code>main</code>) con ramas cortas por tarea, PR de menos de 200 líneas revisados por otra persona, integración cada 2 h como mínimo y <code>main</code> siempre ejecutable. Comandos exactos en el Anexo D.</p>
+</div>
+
+<!-- ======================= 5 ======================= -->
+<div class="section" id="s5">
+  <h1><span class="num">5</span>La simulación: gemelo digital, Wokwi y paso al mundo físico</h1>
+  <p class="lead">La simulación sirve para diseñar y probar el nodo de campo <strong>antes</strong> de tener la placa armada. Produce flujos de datos realistas para la app mientras el hardware no está listo, permite explorar escenarios de Cuatro Cañadas que no se pueden reproducir en vivo (la sequía y el exceso de lluvia de 2025–26) y define <strong>qué debería medir el prototipo</strong>, para después compararlo con lo que mide de verdad.</p>
+
+  <h2>5.1 Motor recomendado: tres herramientas encadenadas</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:18%">Herramienta</th><th style="width:30%">Para qué</th><th style="width:30%">Por qué esta</th><th>Dueño</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Python 3.11+</strong> (NumPy, pandas, matplotlib, SciPy, jsonschema; Jupyter para explorar)</td><td><strong>Gemelo digital físico</strong>: agua y temperatura del suelo, luz, ambiente y modelos de cada sensor; escenarios, exportación y replay a la API</td><td>Es el mismo lenguaje del backend (comparte <code>physics.py</code> y los datos POWER), es gratis y reproducible con semilla, y la física queda explícita en ecuaciones</td><td>Christian</td></tr>
+      <tr><td><strong>Wokwi</strong> (web o extensión de VS Code, con PlatformIO)</td><td><strong>Simulación del circuito y del firmware del ESP32</strong>: el mismo código que irá a la placa real</td><td>Simula el ESP32 con Wi-Fi y tiene piezas oficiales de DS18B20, fotorresistencia (LDR), DHT22 y potenciómetros. Valida el firmware sin riesgo de quemar nada</td><td>Mateo</td></tr>
+      <tr><td><strong>Arduino IDE 2 / PlatformIO</strong></td><td>Compilar y cargar el firmware en la placa física</td><td>Las librerías estándar (OneWire, DallasTemperature, Adafruit BME680, DHT, ArduinoJson) funcionan igual en Wokwi y en la placa</td><td>Mateo</td></tr>
+      <tr><td><strong>Fritzing</strong> o captura del diagrama de Wokwi</td><td>Documentar el cableado para el informe y las diapositivas</td><td>Diagrama legible en minutos; KiCad queda como opción si quieren un esquemático formal</td><td>Mateo · Vanesa</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn small"><span class="h">Herramientas descartadas y por qué</span>
+  <strong>Tinkercad Circuits</strong>: no tiene ESP32 ni Wi-Fi (solo Arduino Uno). <strong>Proteus</strong>: es de pago y montar los modelos lleva demasiado tiempo para 24 h. <strong>Simulink/Simscape</strong>: requiere licencia y es excesivo para estos modelos. <strong>Unity/Gazebo</strong>: la simulación 3D no aporta nada a la decisión agrícola.</div>
+
+  <h2>5.2 Pipeline de tres etapas con un solo contrato</h2>
+  <div class="figure">
+  <svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+    <defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+    <marker id="a3o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#eb6834"/></marker></defs>
+    <g font-size="11.5">
+      <rect x="10" y="20" width="250" height="150" rx="10" fill="#fdeee7" stroke="#eb6834" stroke-width="1.6"/>
+      <text x="135" y="44" text-anchor="middle" font-weight="700" font-size="13" fill="#a8431b">Etapa 1 · Gemelo digital</text>
+      <text x="135" y="62" text-anchor="middle" fill="#a8431b">Python · Christian</text>
+      <text x="135" y="86" text-anchor="middle">Forzante: NASA POWER horario</text>
+      <text x="135" y="102" text-anchor="middle">(modo campo) o BME680 real (modo lab)</text>
+      <text x="135" y="122" text-anchor="middle">Modelos: agua · calor · luz · sensores</text>
+      <text x="135" y="142" text-anchor="middle">Escenarios S1–S6 · semilla fija</text>
+      <text x="135" y="160" text-anchor="middle" font-size="10.5" fill="#a8431b">source = "simulated"</text>
+      <rect x="375" y="20" width="250" height="150" rx="10" fill="#fdeee7" stroke="#eb6834" stroke-width="1.6"/>
+      <text x="500" y="44" text-anchor="middle" font-weight="700" font-size="13" fill="#a8431b">Etapa 2 · Wokwi</text>
+      <text x="500" y="62" text-anchor="middle" fill="#a8431b">ESP32 virtual · Mateo</text>
+      <text x="500" y="86" text-anchor="middle">Firmware real, flag SIMULATION=1</text>
+      <text x="500" y="102" text-anchor="middle">Potenciómetros = humedad</text>
+      <text x="500" y="122" text-anchor="middle">DS18B20 · LDR · DHT22 (por DHT11)</text>
+      <text x="500" y="142" text-anchor="middle">BME680 → stub en firmware</text>
+      <text x="500" y="160" text-anchor="middle" font-size="10.5" fill="#a8431b">source = "wokwi"</text>
+      <rect x="740" y="20" width="250" height="150" rx="10" fill="#dcefe3" stroke="#1b7a3e" stroke-width="1.6"/>
+      <text x="865" y="44" text-anchor="middle" font-weight="700" font-size="13" fill="#14572d">Etapa 3 · Prototipo físico</text>
+      <text x="865" y="62" text-anchor="middle" fill="#14572d">3 macetas · Mateo + Vanesa</text>
+      <text x="865" y="86" text-anchor="middle">Mismo firmware, SIMULATION=0</text>
+      <text x="865" y="102" text-anchor="middle">Calibración gravimétrica de 3 puntos</text>
+      <text x="865" y="122" text-anchor="middle">Wi-Fi + NTP + POST con reintentos</text>
+      <text x="865" y="142" text-anchor="middle">Demo: riego de la zona A</text>
+      <text x="865" y="160" text-anchor="middle" font-size="10.5" fill="#14572d">source = "physical"</text>
+    </g>
+    <g stroke="#52514e" stroke-width="1.8" fill="none">
+      <path d="M260 95 H375" marker-end="url(#a3)"/>
+      <path d="M625 95 H740" marker-end="url(#a3)"/>
+    </g>
+    <text x="317" y="85" text-anchor="middle" font-size="10.5" fill="#52514e">valores esperados</text>
+    <text x="682" y="85" text-anchor="middle" font-size="10.5" fill="#52514e">mismo .ino</text>
+    <rect x="300" y="215" width="400" height="44" rx="8" fill="#eaf2fc" stroke="#1c5cab" stroke-width="1.5"/>
+    <text x="500" y="234" text-anchor="middle" font-size="12" font-weight="700" fill="#0d366b">shared/sensor_reading.schema.json (v1)</text>
+    <text x="500" y="250" text-anchor="middle" font-size="10.5" fill="#0d366b">→ POST /api/field-node/readings → pestaña «Datos de terreno»</text>
+    <g stroke="#1c5cab" stroke-width="1.3" fill="none" stroke-dasharray="4 3">
+      <path d="M135 170 C135 235 250 237 300 237" marker-end="url(#a3)"/>
+      <path d="M500 170 V215" marker-end="url(#a3)"/>
+      <path d="M865 170 C865 235 750 237 700 237" marker-end="url(#a3)"/>
+    </g>
+    <path d="M865 270 C865 295 135 295 135 180" stroke="#eb6834" stroke-width="1.6" fill="none" marker-end="url(#a3o)"/>
+    <text x="500" y="290" text-anchor="middle" font-size="10.5" fill="#a8431b">datos físicos → fit.py ajusta los parámetros del gemelo (tasa de secado k por zona)</text>
+  </svg>
+  <div class="caption"><strong>Figura 3.</strong> Las tres etapas producen el mismo JSON y la app no necesita saber de cuál viene, salvo por la insignia de origen. El ciclo se cierra cuando los datos físicos recalibran el gemelo.</div>
+  </div>
+
+  <h2>5.3 Etapa 1: el gemelo digital en Python</h2>
+  <p><strong>Estructura</strong> (<code>hardware/simulation/</code>): <code>config.yaml</code> (parámetros, semilla, paso de tiempo Δt = 1 min en el modo demo y 10 min en el modo campo) · <code>forcing.py</code> (lee el CSV horario de POWER o el registro del BME680) · <code>models/soil_water.py</code> · <code>models/soil_heat.py</code> · <code>models/light.py</code> · <code>models/sensors.py</code> · <code>scenarios/</code> · <code>export.py</code> · <code>replay.py</code> · <code>fit.py</code> · <code>tests/</code>.</p>
+  <p><strong>Dos modos.</strong> <em>Campo</em>: se fuerza con datos horarios reales de NASA POWER de Cuatro Cañadas, para mostrar «qué vería un nodo allí». <em>Laboratorio</em>: se fuerza con el aire medido por el BME680 del prototipo, para comparar con las macetas reales. En los dos modos, las <strong>entradas</strong> de POWER son <span class="tag t-obs">Observado</span> y las <strong>salidas</strong> del nodo son <span class="tag t-sim">Simulado</span>.</p>
+
+  <h3>a) Agua en el suelo: balance tipo balde por zona</h3>
+  <div class="callout info small">
+    <p><strong>θ<sub>t+Δt</sub> = θ<sub>t</sub> + (I + P − E − D) / (1000 · Z)</strong>, donde θ es la humedad volumétrica (m³/m³), I el riego (mm), P la lluvia (mm, solo en modo campo), E la evaporación o ET (mm), D el drenaje (mm) y Z la profundidad representada (m).</p>
+    <p><strong>Riego de volumen conocido:</strong> I<sub>mm</sub> = 10 · V<sub>mL</sub> / A<sub>cm²</sub>, de modo que Δθ ≈ V / (A · Z<sub>cm</sub>). <em>Ejemplo:</em> 100 mL en una maceta de 100 cm² (Ø ≈ 11 cm) con Z = 10 cm da Δθ ≈ 0.10 m³/m³. Esta es la predicción que se contrasta en la demo.</p>
+    <p><strong>Evaporación:</strong> en modo campo con cultivo, ET<sub>a</sub> = K<sub>s</sub> · K<sub>c</sub> · ET0 (FAO-56, con <code>physics.py</code>), K<sub>s</sub> = clip((θ − θ<sub>wp</sub>)/(θ* − θ<sub>wp</sub>), 0, 1). En modo laboratorio (maceta sin cultivo) se usa secado exponencial, dθ/dt = −k (θ − θ<sub>r</sub>), que da θ(t) = θ<sub>r</sub> + (θ<sub>0</sub> − θ<sub>r</sub>) e<sup>−kt</sup>; k por zona se ajusta después con los datos físicos.</p>
+    <p><strong>Drenaje:</strong> si θ &gt; θ<sub>fc</sub>, entonces D = (θ − θ<sub>fc</sub>) · 1000 Z · τ<sub>d</sub> por paso. Los parámetros θ<sub>fc</sub>/θ<sub>wp</sub> salen de rangos por textura (FAO-56, Tabla 19; por ejemplo, franco ≈ 0.20–0.30 / 0.07–0.17) y se rotulan <span class="tag t-sup">Supuesto</span> hasta medir el sustrato.</p>
+    <p><strong>Prueba unitaria obligatoria:</strong> el balance de masa cierra (Σ entradas − Σ salidas = Δ almacenamiento, con error menor a 0.1 mm).</p>
+  </div>
+
+  <h3>b) Temperatura del suelo a la profundidad del sensor</h3>
+  <div class="callout info small">
+    <p><strong>Solución analítica (onda diaria amortiguada):</strong> T(z,t) = T̄ + A<sub>0</sub> · e<sup>−z/d</sup> · sin(ω(t − t<sub>0</sub>) − z/d), con d = √(2α/ω) y ω = 2π / 86 400 s⁻¹.</p>
+    <p><em>Ejemplo:</em> α = 0.6·10⁻⁶ m²/s (suelo húmedo, <span class="tag t-sup">Supuesto</span>) da d ≈ 0.128 m. A z = 0.07 m la amplitud baja a e<sup>−0.55</sup> ≈ 58 % y el pico se retrasa ≈ 2.1 h. Un suelo seco (α menor) amortigua más rápido, por eso <strong>las zonas A, B y C deberían mostrar temperaturas distintas</strong>.</p>
+    <p><strong>Mejora opcional (diferencias finitas 1D):</strong> T<sub>i</sub><sup>n+1</sup> = T<sub>i</sub><sup>n</sup> + αΔt/Δz² · (T<sub>i+1</sub> − 2T<sub>i</sub> + T<sub>i−1</sub>), estable si αΔt/Δz² ≤ 0.5. Con Δz = 1 cm y α = 0.6·10⁻⁶, Δt ≤ 83 s, así que se usa Δt = 60 s.</p>
+  </div>
+
+  <h3>c) Luz y LDR (y la decisión de diseño que sale de la simulación)</h3>
+  <div class="callout info small">
+    <p><strong>Iluminancia:</strong> E<sub>lux</sub> ≈ η · G, con G en W/m² (ALLSKY_SFC_SW_DWN horario; verificar la unidad en el JSON de POWER) y η ≈ 110 lm/W para luz solar (rango aproximado de 93–120; <span class="tag t-sup">Supuesto</span>).</p>
+    <p><strong>LDR</strong> (familia GL55xx): R(E) = R<sub>10</sub> · (E/10)<sup>−γ</sup>, con R<sub>10</sub> ≈ 10–20 kΩ y γ ≈ 0.6–0.8 según la hoja de datos; en oscuridad, del orden de 1 MΩ.</p>
+    <p><strong>Divisor</strong> (LDR a 3V3, R<sub>f</sub> a GND): V = 3.3 · R<sub>f</sub> / (R<sub>f</sub> + R<sub>LDR</sub>); raw ≈ 4095 · V / 3.3. Hay que usar <code>analogReadMilliVolts()</code> porque el ADC del ESP32 no es lineal cerca de los extremos.</p>
+    <p><strong>Escenario S6, barrido de R<sub>f</sub> ∈ {1 k, 2.2 k, 4.7 k, 10 kΩ}:</strong> con R<sub>10</sub> = 15 kΩ y γ = 0.7, a 300 lux (interior) R ≈ 1.4 kΩ. Con R<sub>f</sub> = 10 kΩ, V ≈ 2.9 V (casi saturado); con R<sub>f</sub> = 1 kΩ, V ≈ 1.4 V (zona media). Al sol (~50 000 lux) y R<sub>f</sub> = 1 kΩ, V ≈ 3.2 V. <strong>Conclusión esperada:</strong> R<sub>f</sub> ≈ 1–2.2 kΩ da el mayor rango útil. Christian confirma el valor y se lo pasa a Mateo antes de las 16:00.</p>
+    <p>El LDR entrega un <strong>índice de luz relativo (0–100 %)</strong>, no radiación en W/m². Con POWER solo se compara la <em>forma</em> del ciclo diario.</p>
+  </div>
+
+  <h3>d) Ambiente y presión</h3>
+  <p class="small">En modo campo, T y HR horarias vienen de T2M/RH2M de POWER. La presión sale de la elevación, P = 101.3 · ((293 − 0.0065 z)/293)<sup>5.26</sup> kPa (FAO-56, ec. 7). En modo laboratorio, se usa el registro real del BME680 o, sin él, una temperatura constante con deriva lenta rotulada <span class="tag t-sup">Supuesto</span>.</p>
+
+  <h3>e) Modelos de sensores (lo que hace realista la simulación)</h3>
+  <table class="t compact">
+    <thead><tr><th style="width:17%">Sensor</th><th style="width:43%">Modelo en la simulación (valores aproximados; confirmar en la hoja de datos de cada módulo)</th><th>Fallas que se inyectan</th></tr></thead>
+    <tbody>
+      <tr><td>Humedad capacitiva v1.2</td><td>raw = raw<sub>aire</sub> − (raw<sub>aire</sub> − raw<sub>agua</sub>) · (θ/θ<sub>sat</sub>)<sup>0.6</sup>, con ruido gaussiano (σ ≈ 10–20 cuentas) y parámetros <strong>distintos por unidad</strong> (dispersión ±5–10 %). El promedio de 64 lecturas reduce el ruido unas 8 veces</td><td>Lectura saturada, salto por humedad en la electrónica, sensor suelto (raw ≈ valor en aire)</td></tr>
+      <tr><td>DS18B20</td><td>Exactitud ±0.5 °C (−10 a +85 °C); resolución de 0.0625 °C a 12 bits; conversión de ~750 ms; sesgo fijo por sonda</td><td>−127 °C (desconectado), 85 °C (valor de reinicio)</td></tr>
+      <tr><td>BME680</td><td>T ±1 °C, HR ±3 %, P ±0.6 hPa (aprox.). <strong>El calentador de gas puede sesgar la temperatura hacia arriba</strong>. El gas se reporta como resistencia (kΩ) relativa; el índice IAQ con BSEC queda fuera de alcance</td><td>Sensor no detectado en I2C (dirección 0x76/0x77)</td></tr>
+      <tr><td>DHT11</td><td>Rango de 0–50 °C y 20–90 % HR; exactitud ±2 °C y ±5 % HR; resolución de 1 unidad; máximo una lectura por segundo</td><td>Lectura NaN, valor repetido</td></tr>
+      <tr><td>LDR + ADC</td><td>Modelo del apartado c) + cuantización de 12 bits + no linealidad del ADC del ESP32 cerca de 0 V y de 3.3 V</td><td>Saturación, sombra súbita</td></tr>
+      <tr><td>Red y reloj</td><td>Pérdida de Wi-Fi con buffer y reenvío; hora por NTP (si no hay, la pone el servidor)</td><td>Lecturas duplicadas, desfase horario</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.4 Escenarios de simulación</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:6%">ID</th><th style="width:20%">Escenario</th><th style="width:24%">Forzante</th><th style="width:9%">Duración</th><th style="width:22%">Resultado esperado</th><th>Se usa para</th></tr></thead>
+    <tbody>
+      <tr><td>S1</td><td>Línea base de Cuatro Cañadas</td><td>POWER horario del último mes completo disponible <span class="tag t-obs">Obs.</span></td><td>14 días</td><td>Ciclos diarios de T y de luz; secado gradual</td><td>Primeras curvas de la pestaña y del replay</td></tr>
+      <tr><td>S2</td><td>Sequía dic-2025 → ene-2026</td><td>POWER real de ese período</td><td>45 días</td><td>Racha seca larga; θ se acerca a θ<sub>wp</sub>; el suelo seco se calienta más</td><td>Pitch: «así lo habría visto un nodo»</td></tr>
+      <tr><td>S3</td><td>Exceso de lluvia feb–mar-2026</td><td>POWER real de ese período</td><td>45 días</td><td>θ cerca de saturación; drenaje frecuente</td><td>Mostrar el segundo riesgo documentado</td></tr>
+      <tr><td>S4</td><td>Demo: riego de la zona A</td><td>Laboratorio; riego de V mL solo en A</td><td>3 h, Δt = 1 min</td><td>Solo A sube, Δθ ≈ V/(A·Z); B y C casi no cambian</td><td>Ensayo de la demo; predicción a contrastar</td></tr>
+      <tr><td>S5</td><td>Fallas de sensores</td><td>S1 + inyección de fallas</td><td>1 día</td><td>Llegan <code>quality_flags</code>; la app muestra «dato inválido»</td><td>Prueba de robustez de la API y de la UI</td></tr>
+      <tr><td>S6</td><td>Diseño del divisor del LDR</td><td>Barrido de 1–100 000 lux</td><td>—</td><td>Curvas V(E) por R<sub>f</sub></td><td>Elegir R<sub>f</sub> (decisión de hardware)</td></tr>
+    </tbody>
+  </table>
+  <p class="small">Si el endpoint horario de POWER no ofrece alguna variable, se desagrega la serie diaria: forma sinusoidal entre T<sub>mín</sub> y T<sub>máx</sub>, y radiación con la geometría solar del día. Esa serie se rotula «desagregado».</p>
+
+  <h2>5.5 Exportación en dos grupos (lo que pidió el equipo)</h2>
+  <div class="grid2">
+    <div class="box hw">
+      <h3>📍 Sensores internos (en la tierra)</h3>
+      <p class="small"><code>internos.csv</code>, una fila por zona y por instante:<br><code>ts, source, scenario, zone, soil_moisture_vwc, soil_moisture_raw, soil_temp_c, flags</code></p>
+      <ul class="small"><li>💧 Humedad capacitiva v1.2 (zonas A, B, C)</li><li>🌡️ Sonda DS18B20 (zonas A, B, C)</li></ul>
+    </div>
+    <div class="box hw">
+      <h3>📍 Sensores externos (fuera de la tierra)</h3>
+      <p class="small"><code>externos.csv</code>, una fila por instante:<br><code>ts, source, scenario, bme680_t_c, bme680_rh_pct, bme680_p_hpa, bme680_gas_kohm, dht11_t_c, dht11_rh_pct, ldr_raw, ldr_mv, light_pct, flags</code></p>
+      <ul class="small"><li>💡 LDR (luz relativa)</li><li>🌦️ BME680 (T, HR, P, gas) + DHT11 (T, HR, redundancia)</li></ul>
+    </div>
+  </div>
+  <p class="small">Además: <code>readings.jsonl</code> (una lectura por línea, en el contrato v1 de la sección 9, validada con <code>jsonschema</code>) y <code>metadata.json</code> (escenario, parámetros, semilla, versión del modelo, fuente y fecha del forzante). <code>replay.py --scenario S4 --speed 60 --api URL</code> envía las lecturas a la API acelerando el tiempo.</p>
+
+  <h2>5.6 Etapa 2: Wokwi (ESP32)</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:26%">Componente real</th><th style="width:30%">En Wokwi</th><th style="width:12%">Pin</th><th>Nota</th></tr></thead>
+    <tbody>
+      <tr><td>ESP32 DevKit</td><td>ESP32 DevKit (pieza oficial)</td><td>—</td><td>Wi-Fi «Wokwi-GUEST», sin contraseña</td></tr>
+      <tr><td>3 × humedad capacitiva v1.2</td><td>3 potenciómetros (señal analógica)</td><td>34 · 35 · 32</td><td>Girar el potenciómetro equivale a regar o secar</td></tr>
+      <tr><td>3 × DS18B20</td><td>3 × <code>wokwi-ds18b20</code> (oficial)</td><td>4</td><td>Comparten bus; cada una necesita un <code>deviceID</code> distinto</td></tr>
+      <tr><td>LDR</td><td>Fotorresistencia (oficial)</td><td>33</td><td>Se ajusta la luz con el control de la pieza</td></tr>
+      <tr><td>DHT11</td><td>DHT22 (oficial) en su lugar</td><td>27</td><td>No se confirmó una pieza oficial DHT11; con <code>SIMULATION</code> se compila con el tipo DHT22</td></tr>
+      <tr><td>BME680</td><td><strong>Sin pieza</strong>: stub en el firmware</td><td>21/22</td><td>Con <code>SIMULATION</code>, devuelve valores plausibles (o leídos por serie)</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn small"><span class="h">Red en Wokwi (verificado en su documentación)</span>
+  El <strong>gateway público gratuito</strong> da acceso a internet, pero para llegar a un servidor en <code>localhost</code> hace falta el <strong>Private Gateway</strong>, que es de pago. Por eso el ESP32 virtual envía a la <strong>API desplegada</strong> o a un <strong>túnel público</strong> (<code>cloudflared tunnel --url http://localhost:8000</code> o ngrok) que provee Alvin. Si es HTTPS, se usa <code>WiFiClientSecure</code> con <code>setInsecure()</code> <em>solo para la demo</em>, declarado como limitación.</div>
+  <p class="small"><strong>Estructura del firmware</strong> (<code>hardware/firmware/rotasat_node/</code>): <code>config.h</code> (pines, intervalos, <code>#define SIMULATION</code>, Wi-Fi, URL) · <code>sensors.cpp</code> (lecturas; stubs con <code>#ifdef SIMULATION</code>) · <code>calibration.h</code> (curvas por sensor) · <code>payload.cpp</code> (ArduinoJson → contrato v1) · <code>net.cpp</code> (Wi-Fi, NTP, POST con 3 reintentos y buffer circular sin conexión) · <code>rotasat_node.ino</code>. <strong>Aceptación:</strong> el JSON que imprime por serie valida contra el mismo esquema que la exportación de Python y el POST responde 201.</p>
+
+  <h2>5.7 Etapa 3: del simulador a la placa (checklist de transición)</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:5%">✓</th><th>Paso</th><th style="width:14%">Quién</th></tr></thead>
+    <tbody>
+      <tr><td>☐</td><td>Compilar el mismo firmware con <code>SIMULATION = 0</code>, tipo DHT11 y el driver real del BME680 activado</td><td>Mateo</td></tr>
+      <tr><td>☐</td><td>Confirmar el pinout real contra la variante de la placa (serigrafía y pinout del fabricante)</td><td>Mateo</td></tr>
+      <tr><td>☐</td><td>Probar cada sensor por separado por serie y luego todos juntos</td><td>Mateo</td></tr>
+      <tr><td>☐</td><td>Cargar las constantes de calibración medidas (sección 6.6) en <code>calibration.h</code></td><td>Vanesa → Mateo</td></tr>
+      <tr><td>☐</td><td>Instalar R<sub>f</sub> del LDR según S6</td><td>Christian → Mateo</td></tr>
+      <tr><td>☐</td><td>Enviar a la API con <code>source = "physical"</code> y ver la insignia «Físico» en la app</td><td>Mateo · Kendra</td></tr>
+      <tr><td>☐</td><td>Ejecutar S4 en físico (riego de V mL en A) y comparar el Δθ medido con el predicho</td><td>Vanesa · Christian</td></tr>
+      <tr><td>☐</td><td>Con 2–4 h de datos, <code>fit.py</code> ajusta k por zona (<code>scipy.optimize.curve_fit</code>) y el gemelo se actualiza; el gráfico «sim vs físico» va a las diapositivas</td><td>Christian</td></tr>
+    </tbody>
+  </table>
+</div>

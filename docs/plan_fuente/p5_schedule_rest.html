@@ -1,0 +1,358 @@
+
+<!-- ======================= 8 ======================= -->
+<div class="section" id="s8">
+  <h1><span class="num">8</span>Cronograma de 24 horas</h1>
+  <p class="lead">La ventana va del sábado 14 a las 09:00 al domingo 15 a las 09:00. La app queda funcional en unas 12 horas (checkpoint 2, 21:00); el resto del tiempo es para el nodo físico, el visor, el pulido, la validación y la entrega. Hay dos turnos de descanso y en cada turno queda alguien de guardia en ambos subequipos.</p>
+  <div class="figure">
+  {{GANTT}}
+  <div class="caption"><strong>Figura 6.</strong> Gantt por persona. Azul: trabajo de la app; naranja: prototipo y simulación; gris oscuro: bloques compartidos (kickoff, sincronizaciones, checkpoints, QA, pitch y envío); gris claro con rayas: descanso. Las líneas rojas son los hitos que no se mueven.</div>
+  </div>
+
+  <h2>8.1 Hora por hora</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:11%">Hora</th><th style="width:13%">Bloque</th><th style="width:38%"><span class="chip app">App</span> Alvin · Matías · Kendra</th><th><span class="chip hw">Prototipo</span> Vanesa · Christian · Mateo</th></tr></thead>
+    <tbody>
+      <tr class="sub"><td colspan="4">Sábado 14 de noviembre</td></tr>
+      <tr><td>09:00–09:45</td><td><strong>Kickoff</strong> (todos)</td><td colspan="2">Lectura de este plan (10 min), confirmación del alcance, <strong>congelación del OpenAPI v0 y del JSON del nodo v1</strong>, repo creado, tablero con las tareas de la sección 7 y primer registro de decisiones.</td></tr>
+      <tr><td>09:45–12:00</td><td>Sprint 1</td><td>POWER diario y horario en caché (Alvin) · schemas y mocks a las 10:30, luego la base agrícola (Matías) · scaffold, Inicio y entrada (Kendra)</td><td>Inventario, compras y diseño de experimentos (Vanesa) · esqueleto del gemelo y modelos de agua y calor (Christian) · prueba individual de sensores y proyecto Wokwi (Mateo)</td></tr>
+      <tr><td>12:00–12:15</td><td>Sincronización</td><td colspan="2">5 min por subequipo y 5 min en conjunto: bloqueos y traspasos de la tarde.</td></tr>
+      <tr><td>12:15–13:15</td><td>Almuerzo</td><td colspan="2">Todos comen. No se programa.</td></tr>
+      <tr><td>13:15–17:00</td><td>Sprint 2</td><td>Indicadores y endpoints (Alvin) · reglas, motor y compare real (Matías) · Comparar y Ventajas y desventajas (Kendra)</td><td>Macetas y calibración P1–P2 (Vanesa) · <code>physics.py</code> a las 14:30, LDR, sensores y exportación (Christian) · firmware v1 en Wokwi, red y cableado (Mateo)</td></tr>
+      <tr><td><strong>17:00–17:30</strong></td><td><strong>Checkpoint 1</strong></td><td colspan="2"><strong>Go/no-go.</strong> ¿Un usuario puede ingresar su rotación y ver ≥ 3 estrategias calculadas con POWER real? ¿La simulación y Wokwi producen JSON válido? ¿Todos los sensores leen por serie? Si no, se congelan los extras (visor isométrico, SMAP/IMERG, físico) y todos van al flujo mínimo.</td></tr>
+      <tr><td>17:30–21:00</td><td>Sprint 3</td><td>GIBS y despliegue (Alvin) · bootstrap, explicaciones y endpoints del nodo (Matías) · Riesgos, Incertidumbre y deslizadores de pesos (Kendra)</td><td>Calibración P3, ajuste y control de calidad (Vanesa) · replay y escenarios S2, S3 y S5 (Christian) · armado físico, calibración cargada y POST real (Mateo)</td></tr>
+      <tr><td><strong>21:00–21:30</strong></td><td><strong>Checkpoint 2</strong> + cena</td><td colspan="2">¿Funcionan los 4 módulos, con incertidumbre? ¿El nodo físico envía (o, como plan B, el replay simulado)? <strong>Se congela el alcance.</strong> Si faltan tarjetas completas, se reduce a E0, E1 y E2 y se completan bien esas.</td></tr>
+      <tr><td>21:30–01:00</td><td>Sprint 4</td><td>Integración, README y formulario (Alvin) · pruebas B–E y rendimiento (Matías) · visor geoespacial y «Datos de terreno» (Kendra)</td><td>Prueba de riego, análisis e informe (Vanesa) · ajuste de k, gráfico sim vs físico y documentación (Christian) · estabilidad y set de la demo (Mateo)</td></tr>
+      <tr class="sub"><td colspan="4">Domingo 15 de noviembre</td></tr>
+      <tr><td><strong>01:00</strong></td><td><strong>Congelación de funciones</strong></td><td colspan="2">Desde aquí solo se corrigen errores, se documenta y se prepara el pitch. Sincronización de 5 min.</td></tr>
+      <tr><td>01:00–03:30</td><td>Turno A de descanso</td><td>Descansan Matías y Kendra · <strong>De guardia: Alvin</strong> (formulario, guion, diapositivas)</td><td>Descansa Mateo (el nodo registra) · <strong>De guardia: Vanesa</strong> (análisis, diapositiva 6) y <strong>Christian</strong> (monitoreo, documentación)</td></tr>
+      <tr><td>03:30–06:00</td><td>Turno B de descanso</td><td>Descansa Alvin · <strong>De guardia: Matías</strong> (correcciones) y <strong>Kendra</strong> (pulido, prueba F, capturas, despliegue del frontend)</td><td>Descansan Vanesa y Christian · <strong>De guardia: Mateo</strong> (nodo, video de la demo, diagrama)</td></tr>
+      <tr><td>06:00–07:00</td><td><strong>QA con ojos nuevos</strong></td><td colspan="2">Cada persona prueba algo que no construyó; prueba F en teléfono (menos de 3 min); enlaces en ventana privada; lista de arreglos críticos (solo esos se arreglan).</td></tr>
+      <tr><td>07:00–08:00</td><td>Pitch y video</td><td colspan="2">Ensayo del pitch de 3 min con el riego en vivo, video de 30 s o 7 diapositivas finales y repaso de las preguntas difíciles (12.6).</td></tr>
+      <tr><td><strong>08:00–08:30</strong></td><td><strong>Envío</strong></td><td colspan="2">Alvin envía el formulario; otra persona verifica cada casilla y el estado «enviado».</td></tr>
+      <tr><td>08:30–09:00</td><td>Colchón</td><td colspan="2">Solo emergencias. No se agregan funciones.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout info small"><span class="h">Cuidado del equipo en 24 h</span>
+  Cada persona tiene 2.5 h de descanso garantizadas. Comidas a hora fija (12:15 y 21:00, con algo ligero a las 04:00). Agua a mano y cafeína con moderación. Pausa de 5 minutos por hora. Si alguien se enferma o se traba, se activa su respaldo (7.3) y se recorta alcance antes que forzar.</div>
+</div>
+
+<!-- ======================= 9 ======================= -->
+<div class="section" id="s9">
+  <h1><span class="num">9</span>Interfaces y contratos entre subequipos</h1>
+  <p class="lead">La mayoría de los fracasos en un hackatón ocurren en las uniones entre partes. Cada traspaso tiene responsable, hora, formato y criterio de aceptación.</p>
+
+  <h2>9.1 Traspasos con hora</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:8%">Hora</th><th style="width:25%">Qué</th><th style="width:20%">De → a</th><th style="width:20%">Formato</th><th>Aceptación</th></tr></thead>
+    <tbody>
+      <tr><td>09:45</td><td>Contrato del nodo v1 + diccionario de datos</td><td>Vanesa · Matías · Mateo · Christian → todos</td><td><code>shared/sensor_reading.schema.json</code></td><td>Los cuatro lo aprobaron en el PR</td></tr>
+      <tr><td>09:45</td><td>OpenAPI v0</td><td>Matías · Alvin → Kendra</td><td><code>/docs</code> + tipos TS</td><td>Kendra genera los tipos sin dudas</td></tr>
+      <tr><td>10:30</td><td>API con mocks (incluido el nodo)</td><td>Matías → Kendra · Mateo · Christian</td><td>Servidor local / túnel</td><td>Todos los endpoints responden</td></tr>
+      <tr><td>11:30</td><td>Forzante POWER horario</td><td>Alvin → Christian</td><td>CSV con unidades y fecha de descarga</td><td>Sin −999; zona horaria declarada</td></tr>
+      <tr><td>14:30</td><td><code>physics.py</code> (ET0)</td><td>Christian → Alvin</td><td>Módulo Python con prueba</td><td>Reproduce el ejemplo de FAO-56</td></tr>
+      <tr><td>15:30</td><td>Indicadores + ET0 + P<sub>ef</sub></td><td>Alvin → Matías · Kendra</td><td>Funciones + <code>/api/indicators</code></td><td>Unidades y procedencia en cada valor</td></tr>
+      <tr><td>16:00</td><td>R<sub>f</sub> del LDR</td><td>Christian → Mateo</td><td>Valor en Ω + gráfico S6</td><td>La lectura en interiores queda en la zona media del ADC</td></tr>
+      <tr><td>16:00</td><td>URL pública de la API (túnel o despliegue)</td><td>Alvin → Mateo · Christian</td><td>URL HTTPS</td><td>Wokwi recibe 201</td></tr>
+      <tr><td>16:00 / 17:00</td><td><code>/rotations/compare</code> real</td><td>Matías → Kendra</td><td>JSON según 3.8</td><td>La UI muestra E0–E3 reales</td></tr>
+      <tr><td>19:00</td><td>Replay simulado</td><td>Christian → app</td><td>POST <code>source = simulated</code></td><td>Se ve en «Datos de terreno» con la insignia</td></tr>
+      <tr><td>19:30</td><td>Constantes de calibración</td><td>Vanesa → Mateo</td><td><code>calibration.h</code> + tabla de error</td><td>Una curva por sensor</td></tr>
+      <tr><td>21:00</td><td>Endpoints reales del nodo</td><td>Matías → Kendra · Mateo · Christian</td><td>SQLite + GET filtrable</td><td>Prueba de contrato en verde</td></tr>
+      <tr><td>03:30</td><td>Análisis, figuras, fotos, diapositiva 6</td><td>Vanesa · Christian · Mateo → Alvin · Kendra</td><td>PNG/SVG + texto</td><td>Cada figura rotulada (simulado o físico)</td></tr>
+      <tr><td>06:00</td><td>Capturas de la app</td><td>Kendra → Alvin</td><td>PNG</td><td>Datos reales, sin mocks visibles</td></tr>
+    </tbody>
+  </table>
+
+  <h2>9.2 Contrato JSON del nodo de campo (v1)</h2>
+  <div class="grid2">
+<pre>{
+  "schema_version": "1.0",
+  "node_id": "rotasat-node-01",
+  "source": "physical",
+  "scenario": null,
+  "ts": "2026-11-14T20:15:00Z",
+  "internal": {
+    "depth_cm": 7,
+    "zones": [
+      {"id": "A", "soil_moisture_vwc": 0.11,
+       "soil_moisture_raw": 2710,
+       "soil_temp_c": 24.6, "flags": []},
+      {"id": "B", "soil_moisture_vwc": 0.19,
+       "soil_moisture_raw": 2290,
+       "soil_temp_c": 23.9, "flags": []},
+      {"id": "C", "soil_moisture_vwc": 0.31,
+       "soil_moisture_raw": 1840,
+       "soil_temp_c": 23.1, "flags": []}
+    ]
+  },</pre>
+<pre>  "external": {
+    "bme680": {"t_c": 26.1, "rh_pct": 48.2,
+               "p_hpa": 965.0, "gas_kohm": 85.4},
+    "dht11":  {"t_c": 26.0, "rh_pct": 50.0},
+    "ldr":    {"raw": 1830, "mv": 1480,
+               "light_pct": 45.0,
+               "r_fixed_ohm": 2200}
+  },
+  "calibration": {
+    "moisture_method": "gravimetric_3pt",
+    "date": "2026-11-14",
+    "ds18b20_offsets_c": [0.1, -0.2, 0.0]
+  },
+  "quality_flags": []
+}
+
+Respuesta: 201 {"stored": true, "id": 1287,
+               "received_at": "2026-11-14T20:15:02Z"}
+Error de esquema: 422 + detalle del campo</pre>
+  </div>
+  <table class="t compact">
+    <thead><tr><th style="width:24%">Regla</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <tr><td><code>source</code></td><td>Obligatorio: <code>simulated</code> | <code>wokwi</code> | <code>physical</code>. La app lo muestra siempre como insignia.</td></tr>
+      <tr><td><code>scenario</code></td><td>S1–S6 cuando <code>source = simulated</code>; <code>null</code> en los demás casos.</td></tr>
+      <tr><td><code>ts</code></td><td>UTC ISO-8601 por NTP. Si falta, el servidor usa <code>received_at</code> y lo marca.</td></tr>
+      <tr><td>Unidades</td><td>Van en el nombre del campo (<code>_c</code>, <code>_pct</code>, <code>_hpa</code>, <code>_kohm</code>, <code>_vwc</code> en m³/m³).</td></tr>
+      <tr><td>Datos faltantes</td><td><code>null</code> + bandera, nunca un valor inventado. Ejemplos de banderas: <code>ds18b20_A_disconnected</code>, <code>dht11_read_fail</code>, <code>ldr_adc_saturated</code>, <code>moisture_uncalibrated</code>.</td></tr>
+      <tr><td>Grupos</td><td><code>internal</code> = sensores en la tierra; <code>external</code> = sensores fuera de la tierra (lo que pidió el equipo).</td></tr>
+    </tbody>
+  </table>
+  <p class="small">Valores ilustrativos. La presión depende de la altitud del lugar donde esté el prototipo.</p>
+</div>
+
+<!-- ======================= 10 ======================= -->
+<div class="section" id="s10">
+  <h1><span class="num">10</span>Riesgos y planes de contingencia</h1>
+  <table class="t compact">
+    <thead><tr><th style="width:3%">#</th><th style="width:25%">Riesgo</th><th style="width:5%" class="c">P</th><th style="width:5%" class="c">I</th><th>Mitigación y plan B</th><th style="width:10%">Dueño</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>NASA POWER lenta o caída durante el evento</td><td class="c">M</td><td class="c">A</td><td>Descarga en la primera hora; caché versionada; respaldo con la última descarga válida mostrando su fecha</td><td>Alvin</td></tr>
+      <tr><td>2</td><td>Integración tardía entre motor y UI</td><td class="c">M</td><td class="c">A</td><td>Contratos a las 09:45, mocks a las 10:30, integración cada 2 h y checkpoints</td><td>Alvin</td></tr>
+      <tr><td>3</td><td>Alcance excesivo</td><td class="c">A</td><td class="c">A</td><td>MVP definido; congelación del alcance a las 21:00 y de funciones a la 01:00; el nodo y el visor son extensiones</td><td>Alvin</td></tr>
+      <tr><td>4</td><td>Parámetros agrícolas sin fuente o incorrectos</td><td class="c">M</td><td class="c">A</td><td>Solo FAO-56, EcoCrop y fuentes identificables; si no hay, <code>null</code> + explicación; «revisá con tu técnico»</td><td>Matías</td></tr>
+      <tr><td>5</td><td>Bootstrap lento (más de 3 s)</td><td class="c">M</td><td class="c">M</td><td>Precálculo para el punto piloto, caché por hash de la entrada y vectorización con NumPy</td><td>Matías</td></tr>
+      <tr><td>6</td><td>El visor isométrico consume demasiado tiempo</td><td class="c">M</td><td class="c">M</td><td>Se construye después del checkpoint 2; plan B: Leaflet + lista de capas</td><td>Kendra</td></tr>
+      <tr><td>7</td><td>Capas GIBS con identificador inválido</td><td class="c">M</td><td class="c">M</td><td>Verificar en GetCapabilities; si no, «Información regional». Nunca URL inventadas</td><td>Alvin</td></tr>
+      <tr><td>8</td><td>BME680 sin pieza en Wokwi</td><td class="c">A</td><td class="c">B</td><td>Stub en el firmware con <code>SIMULATION</code>; el driver real se prueba en la placa en el paso 1</td><td>Mateo</td></tr>
+      <tr><td>9</td><td>Wokwi no llega a localhost (Private Gateway de pago)</td><td class="c">A</td><td class="c">M</td><td>Túnel público (cloudflared o ngrok) o API desplegada; si no, la salida serie validada y el replay de Python</td><td>Alvin · Mateo</td></tr>
+      <tr><td>10</td><td>Sensor capacitivo defectuoso o ruidoso (clones v1.2)</td><td class="c">A</td><td class="c">M</td><td>Probar cada unidad, 1 repuesto, promedio de 64 lecturas, solo ADC1, calibración por unidad</td><td>Mateo</td></tr>
+      <tr><td>11</td><td>DHT11 poco preciso o BME680 sesgado por su calentador</td><td class="c">M</td><td class="c">B</td><td>La redundancia es justamente el control de calidad; se corrige el desfase y se declara la tolerancia</td><td>Vanesa</td></tr>
+      <tr><td>12</td><td>Calibración incompleta por falta de tiempo o de microondas</td><td class="c">M</td><td class="c">M</td><td>Empezar a las 15:00; plan B de 2 puntos, rotulado «relativo»</td><td>Vanesa</td></tr>
+      <tr><td>13</td><td>Wi-Fi del evento saturado o con portal cautivo</td><td class="c">M</td><td class="c">A</td><td>Hotspot del celular; buffer en el firmware; registro por serie y replay</td><td>Mateo</td></tr>
+      <tr><td>14</td><td>Comparación indebida maceta vs SMAP</td><td class="c">M</td><td class="c">A</td><td>Solo comparación cualitativa y etiqueta de escala; frase de pitch preparada</td><td>Vanesa · Alvin</td></tr>
+      <tr><td>15</td><td>Fatiga por las 24 h</td><td class="c">A</td><td class="c">M</td><td>Turnos de descanso, respaldos, congelación a la 01:00 y comidas fijas</td><td>Alvin</td></tr>
+      <tr><td>16</td><td>Errores en el envío (idioma, enlaces privados, límites de la demo)</td><td class="c">M</td><td class="c">A</td><td>Checklist 12.1, enlaces en ventana privada, envío a las 08:00 (no a las 08:59)</td><td>Alvin</td></tr>
+      <tr><td>17</td><td>Uso de IA no declarado o material de terceros sin citar</td><td class="c">B</td><td class="c">A</td><td><code>docs/uso_ia.md</code> y lista de librerías (incluidas las de Arduino); sin marca NASA en contenido generado con IA</td><td>Alvin</td></tr>
+      <tr><td>18</td><td>Las reglas 2026 difieren de las de 2025</td><td class="c">M</td><td class="c">M</td><td>Leer la guía oficial 2026 en el kickoff; prevalece sobre este plan</td><td>Alvin</td></tr>
+    </tbody>
+  </table>
+  <p class="small">P = probabilidad, I = impacto (B baja/bajo · M media/medio · A alta/alto).</p>
+</div>
+
+<!-- ======================= 11 ======================= -->
+<div class="section" id="s11">
+  <h1><span class="num">11</span>Validación, pruebas y criterios de aceptación</h1>
+  <p class="lead">El proyecto <strong>no está terminado por tener una interfaz bonita</strong>. Está terminado cuando un agricultor cambia sus condiciones y prioridades, recibe una comparación recalculada, entiende por qué cambió y puede comprobar de dónde salieron los datos.</p>
+
+  <h2>11.1 Pruebas de la app (A–G)</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:4%">ID</th><th style="width:18%">Prueba</th><th>Criterio de aceptación</th><th style="width:12%">Dueño</th></tr></thead>
+    <tbody>
+      <tr><td>A</td><td>Conexión NASA</td><td>La ingesta trae valores reales del punto piloto, conserva fecha, unidades y fuente y los guarda en caché; el JSON recibido y los indicadores se pueden inspeccionar</td><td>Alvin</td></tr>
+      <tr><td>B</td><td>Recomendación</td><td>Con una rotación y unas prioridades, el motor evalúa la actual y al menos dos alternativas factibles, muestra las puntuaciones y explica las diferencias</td><td>Matías</td></tr>
+      <tr><td>C</td><td>Prioridades</td><td>Al subir el peso del agua, los pesos y los puntajes se recalculan de forma reproducible; el orden puede cambiar solo si los datos lo justifican</td><td>Matías</td></tr>
+      <tr><td>D</td><td>Información incompleta</td><td>Sin suelo, NDVI ni SMAP, la app sigue funcionando, muestra los vacíos y reduce el alcance de sus afirmaciones</td><td>Matías</td></tr>
+      <tr><td>E</td><td>Incertidumbre</td><td>Se ven los rangos P10–P90 del bootstrap y la diferencia entre dos estrategias</td><td>Matías · Kendra</td></tr>
+      <tr><td>F</td><td>Interfaz móvil</td><td>Alguien sin formación técnica llega a la recomendación en menos de 3 minutos desde un teléfono</td><td>Kendra</td></tr>
+      <tr><td>G</td><td>Trazabilidad</td><td>Todo resultado relevante tiene fuente, fecha, unidad y explicación verificable; nunca se dice que «NASA recomienda»</td><td>Alvin</td></tr>
+    </tbody>
+  </table>
+
+  <h2>11.2 Pruebas del nodo y de la simulación (H–N)</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:4%">ID</th><th style="width:18%">Prueba</th><th>Criterio de aceptación</th><th style="width:12%">Dueño</th></tr></thead>
+    <tbody>
+      <tr><td>H</td><td>Esquema</td><td>Todas las lecturas (simulación, Wokwi y físico) validan contra <code>sensor_reading.schema.json</code>; las exportaciones van en dos grupos</td><td>Christian</td></tr>
+      <tr><td>I</td><td>Equivalencia sim → placa</td><td>El mismo firmware compila con <code>SIMULATION</code> 1 y 0; el JSON tiene la misma forma en Wokwi y en la placa</td><td>Mateo</td></tr>
+      <tr><td>J</td><td>Trazabilidad del nodo</td><td>La app muestra el origen, la hora y la calibración de cada lectura; los datos simulados nunca aparecen como «Físico»</td><td>Mateo · Kendra</td></tr>
+      <tr><td>K</td><td>Calibración</td><td>3 puntos gravimétricos por sensor de humedad, error documentado y desfases de los DS18B20 registrados</td><td>Vanesa</td></tr>
+      <tr><td>L</td><td>Demo de riego</td><td>Tras regar V mL en A, solo A sube; el Δθ medido se compara con el predicho por S4 y se reporta la diferencia</td><td>Mateo · Christian</td></tr>
+      <tr><td>M</td><td>Coherencia ambiental</td><td>BME680 y DHT11 dentro de la tolerancia combinada; comparación cualitativa con POWER rotulada «regional»</td><td>Vanesa</td></tr>
+      <tr><td>N</td><td>Física del gemelo</td><td>El balance de masa cierra; la ET0 reproduce el ejemplo de FAO-56; los escenarios son reproducibles con semilla fija</td><td>Christian</td></tr>
+    </tbody>
+  </table>
+
+  <h2>11.3 Limitaciones que declaramos (en la app, el README y el formulario)</h2>
+  <ul class="small">
+    <li>NASA POWER es una celda de unos 50 km: es <strong>contexto regional</strong>, no una medición de la finca. SMAP (9 km) es una estimación de modelo con asimilación, no un sensor enterrado.</li>
+    <li>Las puntuaciones dependen de reglas y pesos; los pesos iniciales son preferencias de producto. Los puntajes son relativos entre opciones, no probabilidades.</li>
+    <li>P10–P90 es la variabilidad bajo remuestreo histórico, no un pronóstico ni una garantía.</li>
+    <li>No se predicen rendimientos ni precios, y no se sustituyen el análisis de suelo ni la visita técnica. Cambiar la rotación no elimina el riesgo de inundación.</li>
+    <li>La base agrícola cubre un conjunto limitado de cultivos y debe validarse localmente.</li>
+    <li>El nodo es un prototipo de laboratorio con horas de datos; no valida estadísticamente al satélite y no alimenta el motor en esta versión.</li>
+  </ul>
+</div>
+
+<!-- ======================= 12 ======================= -->
+<div class="section" id="s12">
+  <h1><span class="num">12</span>Entrega, presentación y defensa ante el jurado</h1>
+
+  <h2>12.1 Checklist del envío <span class="chip app">Alvin</span> (confirmar con la guía oficial 2026)</h2>
+  <div class="grid2 small">
+    <ul style="list-style:none;padding-left:0">
+      <li>☐ Los 6 integrantes confirmados en el <strong>mismo</strong> evento</li>
+      <li>☐ Nombre del proyecto y resumen en <strong>inglés</strong></li>
+      <li>☐ Demo: <strong>≤ 7 diapositivas o video ≤ 30 s</strong> (según la guía 2026), con enlace público</li>
+      <li>☐ Enlace al proyecto final: app pública + repo abierto (README, licencia, créditos)</li>
+      <li>☐ Descripción detallada: qué hace, cómo funciona, beneficios, validación, limitaciones y próximos pasos</li>
+    </ul>
+    <ul style="list-style:none;padding-left:0">
+      <li>☐ Datos NASA usados (POWER, GIBS y, si llegaron, SMAP, IMERG y NDVI) y cómo se usó cada uno</li>
+      <li>☐ Otros datos y recursos (MDPyEP/INE, ANAPO, FAO-56, EcoCrop, librerías de Python, JS y Arduino, Wokwi)</li>
+      <li>☐ Uso de IA declarado (herramientas y para qué; sin marca NASA en contenido generado con IA)</li>
+      <li>☐ Todos los enlaces probados en ventana privada, sin iniciar sesión</li>
+      <li>☐ Estado «<strong>enviado</strong>» verificado por una segunda persona</li>
+    </ul>
+  </div>
+
+  <h2>12.2 Borrador del resumen (inglés)</h2>
+  <div class="callout info small"><em>RotaSat is a farmer-centered decision-support tool for crop-rotation choices in Cuatro Cañadas, Santa Cruz, Bolivia, a soybean-dominated region recently hit by floods, drought and excess rain. A farmer enters the current rotation, irrigation and priorities (save water, protect soil, reduce risk). RotaSat combines NASA POWER daily data (precipitation, temperature, humidity, wind, solar radiation; FAO-56 reference evapotranspiration) with a sourced local crop knowledge base to compare four strategies: the current rotation, Soil-first, Water-first and Balanced. For each one it explains why it was suggested, the evidence with source, date and scale, the benefits, the information gaps and the questions for a local agronomist. Uncertainty comes from bootstrapping historical climate years. A low-cost ESP32 field node (soil moisture and temperature in three zones, plus air and light sensors) was first simulated with a physics-based digital twin forced with NASA POWER and in Wokwi, then built and calibrated. It shows the within-field variability that coarse satellite data averages out. The tool supports, and does not replace, farmer judgment and local expertise.</em></div>
+
+  <h2>12.3 Siete diapositivas</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:4%">#</th><th style="width:22%">Diapositiva</th><th>Mensaje y contenido</th><th style="width:16%">Insumos de</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Título</td><td>RotaSat · reto Field Shift · equipo e integrantes</td><td>Kendra</td></tr>
+      <tr><td>2</td><td>El dilema del agricultor</td><td>Cuatro Cañadas: 318 mil ha de soya (2023); inundación de 2025 y sequía + exceso de lluvia en 2025–26. «¿Qué siembro después?»</td><td>Matías · Alvin</td></tr>
+      <tr><td>3</td><td>La solución</td><td>Captura del Inicio y de la comparación; la promesa en una línea</td><td>Kendra</td></tr>
+      <tr><td>4</td><td>Cómo funciona</td><td>NASA POWER → indicadores → reglas + MCDA + bootstrap → 4 estrategias explicadas (Figura 1 simplificada)</td><td>Alvin · Matías</td></tr>
+      <tr><td>5</td><td>Resultado en el piloto</td><td>Comparación real E0–E3 con P10–P90 y el mapa de calor de riesgos</td><td>Matías · Kendra</td></tr>
+      <tr><td>6</td><td>Confianza y verdad local</td><td>Vacíos y preguntas para el agrónomo; foto del nodo; curvas por zona; sim vs físico</td><td>Vanesa · Christian · Mateo</td></tr>
+      <tr><td>7</td><td>Impacto y próximos pasos</td><td>A quién ayuda, cómo escala (más municipios, estaciones locales, análisis de suelo), enlaces</td><td>Alvin</td></tr>
+    </tbody>
+  </table>
+
+  <div class="grid2">
+    <div>
+      <h2>12.4 Guion del video de 30 s</h2>
+      <p class="small"><strong>0–5 s:</strong> «Farmers in Cuatro Cañadas face drought and floods in the same season.» · <strong>5–12 s:</strong> se responden las 5 preguntas en el teléfono · <strong>12–22 s:</strong> las 4 tarjetas, el rango P10–P90 y «¿Por qué esta opción?» · <strong>22–27 s:</strong> se riega la zona A y su curva sube · <strong>27–30 s:</strong> «Built on NASA data. Honest about uncertainty.» + nombre y equipo.</p>
+    </div>
+    <div>
+      <h2>12.5 Demo en vivo de 3 min</h2>
+      <p class="small"><strong>0:00–0:30</strong> el problema y el agricultor del caso (Alvin) · <strong>0:30–1:30</strong> entrada, comparación y cambio de pesos en vivo (Kendra) · <strong>1:30–2:15</strong> por qué, evidencia, vacíos e incertidumbre (Matías) · <strong>2:15–3:00</strong> «Datos de terreno»: <strong>regar solo la zona A frente al jurado</strong> y mostrar la curva y la predicción del gemelo (Vanesa y Mateo).</p>
+    </div>
+  </div>
+
+  <h2>12.6 Preguntas difíciles y respuestas cortas</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:34%">Pregunta probable</th><th>Respuesta corta</th><th style="width:11%">Responde</th></tr></thead>
+    <tbody>
+      <tr><td>¿Por qué confiar en datos de ~50 km para un campo?</td><td>No lo hacemos: se rotulan como contexto regional. Por eso el nodo de campo muestra la variabilidad local que el satélite promedia</td><td>Alvin</td></tr>
+      <tr><td>¿Dónde está la «IA»? ¿Por qué no machine learning?</td><td>No hay datos locales etiquetados para entrenar un predictor confiable. Usamos un motor explicable (reglas + MCDA + bootstrap): cada número se puede auditar</td><td>Matías</td></tr>
+      <tr><td>¿Qué pasa si la recomendación se equivoca?</td><td>Mostramos rangos, vacíos y riesgos, y cada tarjeta termina en preguntas para un experto. No predice rendimientos ni reemplaza visitas técnicas</td><td>Matías</td></tr>
+      <tr><td>¿Para qué simular si tienen el hardware?</td><td>Para diseñar antes de soldar (el valor de R<sub>f</sub> del LDR salió de la simulación), alimentar la app antes de tener la placa, reproducir la sequía y el exceso de lluvia reales de 2025–26 y tener un valor esperado contra el cual contrastar lo medido</td><td>Christian</td></tr>
+      <tr><td>¿Los datos del nodo en la app son reales?</td><td>Cada lectura lleva su insignia: Simulado, Wokwi o Físico. Nunca mezclamos sin rotular</td><td>Mateo</td></tr>
+      <tr><td>¿Su caja valida el satélite?</td><td>No: es una prueba de concepto de laboratorio. Con un campo real y semanas de datos se podría estimar el sesgo frente a SMAP</td><td>Vanesa</td></tr>
+      <tr><td>¿Cómo calibraron sensores tan baratos?</td><td>Método gravimétrico de 3 puntos por sensor, desfase de las sondas en agua y redundancia BME680/DHT11 como control de calidad</td><td>Vanesa</td></tr>
+      <tr><td>¿Escala a otras regiones?</td><td>Sí: el pipeline es el mismo; hay que ampliar la base agrícola con fuentes locales y validar con técnicos</td><td>Alvin</td></tr>
+    </tbody>
+  </table>
+  <div class="callout ok small"><span class="h">Frases de cierre</span>
+  «El satélite nos da el contexto y décadas de historia; el sensor nos da la verdad local.» · «RotaSat no le dice al agricultor qué hacer: le muestra opciones, la evidencia y qué preguntarle a su técnico.»</div>
+</div>
+
+<!-- ======================= 13 ======================= -->
+<div class="section" id="s13">
+  <h1><span class="num">13</span>Anexos</h1>
+
+  <h2>A. Backlog priorizado</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:4%">#</th><th>Tarea</th><th style="width:6%">Prio.</th><th style="width:16%">Dueño</th><th style="width:7%" class="r">Est.</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Contratos: OpenAPI v0 + JSON del nodo v1 + diccionario</td><td>P0</td><td>Matías · Vanesa · Mateo</td><td class="r">0.75 h</td></tr>
+      <tr><td>2</td><td>Cliente POWER diario y horario con caché y respaldo</td><td>P0</td><td>Alvin</td><td class="r">2 h</td></tr>
+      <tr><td>3</td><td>Schemas + API con mocks</td><td>P0</td><td>Matías</td><td class="r">0.75 h</td></tr>
+      <tr><td>4</td><td>Base agrícola con fuentes (3 JSON) + parser</td><td>P0</td><td>Matías</td><td class="r">2.25 h</td></tr>
+      <tr><td>5</td><td>Indicadores + <code>/indicators</code> + <code>/nasa/status</code></td><td>P0</td><td>Alvin</td><td class="r">3 h</td></tr>
+      <tr><td>6</td><td>ET0 FAO-56 (<code>physics.py</code>)</td><td>P0</td><td>Christian</td><td class="r">1.25 h</td></tr>
+      <tr><td>7</td><td>Reglas + motor + <code>/rotations/compare</code></td><td>P0</td><td>Matías</td><td class="r">3 h</td></tr>
+      <tr><td>8</td><td>Inicio + entrada + Comparar + Ventajas y desventajas</td><td>P0</td><td>Kendra</td><td class="r">5.5 h</td></tr>
+      <tr><td>9</td><td>Bootstrap + explicaciones + Riesgos + Incertidumbre</td><td>P0</td><td>Matías · Kendra</td><td class="r">3.5 h</td></tr>
+      <tr><td>10</td><td>Gemelo digital S1/S4 + exportación en dos grupos</td><td>P0 (HW)</td><td>Christian</td><td class="r">4 h</td></tr>
+      <tr><td>11</td><td>Firmware en Wokwi + POST</td><td>P0 (HW)</td><td>Mateo</td><td class="r">3.75 h</td></tr>
+      <tr><td>12</td><td>Endpoints del nodo + «Datos de terreno»</td><td>P1</td><td>Matías · Kendra</td><td class="r">2.5 h</td></tr>
+      <tr><td>13</td><td>Armado físico + calibración + POST real</td><td>P1</td><td>Mateo · Vanesa</td><td class="r">5 h</td></tr>
+      <tr><td>14</td><td>Replay + escenarios S2, S3, S5 y S6</td><td>P1</td><td>Christian</td><td class="r">3 h</td></tr>
+      <tr><td>15</td><td>Visor geoespacial (Leaflet + isométrico) + <code>/map/layers</code></td><td>P1</td><td>Kendra · Alvin</td><td class="r">4 h</td></tr>
+      <tr><td>16</td><td>Despliegue público</td><td>P1</td><td>Alvin</td><td class="r">2 h</td></tr>
+      <tr><td>17</td><td>Ajuste de k + gráfico sim vs físico + análisis BME680/DHT11</td><td>P2</td><td>Christian · Vanesa</td><td class="r">2.5 h</td></tr>
+      <tr><td>18</td><td>Adaptadores SMAP / IMERG con archivos descargados</td><td>P2</td><td>Alvin</td><td class="r">3 h</td></tr>
+      <tr><td>19</td><td>Serie NDVI real y capa de cobertura</td><td>P2</td><td>Alvin</td><td class="r">2 h</td></tr>
+      <tr><td>20</td><td>Mejoras del nodo (2 profundidades, solar, bomba)</td><td>P3</td><td>Mateo</td><td class="r">—</td></tr>
+    </tbody>
+  </table>
+  <p class="small">P0 = imprescindible · P1 = importante · P2 = diferenciador · P3 = si sobra tiempo.</p>
+
+  <h2>B. Glosario breve (para los «¿Qué significa?» de la app)</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:22%">Término</th><th>Explicación sencilla</th></tr></thead>
+    <tbody>
+      <tr><td>Evapotranspiración (ET0, ETc)</td><td>Agua que pasa del suelo y de las plantas al aire. ET0 es la demanda de referencia del clima; ETc la de un cultivo (Kc × ET0)</td></tr>
+      <tr><td>Lluvia efectiva</td><td>La parte de la lluvia que realmente queda disponible para el cultivo (no toda la que cae)</td></tr>
+      <tr><td>Balance hídrico</td><td>Lluvia efectiva menos lo que pide el cultivo: si es negativo, falta agua</td></tr>
+      <tr><td>Racha seca</td><td>Días seguidos casi sin lluvia (menos de 1 mm)</td></tr>
+      <tr><td>Anomalía de lluvia</td><td>Cuánto llovió más o menos que lo habitual en el mismo período (%)</td></tr>
+      <tr><td>Percentil 95 (P95)</td><td>Un día de lluvia «muy fuerte»: solo el 5 % de los días lluviosos lo superan</td></tr>
+      <tr><td>Humedad del suelo (SMAP)</td><td>Estimación del agua en el suelo que combina satélite y modelo, para áreas de ~9 km</td></tr>
+      <tr><td>NDVI</td><td>Índice de «verdor» visto desde el satélite; bajo puede indicar poca cobertura</td></tr>
+      <tr><td>Reanálisis (POWER)</td><td>Combinación de observaciones y modelos que da datos diarios continuos para áreas de ~50 km</td></tr>
+      <tr><td>Bootstrap</td><td>Repetir el cálculo muchas veces con combinaciones de años pasados para ver cuánto varía el resultado</td></tr>
+      <tr><td>Gemelo digital</td><td>Una simulación por computadora que imita al nodo real y se ajusta con sus datos</td></tr>
+    </tbody>
+  </table>
+
+  <h2>C. Comandos de arranque (Windows PowerShell)</h2>
+<pre># Backend
+cd rotasat\backend
+python -m venv .venv; .\.venv\Scripts\Activate.ps1
+pip install fastapi "uvicorn[standard]" pydantic requests numpy pandas pytest jsonschema
+pip freeze &gt; requirements.txt
+uvicorn app.main:app --reload --port 8000          # OpenAPI en http://localhost:8000/docs
+pytest -q
+
+# Frontend
+cd rotasat
+npm create vite@latest frontend -- --template react-ts
+cd frontend; npm install
+npm install react-router-dom recharts leaflet react-leaflet
+npm install -D tailwindcss @tailwindcss/vite        # Tailwind v4: plugin en vite.config.ts
+npm run dev                                          # http://localhost:5173
+
+# Simulación
+cd rotasat\hardware\simulation
+pip install numpy pandas scipy matplotlib jsonschema requests pyyaml
+python -m scenarios.run --scenario S4 --out output\
+python replay.py --scenario S4 --speed 60 --api https://TU-URL/api/field-node/readings
+
+# Túnel público para Wokwi / nodo físico
+cloudflared tunnel --url http://localhost:8000</pre>
+
+  <h2>D. Fuentes y enlaces</h2>
+  <ul class="small">
+    <li>Enunciado del reto: «Field Shift: Adapting Farms with NASA Data», NASA Space Apps Challenge 2026.</li>
+    <li>MDPyEP, <em>Santa Cruz Industrial y Productiva 2024</em>, fichas municipales (datos 2023 INE/MDRyT): <a href="https://www.siip.produccion.gob.bo/noticias/files/2025-c2369-SANTA-CRUZ-V3-FM.pdf">siip.produccion.gob.bo/…/2025-c2369-SANTA-CRUZ-V3-FM.pdf</a></li>
+    <li>ANAPO, siembra directa y rotación (jul-2024): <a href="https://anapobolivia.org/anapo-reafirma-la-produccion-sostenible-con-la-siembra-directa-y-la-rotacion-de-cultivos/">anapobolivia.org</a></li>
+    <li>Exposoya 2026, Cuatro Cañadas: <a href="https://larazon.bo/economia-y-empresa/2026/03/06/la-exposoya-2026-abre-sus-puertas-en-el-municipio-cruceno-de-cuatro-canadas/">larazon.bo</a></li>
+    <li>Inundación de mar-2025: <a href="https://eldeber.com.bo/santa-cruz/cuatro-canadas-se-declara-en-zona-de-desastre-por-el-desborde-del-rio-grande_507510">eldeber.com.bo</a></li>
+    <li>Campaña 2025–2026 (ANAPO): <a href="https://economy.com.bo/negocios/anapo-reporta-disminucion-produccion-soya-verano-2025-2026-debido-lluvias">economy.com.bo</a></li>
+    <li>NASA POWER API diaria: <a href="https://power.larc.nasa.gov/docs/services/api/temporal/daily/">power.larc.nasa.gov/docs/services/api/temporal/daily/</a></li>
+    <li>NASA GIBS: <a href="https://nasa-gibs.github.io/gibs-api-docs/access-basics/">nasa-gibs.github.io/gibs-api-docs</a> · SMAP L4 SPL4SMGP v8: <a href="https://nsidc.org/data/spl4smgp/versions/8">nsidc.org/data/spl4smgp</a> · GPM IMERG: <a href="https://gpm.nasa.gov/data/imerg">gpm.nasa.gov/data/imerg</a></li>
+    <li>FAO-56, <em>Crop evapotranspiration</em> (Allen et al., 1998): <a href="https://www.fao.org/4/X0490E/x0490e0a.htm">fao.org/4/X0490E</a> · FAO EcoCrop: <a href="https://ecocrop.fao.org/">ecocrop.fao.org</a></li>
+    <li>Wokwi, hardware soportado: <a href="https://docs.wokwi.com/getting-started/supported-hardware">docs.wokwi.com/getting-started/supported-hardware</a> · DS18B20: <a href="https://docs.wokwi.com/parts/wokwi-ds18b20">docs.wokwi.com/parts/wokwi-ds18b20</a> · Redes del ESP32 (gateway público y privado): <a href="https://docs.wokwi.com/guides/esp32-wifi">docs.wokwi.com/guides/esp32-wifi</a></li>
+    <li>Brouwer y Heibloem (1986), <em>Irrigation Water Management: Irrigation Water Needs</em>, FAO (lluvia efectiva empírica).</li>
+  </ul>
+  <div class="callout warn small"><span class="h">Verificar antes de citar</span>Los enlaces y los estados de los productos reflejan lo consultado hasta el 14-nov-2026. Las especificaciones de los sensores son aproximadas: se confirman con la hoja de datos de cada módulo. Las guías oficiales 2026 prevalecen sobre este documento.</div>
+  <p class="small muted" style="margin-top:10pt">Este plan se redactó con ayuda de un asistente de IA a partir de los documentos del equipo; el equipo lo revisa y lo declara en el formulario de envío.</p>
+</div>
+
+</body>
+</html>

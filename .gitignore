@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# salida local del script del plan (el PDF oficial está en la raíz)
+docs/plan_fuente/*.pdf

@@ -1,0 +1,339 @@
+
+<!-- ======================= 7 ======================= -->
+<div class="section" id="s7">
+  <h1><span class="num">7</span>Equipo, roles y paso a paso de cada integrante</h1>
+  <p class="lead">Hay dos subequipos de tres personas, unidos por contratos claros. <strong>Alvin</strong> coordina el proyecto completo y <strong>Vanesa</strong> lidera el subequipo de prototipo y simulación. Cada persona tiene un respaldo, para que nadie sea un punto único de falla.</p>
+
+  <div class="figure">
+  <svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+    <rect x="360" y="10" width="280" height="58" rx="10" fill="#0d366b"/>
+    <text x="500" y="34" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Coordinación general · Alvin</text>
+    <text x="500" y="54" text-anchor="middle" font-size="11" fill="#cde2fb">tiempos · checkpoints · integración · pitch · envío</text>
+    <rect x="30" y="100" width="440" height="40" rx="8" fill="#eaf2fc" stroke="#2a78d6" stroke-width="1.5"/>
+    <text x="250" y="125" text-anchor="middle" font-size="13" font-weight="700" fill="#1c5cab">Subequipo App (Ing. Sistemas)</text>
+    <rect x="530" y="100" width="440" height="40" rx="8" fill="#fdeee7" stroke="#eb6834" stroke-width="1.5"/>
+    <text x="750" y="125" text-anchor="middle" font-size="13" font-weight="700" fill="#a8431b">Subequipo Prototipo y Simulación (líder: Vanesa)</text>
+    <g font-size="11.5">
+      <rect x="30" y="160" width="140" height="92" rx="8" fill="#fff" stroke="#2a78d6"/><text x="100" y="182" text-anchor="middle" font-weight="700">Alvin</text><text x="100" y="200" text-anchor="middle">Datos NASA</text><text x="100" y="216" text-anchor="middle">indicadores · capas</text><text x="100" y="232" text-anchor="middle">despliegue · envío</text>
+      <rect x="180" y="160" width="140" height="92" rx="8" fill="#fff" stroke="#2a78d6"/><text x="250" y="182" text-anchor="middle" font-weight="700">Matías</text><text x="250" y="200" text-anchor="middle">Motor + API</text><text x="250" y="216" text-anchor="middle">base agrícola · bootstrap</text><text x="250" y="232" text-anchor="middle">endpoints del nodo</text>
+      <rect x="330" y="160" width="140" height="92" rx="8" fill="#fff" stroke="#2a78d6"/><text x="400" y="182" text-anchor="middle" font-weight="700">Kendra</text><text x="400" y="200" text-anchor="middle">Frontend + UX</text><text x="400" y="216" text-anchor="middle">4 módulos · visor</text><text x="400" y="232" text-anchor="middle">Datos de terreno</text>
+      <rect x="530" y="160" width="140" height="92" rx="8" fill="#fff" stroke="#eb6834"/><text x="600" y="182" text-anchor="middle" font-weight="700">Vanesa</text><text x="600" y="200" text-anchor="middle">Experimentos</text><text x="600" y="216" text-anchor="middle">calibración · datos</text><text x="600" y="232" text-anchor="middle">BOM · documentación</text>
+      <rect x="680" y="160" width="140" height="92" rx="8" fill="#fff" stroke="#eb6834"/><text x="750" y="182" text-anchor="middle" font-weight="700">Christian</text><text x="750" y="200" text-anchor="middle">Gemelo digital</text><text x="750" y="216" text-anchor="middle">modelos físicos · ET0</text><text x="750" y="232" text-anchor="middle">escenarios · replay</text>
+      <rect x="830" y="160" width="140" height="92" rx="8" fill="#fff" stroke="#eb6834"/><text x="900" y="182" text-anchor="middle" font-weight="700">Mateo</text><text x="900" y="200" text-anchor="middle">Circuito + firmware</text><text x="900" y="216" text-anchor="middle">Wokwi · ESP32</text><text x="900" y="232" text-anchor="middle">armado · demo</text>
+    </g>
+    <g stroke="#52514e" stroke-width="1.4" fill="none">
+      <path d="M500 68 V84 H250 V100"/><path d="M500 84 H750 V100"/>
+      <path d="M100 140 V160"/><path d="M250 140 V160"/><path d="M400 140 V160"/>
+      <path d="M600 140 V160"/><path d="M750 140 V160"/><path d="M900 140 V160"/>
+    </g>
+    <g stroke="#6250d6" stroke-width="1.4" fill="none" stroke-dasharray="4 3">
+      <path d="M250 252 C250 290 900 290 900 252"/>
+      <path d="M100 252 C100 280 750 280 750 252"/>
+    </g>
+    <text x="500" y="296" text-anchor="middle" font-size="10.5" fill="#4a3aa7">interfaces clave: Matías ↔ Mateo (endpoint y contrato del nodo) · Alvin ↔ Christian (POWER horario ↔ physics.py)</text>
+  </svg>
+  <div class="caption"><strong>Figura 5.</strong> Organización. Las líneas punteadas son los dos puentes técnicos más importantes entre los subequipos.</div>
+  </div>
+
+  <h2>7.1 Reglas de trabajo para todo el equipo</h2>
+  <div class="grid2 small">
+    <ul>
+      <li><strong>Un solo canal</strong> de mensajería, un tablero (GitHub Projects) y un repositorio.</li>
+      <li><strong>Contrato primero:</strong> la API y el JSON del nodo se congelan a las 09:45; los cambios se hacen solo por acuerdo explícito y quedan en el registro de decisiones (<code>docs/decisiones.md</code>).</li>
+      <li><strong>Git:</strong> ramas cortas, PR de menos de 200 líneas revisado por otra persona, integración cada 2 h y <code>main</code> siempre ejecutable.</li>
+      <li><strong>Bloques de tiempo:</strong> si una tarea supera 1.5 veces su estimación, se pide ayuda o se recorta. No se sufre en silencio.</li>
+    </ul>
+    <ul>
+      <li><strong>Definition of Done:</strong> funciona, tiene una prueba mínima, está documentado en el README y lo vio otra persona.</li>
+      <li><strong>Sincronizaciones de 5 minutos</strong> a las 12:00, 17:00, 21:00, 01:00 y 06:00: qué terminé, qué sigue, qué me bloquea.</li>
+      <li><strong>Cuidado del equipo:</strong> 2.5 h de descanso por persona en turnos, comidas a hora fija, agua y pausas de 5 min por hora. Nadie programa funciones nuevas después de la 01:00.</li>
+      <li><strong>Uso de IA:</strong> cada uno anota en <code>docs/uso_ia.md</code> qué herramienta usó y para qué (se declara en el envío).</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ======================= ALVIN ======================= -->
+<div class="person">
+  <div class="ph"><div><div class="nm">Alvin</div><div class="rl">Ing. Sistemas · Líder técnico, coordinación general y datos NASA</div></div><div><span class="chip app">App</span> <span class="chip all">Coordinación</span></div></div>
+  <div class="mission"><strong>Misión:</strong> que los datos NASA fluyan limpios y en caché hasta el motor, que las piezas se integren a tiempo y que el proyecto se envíe completo y verificado.</div>
+  <div class="grid2 small">
+    <div><h4>Responsabilidades</h4><ul>
+      <li>Repositorio, estructura, revisión de PR, integración de punta a punta y despliegue.</li>
+      <li><code>pipeline/power.py</code>: diario e horario, validación, caché y respaldo.</li>
+      <li><code>analytics/indicators.py</code> y los endpoints <code>/indicators</code>, <code>/nasa/status</code> y <code>/map/layers</code>.</li>
+      <li>Adaptadores opcionales SMAP e IMERG (P2), solo si el P0 está sólido.</li>
+      <li>Coordinación: checkpoints, guardián del alcance, README, formulario en inglés, declaración de IA y dirección del pitch.</li>
+    </ul></div>
+    <div><h4>Herramientas</h4><p>Python 3.11, FastAPI, requests, NumPy, pandas, pytest, Git/GitHub, cloudflared o ngrok, Render/Railway (backend), Vercel/Netlify (frontend).</p>
+    <h4>Respaldo</h4><p>Matías (backend). Para el formulario: Kendra.</p>
+    <h4>Depende de / entrega a</h4><p>Recibe <code>physics.py</code> de Christian a las 14:30. Entrega el CSV horario de POWER a Christian a las 11:30, los indicadores a Matías y Kendra a las 15:30 y la URL del túnel o del despliegue a Mateo a las 16:00.</p></div>
+  </div>
+  <h4>Paso a paso</h4>
+  <table class="steps">
+    <tr><td class="h">09:00–09:45</td><td><strong>Kickoff.</strong> Repasa el plan con todos, confirma el alcance del MVP, crea el monorepo <code>rotasat</code> (estructura de 4.9, README esqueleto, <code>.env.example</code>, <code>.gitignore</code>, tablero) y congela con Matías el OpenAPI v0 y, con todos, <code>shared/sensor_reading.schema.json</code> v1.</td></tr>
+    <tr><td class="h">09:45–11:00</td><td><code>fetch_power_daily(lat, lon, start, end)</code>: GET con <code>requests</code> (timeout de 60 s, 3 reintentos con backoff), validación del HTTP y de <code>properties.parameter</code>, fechas YYYYMMDD → ISO, variables alineadas por fecha, −999 → <code>null</code>, unidades y elevación de <code>geometry</code> conservadas. Caché en <code>backend/data/cache/</code> con fecha de descarga; si NASA no responde, reutiliza la última descarga válida y avisa. Descarga 2015-01-01→2025-12-31 y 2026-01-01→2026-11-14, detecta la última observación válida y prueba GWETROOT por separado.</td></tr>
+    <tr><td class="h">11:00–11:30</td><td><code>fetch_power_hourly</code> para el punto piloto (períodos de S1, S2 y S3) → <code>hardware/simulation/forcing/power_hourly_*.csv</code>. <strong>Traspaso a Christian a las 11:30.</strong></td></tr>
+    <tr><td class="h">11:30–12:00</td><td><strong>Prueba A</strong> (<code>tests/test_power.py</code>): llamada real o desde caché, JSON inspeccionable, unidades y fuente presentes.</td></tr>
+    <tr class="rest"><td class="h">12:00–13:15</td><td>Sincronización de 5 min + almuerzo.</td></tr>
+    <tr><td class="h">13:15–14:30</td><td><code>indicators.py</code>: racha seca, anomalía de lluvia (con el caso P̄ = 0), días de calor (umbral del cultivo o P90 rotulado), lluvia &gt; P95, agregación mensual y por campaña, y grilla meses × años para el mapa de calor. Pruebas unitarias con series sintéticas de resultado conocido.</td></tr>
+    <tr><td class="h">14:30–15:30</td><td>Integra <code>physics.py</code> de Christian: ET0 diaria, P<sub>ef</sub> y el insumo para el balance (Matías aplica K<sub>c</sub>). Entrega los indicadores al motor.</td></tr>
+    <tr><td class="h">15:30–17:00</td><td><code>GET /api/indicators</code> y <code>GET /api/nasa/status</code> con procedencia, calidad (días válidos, % faltante) y última fecha. Levanta el túnel o el despliegue provisional y pasa la URL a Mateo y Christian (16:00).</td></tr>
+    <tr class="cp"><td class="h">17:00–17:30</td><td><strong>Checkpoint 1</strong> (lo dirige): demo interna extremo a extremo y decisión go/no-go de los extras.</td></tr>
+    <tr><td class="h">17:30–19:00</td><td><code>GET /api/map/layers</code>: revisa en el GetCapabilities de GIBS qué capas existen (vegetación, precipitación, humedad) y publica solo identificadores verificados; para el resto, estado «regional» o «no disponible».</td></tr>
+    <tr><td class="h">19:00–21:00</td><td>Despliegue estable del backend (caché incluida) y del frontend con Kendra; CORS y variables. A las 19:00 decide si vale la pena intentar SMAP o IMERG (P2) o si se declara la limitación.</td></tr>
+    <tr class="cp"><td class="h">21:00–21:30</td><td><strong>Checkpoint 2</strong> (lo dirige) y cena: se congela el alcance.</td></tr>
+    <tr><td class="h">21:30–01:00</td><td>Integración y revisión de PR; README (instalación, fuentes, limitaciones, cómo reproducir); catálogo de fuentes; borrador del formulario en inglés (resumen, descripción, datos NASA, otros datos, uso de IA).</td></tr>
+    <tr><td class="h">01:00–03:30</td><td><strong>De guardia:</strong> formulario completo, guion del pitch y contenido de las 7 diapositivas, con los insumos de Vanesa, Christian y Kendra.</td></tr>
+    <tr class="rest"><td class="h">03:30–06:00</td><td>Descanso (turno B).</td></tr>
+    <tr><td class="h">06:00–07:00</td><td>QA con ojos nuevos: recorre la app en un teléfono y revisa los enlaces en una ventana privada; lista de arreglos críticos.</td></tr>
+    <tr><td class="h">07:00–08:00</td><td>Dirige el ensayo del pitch; graba o edita el video de 30 s con Kendra; verifica los enlaces finales.</td></tr>
+    <tr class="cp"><td class="h">08:00–08:30</td><td><strong>Envía el formulario</strong> y confirma el estado «enviado». Colchón hasta las 09:00.</td></tr>
+  </table>
+  <div class="grid2 small">
+    <div class="callout ok"><span class="h">Hecho cuando…</span>POWER real está en caché con metadatos; los indicadores tienen unidades y fuente; la prueba A pasa; la app es pública o reproducible; el formulario está enviado.</div>
+    <div class="callout warn"><span class="h">Plan B</span>Si POWER no responde, se usa la caché. Si el despliegue falla, se ejecuta en local con túnel y se respalda con video. Si GIBS no está claro, todas las capas quedan como «Información regional».</div>
+  </div>
+</div>
+
+<!-- ======================= MATÍAS ======================= -->
+<div class="person">
+  <div class="ph"><div><div class="nm">Matías</div><div class="rl">Ing. Sistemas · Motor de recomendación, base agrícola y API</div></div><div><span class="chip app">App</span></div></div>
+  <div class="mission"><strong>Misión:</strong> construir el cerebro explicable de RotaSat (cultivos → reglas → estrategias → puntajes → incertidumbre → explicación) y exponerlo con una API estable, incluido el puente con el nodo de campo.</div>
+  <div class="grid2 small">
+    <div><h4>Responsabilidades</h4><ul>
+      <li><code>app/schemas.py</code> (Pydantic), <code>app/main.py</code> (FastAPI, CORS, <code>/docs</code>) y mocks desde la primera hora.</li>
+      <li>Los tres JSON de referencia con fuentes y <code>evidence_status</code>, y el parser de nombres de cultivos.</li>
+      <li><code>engine/rules.py</code>, <code>engine/recommendation.py</code> y <code>analytics/uncertainty.py</code>.</li>
+      <li>Endpoints <code>/rotations/compare</code>, <code>/context</code>, <code>/sources</code> y <code>/field-node/*</code> (SQLite).</li>
+      <li>Pruebas B, C, D y E, y la prueba de contrato del nodo.</li>
+    </ul></div>
+    <div><h4>Herramientas</h4><p>FastAPI, Pydantic v2, NumPy, pandas, sqlite3, jsonschema, pytest.</p>
+    <h4>Respaldo</h4><p>Alvin.</p>
+    <h4>Depende de / entrega a</h4><p>Recibe los indicadores y la ET0 de Alvin (15:30). Entrega los mocks a Kendra y Mateo (10:30), el compare real a Kendra (16:00 preliminar, 17:00 estable) y los endpoints reales del nodo a Kendra, Christian y Mateo (21:00).</p></div>
+  </div>
+  <h4>Paso a paso</h4>
+  <table class="steps">
+    <tr><td class="h">09:00–09:45</td><td><strong>Kickoff.</strong> Acuerda el OpenAPI v0 con Alvin y Kendra; acuerda con Vanesa, Mateo y Christian el contrato del nodo (sección 9) y lo codifica como modelos Pydantic.</td></tr>
+    <tr><td class="h">09:45–10:30</td><td><code>schemas.py</code> + <code>main.py</code> con <strong>mocks de todos los endpoints</strong>, incluidos los del nodo (POST devuelve 201). <strong>Traspaso a Kendra y Mateo a las 10:30.</strong></td></tr>
+    <tr><td class="h">10:30–12:00</td><td><code>crops.json</code>: soya, sorgo, maíz, girasol, trigo y chía (no prioritaria); barbecho y cobertura solo con parámetros. Campos: familia, campañas candidatas, ciclo, K<sub>c</sub> ini/med/fin (FAO-56, Tabla 12, citando la tabla), profundidad de raíz (FAO-56), clase de residuo, tolerancia a sequía (EcoCrop), fija N (sí/no, sin crédito fijo), umbral de calor (o <code>null</code>), sinónimos y los 5 campos de procedencia. Sin fuente → <code>null</code> y explicación.</td></tr>
+    <tr class="rest"><td class="h">12:00–13:15</td><td>Sincronización + almuerzo.</td></tr>
+    <tr><td class="h">13:15–14:00</td><td><code>rotation_rules.json</code> (reglas 1–7 con explicación y fundamento) y <code>agricultural_context.json</code> (producción 2023 <strong>verificada contra el PDF</strong>, prácticas, riesgos, bibliografía). Parser de sinónimos con pruebas.</td></tr>
+    <tr><td class="h">14:00–17:00</td><td><code>rules.py</code> (filtros de factibilidad con motivo) y <code>recommendation.py</code>: candidatos de 12 meses, S<sub>agua</sub>, S<sub>suelo</sub> y S<sub>riesgo</sub> según 3.6, MCDA con pesos, selección E0–E3 y política de faltantes. <code>POST /api/rotations/compare</code> real (todavía sin incertidumbre) para Kendra a las 16:00.</td></tr>
+    <tr class="cp"><td class="h">17:00–17:30</td><td><strong>Checkpoint 1:</strong> muestra ≥ 3 estrategias calculadas con datos POWER reales.</td></tr>
+    <tr><td class="h">17:30–19:30</td><td><code>uncertainty.py</code>: bootstrap de 200 iteraciones por años completos, <code>seed = 42</code>, P10/P50/P90, estabilidad del ranking y P(A &gt; B). Caché por hash de la entrada para responder en menos de 3 s.</td></tr>
+    <tr><td class="h">19:30–21:00</td><td>Explicaciones generadas desde valores y reglas: <code>reasons</code>, <code>tradeoffs</code>, <code>evidence[]</code>, <code>missing_information[]</code>, <code>agronomist_questions[]</code>, <code>alerts</code> con fecha, <code>limitations</code>, <code>recommended_strategy_id</code> y política de confianza. <strong>Endpoints reales del nodo:</strong> el POST valida el esquema (422 si falla), agrega <code>received_at</code> y guarda en SQLite; el GET filtra por <code>node_id</code>, <code>source</code> y <code>since</code>; además, <code>/status</code>.</td></tr>
+    <tr class="cp"><td class="h">21:00–21:30</td><td><strong>Checkpoint 2</strong> + cena.</td></tr>
+    <tr><td class="h">21:30–01:00</td><td>Pruebas <strong>B</strong> (actual + ≥ 2 alternativas con diferencias explicadas), <strong>C</strong> (subir el peso del agua recalcula de forma reproducible y el orden puede cambiar sin forzarlo), <strong>D</strong> (sin suelo, NDVI ni SMAP la app sigue y declara los vacíos), <strong>E</strong> (rangos del bootstrap) y prueba de contrato del nodo. <code>/context</code> y <code>/sources</code> completos.</td></tr>
+    <tr class="rest"><td class="h">01:00–03:30</td><td>Descanso (turno A).</td></tr>
+    <tr><td class="h">03:30–06:00</td><td><strong>De guardia:</strong> corrige los errores de la lista de QA de Alvin, ajusta la integración con «Datos de terreno» y revisa el rendimiento.</td></tr>
+    <tr><td class="h">06:00–08:00</td><td>QA y preparación de las respuestas técnicas del jurado sobre el motor (por qué no ML, cómo funcionan los pesos y la incertidumbre).</td></tr>
+  </table>
+  <div class="grid2 small">
+    <div class="callout ok"><span class="h">Hecho cuando…</span><code>/rotations/compare</code> devuelve E0–E3 con los 5 bloques y la incertidumbre en menos de 3 s; las pruebas B a E pasan; cada dato agrícola tiene fuente o <code>null</code>; el nodo guarda y sirve lecturas validadas.</div>
+    <div class="callout warn"><span class="h">Plan B</span>Si el bootstrap es lento, se precalcula para el punto piloto. Si falta un criterio, se aplica el puntaje parcial declarado. Si hay menos de 3 opciones defendibles, la app explica por qué y no inventa.</div>
+  </div>
+</div>
+
+<!-- ======================= KENDRA ======================= -->
+<div class="person">
+  <div class="ph"><div><div class="nm">Kendra</div><div class="rl">Ing. Sistemas · Frontend, experiencia de usuario y visualización</div></div><div><span class="chip app">App</span></div></div>
+  <div class="mission"><strong>Misión:</strong> que un agricultor sin formación técnica llegue a una recomendación en menos de 3 minutos desde su teléfono, entienda por qué y pueda ver de dónde salen los datos.</div>
+  <div class="grid2 small">
+    <div><h4>Responsabilidades</h4><ul>
+      <li>Proyecto React + Vite + TypeScript + Tailwind; <code>services/api.ts</code> tipado.</li>
+      <li>Inicio, entrada conversacional y los 4 módulos (sección 4.5).</li>
+      <li>Visor geoespacial (Leaflet + 5 capas isométricas en CSS) y «Datos de terreno».</li>
+      <li>Accesibilidad, diseño mobile-first, español sencillo y prueba F.</li>
+      <li>Capturas y diseño visual de las diapositivas.</li>
+    </ul></div>
+    <div><h4>Herramientas</h4><p>Node 20+, Vite, React 18, TypeScript, Tailwind, React Router, Recharts, Leaflet / react-leaflet.</p>
+    <h4>Respaldo</h4><p>Alvin.</p>
+    <h4>Depende de / entrega a</h4><p>Recibe los mocks de Matías (10:30), el compare real (16:00–17:00), los indicadores de Alvin (15:30) y los datos del nodo (replay desde las 19:00). Entrega capturas a Alvin (06:00).</p></div>
+  </div>
+  <h4>Paso a paso</h4>
+  <table class="steps">
+    <tr><td class="h">09:00–09:45</td><td><strong>Kickoff.</strong> Bocetos en papel de Inicio, entrada y los 4 módulos (10 min); acuerda el OpenAPI v0.</td></tr>
+    <tr><td class="h">09:45–10:30</td><td>Scaffold (Vite react-ts + Tailwind + Router + Recharts + Leaflet), layout móvil con navegación inferior y <code>api.ts</code> tipado contra fixtures locales hasta que lleguen los mocks.</td></tr>
+    <tr><td class="h">10:30–12:00</td><td><code>Home.tsx</code> en el orden de 4.3 y entrada de 5 preguntas con chips, texto libre, edición y reconocimiento de sinónimos.</td></tr>
+    <tr class="rest"><td class="h">12:00–13:15</td><td>Sincronización + almuerzo.</td></tr>
+    <tr><td class="h">13:15–17:00</td><td><code>Compare.tsx</code>: tarjetas con secuencia, barras horizontales con leyenda («puntaje relativo, no probabilidad»), ventaja, desventaja, riesgo principal y botón «¿Por qué esta opción?». <code>Tradeoffs.tsx</code>: frases primero y radar plegable. Conexión al compare real a las 16:00.</td></tr>
+    <tr class="cp"><td class="h">17:00–17:30</td><td><strong>Checkpoint 1:</strong> el recorrido entrada → comparación funciona con datos reales.</td></tr>
+    <tr><td class="h">17:30–21:00</td><td><code>Risks.tsx</code>: mapa de calor de meses × años con celdas tocables (período, valor, unidad, fuente) y leyenda. <code>Uncertainty.tsx</code>: barras P10–P90 con la mediana y listas de NASA / agricultor / faltantes / supuestos / agrónomo. Deslizadores de pesos que suman 1 y recalculan.</td></tr>
+    <tr class="cp"><td class="h">21:00–21:30</td><td><strong>Checkpoint 2:</strong> los 4 módulos funcionan + cena.</td></tr>
+    <tr><td class="h">21:30–01:00</td><td><code>GeoViewer.tsx</code>: Leaflet (punto piloto y del agricultor), pila isométrica de 5 capas con selección individual y panel con fuente, fecha, escala, leyenda e interpretación; estados «Información regional» y «Datos no disponibles». <code>FieldData.tsx</code> (4.7) con la insignia de origen siempre visible.</td></tr>
+    <tr class="rest"><td class="h">01:00–03:30</td><td>Descanso (turno A).</td></tr>
+    <tr><td class="h">03:30–06:00</td><td><strong>De guardia:</strong> pulido móvil (botones grandes, 16 px o más, contraste, foco, textos), <strong>prueba F</strong> con alguien que no construyó la app (por ejemplo, Mateo o Vanesa), build y despliegue del frontend, capturas para las diapositivas.</td></tr>
+    <tr><td class="h">06:00–08:00</td><td>QA; diseño de las 7 diapositivas y grabación de la pantalla para el video con Alvin.</td></tr>
+  </table>
+  <div class="grid2 small">
+    <div class="callout ok"><span class="h">Hecho cuando…</span>El flujo completo dura menos de 3 min en un teléfono, sin errores en consola; no hay color sin texto; cada número tiene «¿Qué significa?»; la insignia de origen aparece en «Datos de terreno».</div>
+    <div class="callout warn"><span class="h">Plan B</span>Si el visor se atrasa: mapa Leaflet con una lista de capas, sin la pila isométrica. Si la API cae durante la demo: fixtures rotulados «demo». El radar es opcional; las frases no.</div>
+  </div>
+</div>
+
+<!-- ======================= VANESA ======================= -->
+<div class="person hwp">
+  <div class="ph"><div><div class="nm">Vanesa</div><div class="rl">Ing. Industrial · Líder de prototipo y simulación: experimentos, calibración, datos y calidad</div></div><div><span class="chip hw">Prototipo</span></div></div>
+  <div class="mission"><strong>Misión:</strong> que el prototipo y la simulación respondan a una pregunta clara, se midan con un método defendible (diseño de experimentos y calibración) y queden documentados con datos de calidad y listos para el pitch.</div>
+  <div class="grid2 small">
+    <div><h4>Responsabilidades</h4><ul>
+      <li>Liderar el subequipo: alcance, tiempos internos y go/no-go del físico junto con Mateo.</li>
+      <li>Diccionario de datos de los dos grupos (campo, unidad, rango, resolución, fuente, banderas).</li>
+      <li>BOM, inventario, compras y presupuesto.</li>
+      <li>Diseño de escenarios (con Christian) y protocolo experimental (6.5).</li>
+      <li>Protocolo y ejecución de la calibración (con Mateo).</li>
+      <li>Análisis de datos (sim vs físico; BME680 vs DHT11; LDR vs luxómetro), checklist de calidad, informe del prototipo, fotos y video.</li>
+    </ul></div>
+    <div><h4>Herramientas</h4><p>Hoja de cálculo, Python/pandas (con Christian), balanza, microondas, hoja de registro, cámara del celular.</p>
+    <h4>Respaldo</h4><p>Christian.</p>
+    <h4>Depende de / entrega a</h4><p>Entrega el diccionario de datos a todos (09:45), el protocolo de escenarios a Christian (12:00), las constantes de calibración a Mateo (19:30) y el análisis, las fotos y la diapositiva 6 a Alvin y Kendra (03:30).</p></div>
+  </div>
+  <h4>Paso a paso</h4>
+  <table class="steps">
+    <tr><td class="h">09:00–09:45</td><td><strong>Kickoff.</strong> Con Christian y Mateo confirma el alcance (3 macetas, 5 tipos de sensores, 3 etapas). Redacta el <strong>diccionario de datos</strong> del contrato v1 (internos y externos) y lo congela con Matías.</td></tr>
+    <tr><td class="h">09:45–11:00</td><td>Inventario contra el BOM (6.2): qué hay, qué falta y quién lo consigue. Compras si hay tiendas abiertas, presupuesto y checklist de herramientas (balanza, microondas, jeringa).</td></tr>
+    <tr><td class="h">11:00–12:00</td><td>Diseño de experimentos: con Christian define S1–S6 (parámetros, salida esperada, criterio de aceptación). Escribe el protocolo de calibración y la hoja de registro (<code>registro.csv</code>) y planifica la demo de riego (volumen V, momento, responsable).</td></tr>
+    <tr class="rest"><td class="h">12:00–13:15</td><td>Sincronización + almuerzo.</td></tr>
+    <tr><td class="h">13:15–15:00</td><td>Prepara el sustrato y las macetas: homogeneiza, pesa, llena con la misma compactación, mide la densidad aparente (ρ<sub>b</sub>) con un recipiente de volumen conocido y fija la humedad inicial de A, B y C agregando masas de agua conocidas.</td></tr>
+    <tr><td class="h">15:00–17:00</td><td>Calibración, puntos 1 (seco) y 2 (medio), de los 3 sensores capacitivos: lecturas promedio, muestras, pesadas y secado en microondas; todo al registro.</td></tr>
+    <tr class="cp"><td class="h">17:00–17:30</td><td><strong>Checkpoint 1:</strong> presenta el estado de la calibración y, con Mateo, el go/no-go del físico.</td></tr>
+    <tr><td class="h">17:30–19:30</td><td>Punto 3 (saturado) y ajuste de la curva por sensor con Christian (<code>fit.py</code>); prueba de desfase de los DS18B20. <strong>Entrega de constantes a Mateo a las 19:30</strong>, con el error de cada ajuste.</td></tr>
+    <tr><td class="h">19:30–21:00</td><td>Control de calidad de las exportaciones simuladas (¿cumplen el diccionario? ¿rangos plausibles? ¿banderas en S5?). Prepara los gráficos de S2 y S3 para el pitch.</td></tr>
+    <tr class="cp"><td class="h">21:00–21:30</td><td><strong>Checkpoint 2</strong> + cena.</td></tr>
+    <tr><td class="h">21:30–01:00</td><td>Primera prueba física de riego (S4) con Mateo y Christian. Análisis inicial: BME680 vs DHT11 (diferencia media, DE, límites de acuerdo) y LDR vs luxómetro. Redacta <code>hardware/docs/README.md</code> (qué es, qué mide, cómo se calibró, error, limitaciones) y fotografía el armado.</td></tr>
+    <tr><td class="h">01:00–03:30</td><td><strong>De guardia:</strong> revisa el registro nocturno del nodo, actualiza el análisis, redacta la diapositiva 6 («Confianza y verdad local») y la parte de hardware del formulario (con Alvin).</td></tr>
+    <tr class="rest"><td class="h">03:30–06:00</td><td>Descanso (turno B).</td></tr>
+    <tr><td class="h">06:00–07:00</td><td>QA del prototipo: todo conectado, power bank cargado, jeringa con el volumen listo, guion de la demo.</td></tr>
+    <tr><td class="h">07:00–08:00</td><td>Ensayo: presenta el prototipo en 30–40 s. Video del riego de la zona A.</td></tr>
+  </table>
+  <div class="grid2 small">
+    <div class="callout ok"><span class="h">Hecho cuando…</span>El diccionario y el protocolo están publicados; los 3 sensores están calibrados con error documentado; el análisis y los gráficos están listos; el informe del prototipo está en el repo.</div>
+    <div class="callout warn"><span class="h">Plan B</span>Sin microondas o sin tiempo: calibración relativa de 2 puntos (aire y agua), rotulada como tal. Sin físico: el análisis se hace sobre Wokwi y la simulación, declarándolo.</div>
+  </div>
+</div>
+
+<!-- ======================= CHRISTIAN ======================= -->
+<div class="person hwp">
+  <div class="ph"><div><div class="nm">Christian</div><div class="rl">Ing. Electromecánica · Simulación física (gemelo digital), modelos y ET0</div></div><div><span class="chip hw">Prototipo</span></div></div>
+  <div class="mission"><strong>Misión:</strong> construir un gemelo digital con física explícita que prediga lo que medirá el nodo, alimente la app antes de que exista el hardware y se recalibre con los datos reales.</div>
+  <div class="grid2 small">
+    <div><h4>Responsabilidades</h4><ul>
+      <li><code>hardware/simulation/</code> completo: forzante, modelos de agua, calor y luz, sensores, escenarios, exportación, replay y ajuste.</li>
+      <li><code>backend/analytics/physics.py</code>: ET0 FAO-56 Penman–Monteith, compartido con la app.</li>
+      <li>Cálculos eléctricos: divisor del LDR (S6), pull-ups y consumo.</li>
+      <li>Gráficos «sim vs físico» para el pitch y documentación de los modelos.</li>
+    </ul></div>
+    <div><h4>Herramientas</h4><p>Python 3.11, NumPy, pandas, SciPy, matplotlib, jsonschema, Jupyter, requests (para el replay).</p>
+    <h4>Respaldo</h4><p>Mateo (y Vanesa para el análisis).</p>
+    <h4>Depende de / entrega a</h4><p>Recibe el CSV horario de POWER de Alvin (11:30) y la URL de la API (16:00). Entrega <code>physics.py</code> a Alvin (14:30), R<sub>f</sub> a Mateo (16:00) y el replay a la app (19:00).</p></div>
+  </div>
+  <h4>Paso a paso</h4>
+  <table class="steps">
+    <tr><td class="h">09:00–09:45</td><td><strong>Kickoff.</strong> Contrato v1, lista de escenarios y supuestos del modelo.</td></tr>
+    <tr><td class="h">09:45–11:30</td><td>Esqueleto de <code>hardware/simulation/</code> (<code>config.yaml</code>, semilla, Δt). <code>soil_water.py</code> (balde por zona, riego de volumen conocido, secado exponencial, drenaje) y <code>soil_heat.py</code> (onda amortiguada). Pruebas: el balance de masa cierra. Mientras tanto trabaja con un forzante sintético rotulado.</td></tr>
+    <tr><td class="h">11:30–12:00</td><td><code>forcing.py</code>: integra el CSV horario de POWER de Alvin y, si falta una variable, la desagrega de la serie diaria.</td></tr>
+    <tr class="rest"><td class="h">12:00–13:15</td><td>Sincronización + almuerzo.</td></tr>
+    <tr><td class="h">13:15–14:30</td><td><code>physics.py</code>: ET0 FAO-56 PM diaria (presión por elevación, R<sub>n</sub> desde R<sub>s</sub>, e<sub>s</sub>/e<sub>a</sub>, Δ, γ), probada contra el ejemplo de cálculo del capítulo 4 de FAO-56. <strong>Traspaso a Alvin a las 14:30.</strong></td></tr>
+    <tr><td class="h">14:30–17:00</td><td><code>light.py</code> + escenario S6, con la recomendación de R<sub>f</sub> a Mateo a las 16:00. <code>sensors.py</code> (ruido, ADC, sesgos por unidad, fallas). <code>export.py</code> (CSV de internos y externos + <code>readings.jsonl</code> validado + <code>metadata.json</code>). S1 y S4 funcionando.</td></tr>
+    <tr class="cp"><td class="h">17:00–17:30</td><td><strong>Checkpoint 1:</strong> la simulación exporta un JSON válido y R<sub>f</sub> está decidido.</td></tr>
+    <tr><td class="h">17:30–19:30</td><td>Con Vanesa, ajuste de las curvas de calibración (<code>fit.py</code>). <code>replay.py</code>: POST a <code>/api/field-node/readings</code> con <code>source = "simulated"</code> y un factor de velocidad.</td></tr>
+    <tr><td class="h">19:30–21:00</td><td>Escenarios S2 (sequía), S3 (exceso de lluvia) y S5 (fallas); figuras en matplotlib para el pitch (curvas por zona y comparación con la lluvia de POWER).</td></tr>
+    <tr class="cp"><td class="h">21:00–21:30</td><td><strong>Checkpoint 2</strong> + cena.</td></tr>
+    <tr><td class="h">21:30–01:00</td><td>Apoya a Mateo con la verificación del cableado y la primera prueba física. Con las primeras horas de datos, ajusta k por zona; gráfico «sim vs físico»; <code>hardware/simulation/README.md</code> con ecuaciones, supuestos y cómo ejecutar.</td></tr>
+    <tr><td class="h">01:00–03:30</td><td><strong>De guardia:</strong> monitorea el nodo y el replay, cierra la documentación y genera las figuras finales.</td></tr>
+    <tr class="rest"><td class="h">03:30–06:00</td><td>Descanso (turno B).</td></tr>
+    <tr><td class="h">06:00–08:00</td><td>QA; deja una laptop con el replay listo como plan B de la demo; prepara las respuestas del jurado sobre la física y la simulación.</td></tr>
+  </table>
+  <div class="grid2 small">
+    <div class="callout ok"><span class="h">Hecho cuando…</span>S1–S6 se ejecutan con un solo comando y semilla fija; las exportaciones validan contra el esquema; la ET0 reproduce el ejemplo de FAO; el replay se ve en la app como «Simulado»; existe el gráfico sim vs físico.</div>
+    <div class="callout warn"><span class="h">Plan B</span>Si no hay POWER horario, se desagrega el diario. Si el modelo de calor se complica, se usa la solución analítica. Si no hay datos físicos, se comparan Wokwi y la simulación.</div>
+  </div>
+</div>
+
+<!-- ======================= MATEO ======================= -->
+<div class="person hwp">
+  <div class="ph"><div><div class="nm">Mateo</div><div class="rl">Ing. Electromecánica · Circuito, firmware ESP32, Wokwi y armado físico</div></div><div><span class="chip hw">Prototipo</span></div></div>
+  <div class="mission"><strong>Misión:</strong> que un mismo firmware funcione primero en Wokwi y después en la placa real, leyendo bien los 5 tipos de sensores y enviando el JSON v1 a la API, y que la demo en vivo salga bien.</div>
+  <div class="grid2 small">
+    <div><h4>Responsabilidades</h4><ul>
+      <li>Prueba individual de cada sensor y registro de direcciones (DS18B20, I2C).</li>
+      <li>Proyecto Wokwi (<code>diagram.json</code>) y firmware modular con <code>SIMULATION</code>.</li>
+      <li>Red: Wi-Fi, NTP, POST con reintentos y buffer.</li>
+      <li>Armado de las macetas, sellado, cableado, carga de la calibración y estabilidad nocturna.</li>
+      <li>Diagrama de cableado y video de la demo.</li>
+    </ul></div>
+    <div><h4>Herramientas</h4><p>Arduino IDE 2 o PlatformIO, Wokwi, librerías OneWire, DallasTemperature, Adafruit BME680, DHT sensor library y ArduinoJson; multímetro y soldador.</p>
+    <h4>Respaldo</h4><p>Christian.</p>
+    <h4>Depende de / entrega a</h4><p>Recibe los mocks de Matías (10:30), R<sub>f</sub> de Christian (16:00), la URL de Alvin (16:00) y la calibración de Vanesa (19:30). Entrega el nodo enviando datos (21:00) y el video (06:00).</p></div>
+  </div>
+  <h4>Paso a paso</h4>
+  <table class="steps">
+    <tr><td class="h">09:00–09:45</td><td><strong>Kickoff.</strong> Congela el pinout (6.3) y el contrato v1.</td></tr>
+    <tr><td class="h">09:45–12:00</td><td><strong>Prueba individual por serie</strong> de cada sensor con el ESP32 real: valor raw de humedad al aire y en agua, direcciones de los DS18B20 (rotular T1–T3), escaneo I2C del BME680 (0x76/0x77), DHT11 y LDR; todo al registro. En paralelo arma el proyecto Wokwi (ESP32 + 3 potenciómetros + 3 DS18B20 + fotorresistencia + DHT22).</td></tr>
+    <tr class="rest"><td class="h">12:00–13:15</td><td>Sincronización + almuerzo.</td></tr>
+    <tr><td class="h">13:15–15:00</td><td>Firmware v1: <code>config.h</code>, <code>sensors.cpp</code> (con stubs para <code>SIMULATION</code>), <code>calibration.h</code> (valores provisionales) y <code>payload.cpp</code> (contrato v1). Lo ejecuta en Wokwi y valida el JSON de la salida serie con el validador de Christian.</td></tr>
+    <tr><td class="h">15:00–17:00</td><td><code>net.cpp</code>: Wi-Fi, NTP, POST con 3 reintentos y buffer circular. Prueba desde Wokwi hacia la URL pública de Alvin hasta recibir 201. En paralelo cablea en la protoboard los sensores físicos según el pinout.</td></tr>
+    <tr class="cp"><td class="h">17:00–17:30</td><td><strong>Checkpoint 1:</strong> JSON de Wokwi válido y go/no-go del físico (¿todos los sensores leen por serie?).</td></tr>
+    <tr><td class="h">17:30–19:30</td><td>Armado físico: sella los capacitivos, inserta los sensores en las macetas (con Vanesa), monta los externos con la R<sub>f</sub> elegida y carga el firmware con <code>SIMULATION = 0</code>; verificación por serie.</td></tr>
+    <tr><td class="h">19:30–21:00</td><td>Carga las constantes de calibración de Vanesa y envía por Wi-Fi a la API; verifica la insignia «Físico» en la app con Kendra y Matías.</td></tr>
+    <tr class="cp"><td class="h">21:00–21:30</td><td><strong>Checkpoint 2:</strong> nodo enviando + cena.</td></tr>
+    <tr><td class="h">21:30–01:00</td><td>Estabilidad: corrige los −127, NaN y saturaciones; intervalo de 1 min para la demo y de 10 min para la noche. Arma el set de la demo (bandeja, etiquetas A/B/C, jeringa con volumen marcado). Primera prueba de riego con Vanesa y Christian.</td></tr>
+    <tr class="rest"><td class="h">01:00–03:30</td><td>Descanso (turno A). El nodo queda registrando.</td></tr>
+    <tr><td class="h">03:30–06:00</td><td><strong>De guardia:</strong> revisa los registros del nodo, cambia el power bank si hace falta, graba el clip del riego de la zona A con la pestaña «Datos de terreno» y hace el diagrama de cableado (Fritzing o captura de Wokwi).</td></tr>
+    <tr><td class="h">06:00–08:00</td><td>QA del hardware y ensayo de la demo en vivo; tiene listo el plan B (Wokwi + replay).</td></tr>
+  </table>
+  <div class="grid2 small">
+    <div class="callout ok"><span class="h">Hecho cuando…</span>El mismo firmware compila en Wokwi y en la placa; el JSON valida; el nodo físico envía de forma continua; la demo de riego funciona y el diagrama está en el repo.</div>
+    <div class="callout warn"><span class="h">Plan B</span>Si el físico falla: Wokwi y el replay de Python alimentan la app rotulados «Simulado», y el físico se muestra en fotos. Si falla el Wi-Fi: hotspot del celular, o registro por serie y replay.</div>
+  </div>
+</div>
+
+<div class="pb">
+  <h2>7.2 Matriz de responsabilidades (RACI)</h2>
+  <p class="small"><strong>A</strong> = dueño (responde por el resultado) · <strong>R</strong> = ejecuta · <strong>C</strong> = consultado · <strong>I</strong> = informado.</p>
+  <table class="t compact raci">
+    <thead><tr><th style="width:40%">Tarea</th><th class="c">Alvin</th><th class="c">Matías</th><th class="c">Kendra</th><th class="c">Vanesa</th><th class="c">Christian</th><th class="c">Mateo</th></tr></thead>
+    <tbody>
+      <tr class="sub"><td colspan="7">Producto y coordinación</td></tr>
+      <tr><td>Alcance, checkpoints, registro de decisiones</td><td class="c">A/R</td><td class="c">C</td><td class="c">C</td><td class="c">C</td><td class="c">C</td><td class="c">C</td></tr>
+      <tr><td>Contratos (OpenAPI v0 y JSON del nodo v1)</td><td class="c">A</td><td class="c">R</td><td class="c">C</td><td class="c">R (diccionario)</td><td class="c">C</td><td class="c">R</td></tr>
+      <tr class="sub"><td colspan="7">App</td></tr>
+      <tr><td>Ingesta NASA POWER, caché, <code>/nasa/status</code></td><td class="c">A/R</td><td class="c">I</td><td class="c">I</td><td class="c">I</td><td class="c">C</td><td class="c">I</td></tr>
+      <tr><td>Indicadores y <code>/indicators</code></td><td class="c">A/R</td><td class="c">C</td><td class="c">C</td><td class="c">I</td><td class="c">C</td><td class="c">I</td></tr>
+      <tr><td>ET0 FAO-56 (<code>physics.py</code>)</td><td class="c">C</td><td class="c">I</td><td class="c">I</td><td class="c">I</td><td class="c">A/R</td><td class="c">I</td></tr>
+      <tr><td>Base agrícola con fuentes (3 JSON)</td><td class="c">C</td><td class="c">A/R</td><td class="c">I</td><td class="c">C</td><td class="c">I</td><td class="c">I</td></tr>
+      <tr><td>Motor, MCDA, explicaciones, <code>/rotations/compare</code></td><td class="c">C</td><td class="c">A/R</td><td class="c">C</td><td class="c">I</td><td class="c">I</td><td class="c">I</td></tr>
+      <tr><td>Bootstrap de incertidumbre</td><td class="c">C</td><td class="c">A/R</td><td class="c">C</td><td class="c">C</td><td class="c">C</td><td class="c">I</td></tr>
+      <tr><td>Interfaz: Inicio, entrada y 4 módulos</td><td class="c">C</td><td class="c">C</td><td class="c">A/R</td><td class="c">I</td><td class="c">I</td><td class="c">I</td></tr>
+      <tr><td>Visor geoespacial y <code>/map/layers</code></td><td class="c">R (capas)</td><td class="c">I</td><td class="c">A/R</td><td class="c">I</td><td class="c">I</td><td class="c">I</td></tr>
+      <tr><td>Despliegue y túnel</td><td class="c">A/R</td><td class="c">R</td><td class="c">R (frontend)</td><td class="c">I</td><td class="c">I</td><td class="c">C</td></tr>
+      <tr class="sub"><td colspan="7">Nodo de campo</td></tr>
+      <tr><td>Gemelo digital, escenarios, exportación, replay</td><td class="c">I</td><td class="c">C</td><td class="c">I</td><td class="c">C</td><td class="c">A/R</td><td class="c">C</td></tr>
+      <tr><td>Wokwi y firmware</td><td class="c">I</td><td class="c">C</td><td class="c">I</td><td class="c">I</td><td class="c">C</td><td class="c">A/R</td></tr>
+      <tr><td>BOM, compras, inventario</td><td class="c">I</td><td class="c">I</td><td class="c">I</td><td class="c">A/R</td><td class="c">C</td><td class="c">R</td></tr>
+      <tr><td>Armado físico y cableado</td><td class="c">I</td><td class="c">I</td><td class="c">I</td><td class="c">R</td><td class="c">C</td><td class="c">A/R</td></tr>
+      <tr><td>Calibración y protocolo experimental</td><td class="c">I</td><td class="c">I</td><td class="c">I</td><td class="c">A/R</td><td class="c">R (ajuste)</td><td class="c">R</td></tr>
+      <tr><td>Endpoints <code>/field-node/*</code></td><td class="c">C</td><td class="c">A/R</td><td class="c">C</td><td class="c">C</td><td class="c">C</td><td class="c">C</td></tr>
+      <tr><td>Pestaña «Datos de terreno»</td><td class="c">I</td><td class="c">C</td><td class="c">A/R</td><td class="c">C</td><td class="c">C</td><td class="c">C</td></tr>
+      <tr><td>Análisis sim vs físico, informe del prototipo</td><td class="c">I</td><td class="c">I</td><td class="c">I</td><td class="c">A/R</td><td class="c">R</td><td class="c">C</td></tr>
+      <tr class="sub"><td colspan="7">Entrega</td></tr>
+      <tr><td>Pruebas A–G (app) y H–N (nodo)</td><td class="c">A (A, G)</td><td class="c">A (B–E)</td><td class="c">A (F)</td><td class="c">A (K, M)</td><td class="c">A (H, N)</td><td class="c">A (I, J, L)</td></tr>
+      <tr><td>README y reproducibilidad</td><td class="c">A/R</td><td class="c">R</td><td class="c">R</td><td class="c">R</td><td class="c">R</td><td class="c">R</td></tr>
+      <tr><td>Diapositivas y video</td><td class="c">A</td><td class="c">C</td><td class="c">R</td><td class="c">R</td><td class="c">C</td><td class="c">R</td></tr>
+      <tr><td>Formulario en inglés y declaración de IA</td><td class="c">A/R</td><td class="c">C</td><td class="c">C</td><td class="c">R (hardware)</td><td class="c">C</td><td class="c">C</td></tr>
+    </tbody>
+  </table>
+
+  <h2>7.3 Respaldos</h2>
+  <table class="t compact">
+    <thead><tr><th>Si falta…</th><th>lo cubre…</th><th>porque…</th></tr></thead>
+    <tbody>
+      <tr><td>Alvin (datos, coordinación)</td><td>Matías (backend) · Kendra (formulario)</td><td>Matías conoce la API y la caché; Kendra conoce el producto completo</td></tr>
+      <tr><td>Matías (motor, API)</td><td>Alvin</td><td>Comparte el backend y los indicadores</td></tr>
+      <tr><td>Kendra (frontend)</td><td>Alvin</td><td>Conoce la API y los contratos</td></tr>
+      <tr><td>Vanesa (experimentos, calibración)</td><td>Christian</td><td>Ajusta las curvas con ella y conoce los escenarios</td></tr>
+      <tr><td>Christian (simulación)</td><td>Mateo (sensores) · Vanesa (análisis)</td><td>Conocen los modelos de sensor y los datos</td></tr>
+      <tr><td>Mateo (firmware, armado)</td><td>Christian</td><td>Diseñó la parte eléctrica (divisor, pull-ups) y conoce el contrato</td></tr>
+    </tbody>
+  </table>
+</div>

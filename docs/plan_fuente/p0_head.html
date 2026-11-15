@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>RotaSat — Plan de Proyecto</title>
+<style>
+  @page {
+    size: A4;
+    margin: 17mm 15mm 18mm 15mm;
+    @bottom-left { content: "RotaSat · Plan de Proyecto · NASA Space Apps 2026 · Field Shift"; font: 7.5pt "Segoe UI", sans-serif; color: #898781; }
+    @bottom-right { content: "Página " counter(page) " de " counter(pages); font: 7.5pt "Segoe UI", sans-serif; color: #898781; }
+  }
+  @page cover { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
+  :root {
+    --ink: #0b0b0b; --ink2: #52514e; --muted: #898781; --line: #d9d8d1; --soft: #f4f3ef;
+    --navy: #0d366b; --blue: #2a78d6; --blue-bg: #eaf2fc; --orange: #eb6834; --orange-bg: #fdeee7;
+    --green: #1b7a3e; --green-bg: #e8f4ec; --amber: #b7791f; --amber-bg: #fdf4e1; --red: #c53030; --red-bg: #fbeaea;
+  }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; background: #ffffff; color: var(--ink); }
+  body { font-family: "Segoe UI", Calibri, system-ui, sans-serif; font-size: 9.4pt; line-height: 1.45; }
+  p { margin: 0 0 6pt 0; }
+  ul, ol { margin: 0 0 6pt 0; padding-left: 16pt; }
+  li { margin-bottom: 2pt; }
+  strong { font-weight: 650; }
+  code, pre { font-family: Consolas, "Cascadia Mono", monospace; }
+  code { font-size: 8.4pt; background: var(--soft); padding: 0 3pt; border-radius: 3pt; }
+  pre { font-size: 7.6pt; line-height: 1.35; background: #f7f7f4; border: 1px solid var(--line); border-radius: 5pt; padding: 7pt 9pt; white-space: pre-wrap; break-inside: avoid; margin: 0 0 8pt 0; }
+  a { color: var(--blue); text-decoration: none; word-break: break-all; }
+
+  /* ---------- Cover ---------- */
+  .cover { page: cover; height: 297mm; width: 210mm; position: relative; overflow: hidden; background: #0d366b; color: #fff; }
+  .cover .band { position: absolute; inset: 0; background: linear-gradient(160deg, #0d366b 0%, #104281 55%, #1b7a3e 140%); }
+  .cover .inner { position: relative; padding: 26mm 20mm 0 20mm; }
+  .cover .kicker { font-size: 10pt; letter-spacing: 1.5pt; text-transform: uppercase; color: #b7d3f6; font-weight: 600; }
+  .cover h1.title { font-size: 54pt; line-height: 1; margin: 14pt 0 6pt 0; font-weight: 700; letter-spacing: -1pt; border: 0; color: #fff; }
+  .cover .subtitle { font-size: 17pt; font-weight: 300; color: #e8f0fb; margin-bottom: 14pt; }
+  .cover .motto { font-size: 12.5pt; font-style: italic; color: #cde2fb; border-left: 3pt solid #6fcf97; padding-left: 10pt; margin: 16pt 0 22pt 0; }
+  .cover .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8pt 18pt; font-size: 9.5pt; margin-bottom: 22pt; }
+  .cover .facts div span { display: block; color: #9ec5f4; font-size: 7.8pt; text-transform: uppercase; letter-spacing: 0.8pt; }
+  .cover .team { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 8pt; padding: 10pt 12pt; }
+  .cover .team h3 { color: #fff; font-size: 10pt; margin: 0 0 6pt 0; text-transform: uppercase; letter-spacing: 1pt; border: 0; padding: 0; }
+  .cover .team table { width: 100%; border-collapse: collapse; font-size: 9pt; color: #fff; }
+  .cover .team td { padding: 3.5pt 4pt; border-bottom: 1px solid rgba(255,255,255,0.12); vertical-align: top; }
+  .cover .team td.g { color: #9ec5f4; font-size: 7.8pt; text-transform: uppercase; letter-spacing: 0.6pt; width: 26%; }
+  .cover .foot { position: absolute; bottom: 16mm; left: 20mm; right: 20mm; font-size: 8pt; color: #b7d3f6; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8pt; }
+
+  /* ---------- Headings ---------- */
+  .section { break-before: page; }
+  h1 { font-size: 19pt; color: var(--navy); margin: 0 0 10pt 0; padding-bottom: 5pt; border-bottom: 2.5pt solid var(--navy); font-weight: 700; }
+  h1 .num { color: var(--blue); margin-right: 6pt; }
+  h2 { font-size: 12.6pt; color: var(--navy); margin: 14pt 0 6pt 0; font-weight: 650; break-after: avoid; }
+  h3 { font-size: 10.4pt; color: var(--ink); margin: 10pt 0 4pt 0; font-weight: 650; break-after: avoid; }
+  h4 { font-size: 9.4pt; color: var(--ink2); margin: 8pt 0 3pt 0; font-weight: 650; text-transform: uppercase; letter-spacing: 0.4pt; break-after: avoid; }
+  .lead { font-size: 10.4pt; color: var(--ink2); margin-bottom: 9pt; }
+
+  /* ---------- Tables ---------- */
+  table.t { width: 100%; border-collapse: collapse; font-size: 8.2pt; line-height: 1.35; margin: 2pt 0 9pt 0; }
+  table.t th { background: #e9eef6; color: var(--navy); text-align: left; font-weight: 650; padding: 4pt 5pt; border-bottom: 1.2pt solid #b7c6dc; vertical-align: bottom; }
+  table.t td { padding: 3.5pt 5pt; border-bottom: 0.6pt solid var(--line); vertical-align: top; }
+  table.t tr { break-inside: avoid; }
+  table.t thead { display: table-header-group; }
+  table.t.compact { font-size: 7.7pt; }
+  table.t.compact td, table.t.compact th { padding: 2.6pt 4pt; }
+  table.t td.c, table.t th.c { text-align: center; }
+  table.t td.r, table.t th.r { text-align: right; font-variant-numeric: tabular-nums; }
+  table.t tr.sub td { background: var(--soft); font-weight: 650; color: var(--navy); }
+  table.t.raci td.c { font-weight: 650; }
+
+  /* ---------- Callouts ---------- */
+  .callout { border-radius: 6pt; padding: 7pt 10pt; margin: 4pt 0 9pt 0; break-inside: avoid; border-left: 3.5pt solid; }
+  .callout p:last-child, .callout ul:last-child { margin-bottom: 0; }
+  .callout .h { font-weight: 700; margin-bottom: 2pt; display: block; }
+  .info { background: var(--blue-bg); border-color: var(--blue); }
+  .warn { background: var(--amber-bg); border-color: var(--amber); }
+  .ok { background: var(--green-bg); border-color: var(--green); }
+  .danger { background: var(--red-bg); border-color: var(--red); }
+
+  /* ---------- Chips & tags ---------- */
+  .chip { display: inline-block; font-size: 7.3pt; font-weight: 650; padding: 0.5pt 5pt; border-radius: 8pt; white-space: nowrap; vertical-align: 1px; }
+  .chip.app { background: var(--blue-bg); color: #1c5cab; border: 0.6pt solid #9ec5f4; }
+  .chip.hw { background: var(--orange-bg); color: #a8431b; border: 0.6pt solid #f3b597; }
+  .chip.all { background: #efeee9; color: #52514e; border: 0.6pt solid #c3c2b7; }
+  .tag { display: inline-block; font-size: 7pt; font-weight: 700; padding: 0 4pt; border-radius: 3pt; letter-spacing: 0.3pt; text-transform: uppercase; vertical-align: 1px; }
+  .t-obs { background: #dcefe3; color: #14572d; }
+  .t-der { background: #dfeafb; color: #184f95; }
+  .t-sup { background: #fbecd0; color: #8a5a10; }
+  .t-agr { background: #ece6fb; color: #4a3aa7; }
+  .t-sim { background: #fde2d6; color: #a8431b; }
+  .t-ilu { background: #ececec; color: #52514e; }
+  .t-na { background: #f7dddd; color: #9b2c2c; }
+
+  /* ---------- Layout helpers ---------- */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9pt 12pt; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8pt 10pt; }
+  .box { border: 0.8pt solid var(--line); border-radius: 6pt; padding: 7pt 9pt; break-inside: avoid; background: #fff; }
+  .box h3 { margin-top: 0; }
+  .box.app { border-top: 3pt solid var(--blue); }
+  .box.hw { border-top: 3pt solid var(--orange); }
+  .box.all { border-top: 3pt solid #898781; }
+  .kpi { font-size: 18pt; font-weight: 700; color: var(--navy); line-height: 1.1; }
+  .kpi-l { font-size: 7.8pt; color: var(--ink2); text-transform: uppercase; letter-spacing: 0.5pt; }
+  .muted { color: var(--muted); }
+  .small { font-size: 8pt; }
+  .figure { margin: 4pt 0 10pt 0; break-inside: avoid; text-align: center; }
+  .figure svg { max-width: 100%; height: auto; }
+  .caption { font-size: 7.8pt; color: var(--ink2); margin-top: 3pt; text-align: left; }
+  .avoid { break-inside: avoid; }
+  .pb { break-before: page; }
+
+  /* ---------- Person cards ---------- */
+  .person { break-before: page; }
+  .person .small, .person ul.small, .person .grid2.small { font-size: 7.7pt; line-height: 1.32; }
+  .person h4 { margin: 5pt 0 2pt 0; font-size: 8.4pt; }
+  .person .grid2 { gap: 4pt 12pt; }
+  .person .callout { padding: 5pt 8pt; margin: 2pt 0 0 0; }
+  .person ul { margin-bottom: 3pt; }
+  .person li { margin-bottom: 1pt; }
+  .person .ph { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2pt solid var(--navy); padding-bottom: 5pt; margin-bottom: 8pt; }
+  .person .ph .nm { font-size: 15pt; font-weight: 700; color: var(--navy); line-height: 1.1; }
+  .person .ph .rl { font-size: 9.6pt; color: var(--ink2); }
+  .person.hwp .ph { border-color: var(--orange); }
+  .person.hwp .ph .nm { color: #a8431b; }
+  .mission { font-size: 9pt; background: var(--soft); border-radius: 6pt; padding: 5pt 8pt; margin-bottom: 6pt; }
+  table.steps { width: 100%; border-collapse: collapse; font-size: 7.6pt; line-height: 1.3; margin-bottom: 6pt; }
+  table.steps td { padding: 2.2pt 4pt; border-bottom: 0.6pt solid var(--line); vertical-align: top; }
+  table.steps td.h { width: 17%; font-weight: 650; color: var(--navy); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  table.steps tr { break-inside: avoid; }
+  table.steps tr.cp td { background: #fff3f0; }
+  table.steps tr.rest td { background: #f4f3ef; color: var(--ink2); }
+
+  /* ---------- TOC ---------- */
+  .toc { font-size: 10pt; }
+  .toc .row { display: flex; align-items: baseline; padding: 3.2pt 0; border-bottom: 0.5pt dotted #c3c2b7; }
+  .toc .row .n { width: 26pt; color: var(--blue); font-weight: 700; }
+  .toc .row .tt { flex: 1; }
+  .toc .row .pg { width: 30pt; text-align: right; color: var(--ink2); font-variant-numeric: tabular-nums; }
+  .toc .row.s { font-size: 8.6pt; color: var(--ink2); padding: 1.6pt 0 1.6pt 26pt; border-bottom: 0; }
+</style>
+</head>
+<body>
+
+<!-- ======================= PORTADA ======================= -->
+<div class="cover">
+  <div class="band"></div>
+  <div class="inner">
+    <div class="kicker">NASA Space Apps Challenge 2026 · Reto «Field Shift: Adapting Farms with NASA Data»</div>
+    <h1 class="title">RotaSat</h1>
+    <div class="subtitle">Plan de Proyecto: el documento central del equipo<br>problema · solución · aplicación · simulación · prototipo · paso a paso por integrante</div>
+    <div class="motto">«Decidí qué sembrar después, con información sobre el clima y tu tierra.»</div>
+    <div class="facts">
+      <div><span>Zona piloto</span>Cuatro Cañadas, Santa Cruz, Bolivia<br>Punto de referencia: −17.2374, −62.2427</div>
+      <div><span>Ventana de trabajo</span>Sábado 14 nov 2026, 09:00 → Domingo 15 nov 2026, 09:00 (24 h)<br>Meta interna de envío: domingo 08:00</div>
+      <div><span>Producto</span>App web móvil de apoyo a la decisión de rotación de cultivos con datos NASA y un motor explicable</div>
+      <div><span>Extensión física</span>Nodo de campo ESP32 de 3 zonas: primero simulado (gemelo digital + Wokwi) y luego físico</div>
+    </div>
+    <div class="team">
+      <h3>Equipo FarmealoTu (6 integrantes)</h3>
+      <table>
+        <tr><td class="g">Subequipo App</td><td><strong>Alvin</strong> (Ing. Sistemas): líder técnico, coordinación general y datos NASA</td></tr>
+        <tr><td class="g"></td><td><strong>Matías</strong> (Ing. Sistemas): motor de recomendación y API</td></tr>
+        <tr><td class="g"></td><td><strong>Kendra</strong> (Ing. Sistemas): frontend y experiencia de usuario</td></tr>
+        <tr><td class="g">Subequipo Prototipo y Simulación</td><td><strong>Vanesa</strong> (Ing. Industrial): líder del prototipo, diseño de experimentos, calibración y datos</td></tr>
+        <tr><td class="g"></td><td><strong>Christian</strong> (Ing. Electromecánica): simulación física (gemelo digital) y modelos</td></tr>
+        <tr><td class="g"></td><td><strong>Mateo</strong> (Ing. Electromecánica): circuito, firmware ESP32 y armado del prototipo</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="foot">Versión 1.0 · 14 de noviembre de 2026 · Unifica el enunciado oficial del reto, el prompt del MVP de RotaSat, el Plan Maestro Unificado y la guía de simulación y hardware, con las decisiones del equipo del 14-nov. Las guías oficiales 2026 de envío y de jurado de Space Apps prevalecen sobre este documento.</div>
+</div>
+
+<!-- ======================= ÍNDICE ======================= -->
+<div class="section">
+  <h1>Índice</h1>
+  <div class="toc">
+    <div class="row"><span class="n">0</span><span class="tt">Cómo usar este documento y decisiones de unificación</span><span class="pg" data-sec="s0"></span></div>
+    <div class="row"><span class="n">1</span><span class="tt">Resumen ejecutivo</span><span class="pg" data-sec="s1"></span></div>
+    <div class="row"><span class="n">2</span><span class="tt">El problema y el análisis del reto</span><span class="pg" data-sec="s2"></span></div>
+    <div class="row s">Contexto de Cuatro Cañadas · qué pide el reto · criterios del jurado · matriz de cumplimiento</div>
+    <div class="row"><span class="n">3</span><span class="tt">La solución: RotaSat</span><span class="pg" data-sec="s3"></span></div>
+    <div class="row s">Arquitectura · datos NASA · indicadores · motor de recomendación · puntuación multicriterio · incertidumbre · estrategias E0–E3</div>
+    <div class="row"><span class="n">4</span><span class="tt">La aplicación</span><span class="pg" data-sec="s4"></span></div>
+    <div class="row s">Pantallas · entrada conversacional · 4 módulos · visor geoespacial · «Datos de terreno» · API · repositorio</div>
+    <div class="row"><span class="n">5</span><span class="tt">La simulación: gemelo digital, Wokwi y paso al mundo físico</span><span class="pg" data-sec="s5"></span></div>
+    <div class="row s">Motores recomendados · modelos físicos · modelos de sensores · escenarios · exportación en dos grupos</div>
+    <div class="row"><span class="n">6</span><span class="tt">El prototipo físico (pequeño): nodo de campo de 3 zonas</span><span class="pg" data-sec="s6"></span></div>
+    <div class="row s">Sensores · materiales · conexiones · armado · calibración · protocolo experimental</div>
+    <div class="row"><span class="n">7</span><span class="tt">Equipo, roles y paso a paso de cada integrante</span><span class="pg" data-sec="s7"></span></div>
+    <div class="row s">Alvin · Matías · Kendra · Vanesa · Christian · Mateo · matriz RACI · respaldos</div>
+    <div class="row"><span class="n">8</span><span class="tt">Cronograma de 24 horas</span><span class="pg" data-sec="s8"></span></div>
+    <div class="row"><span class="n">9</span><span class="tt">Interfaces y contratos entre subequipos</span><span class="pg" data-sec="s9"></span></div>
+    <div class="row"><span class="n">10</span><span class="tt">Riesgos y planes de contingencia</span><span class="pg" data-sec="s10"></span></div>
+    <div class="row"><span class="n">11</span><span class="tt">Validación, pruebas y criterios de aceptación</span><span class="pg" data-sec="s11"></span></div>
+    <div class="row"><span class="n">12</span><span class="tt">Entrega, presentación y defensa ante el jurado</span><span class="pg" data-sec="s12"></span></div>
+    <div class="row"><span class="n">13</span><span class="tt">Anexos: backlog, glosario, comandos y fuentes</span><span class="pg" data-sec="s13"></span></div>
+  </div>
+</div>
+
+<!-- ======================= 0 ======================= -->
+<div class="section" id="s0">
+  <h1><span class="num">0</span>Cómo usar este documento y decisiones de unificación</h1>
+  <p class="lead">Este es el documento central del proyecto. Reúne en un solo plan los cuatro documentos de trabajo y las decisiones que tomamos el 14 de noviembre. Ante una duda durante el evento, se consulta aquí primero.</p>
+
+  <div class="grid2">
+    <div class="box all">
+      <h3>Si solo tenés 10 minutos</h3>
+      <ol>
+        <li>Leé el <strong>resumen ejecutivo</strong> (sección 1).</li>
+        <li>Buscá <strong>tu ficha personal</strong> en la sección 7: misión, paso a paso con horas, entregables y plan B.</li>
+        <li>Mirá el <strong>cronograma de 24 h</strong> (sección 8) y los <strong>traspasos</strong> que te tocan (sección 9).</li>
+      </ol>
+    </div>
+    <div class="box all">
+      <h3>Jerarquía de documentos</h3>
+      <ol>
+        <li>Guías oficiales 2026 de Space Apps (envío y jurado).</li>
+        <li><strong>Este plan</strong> (v1.0, 14-nov-2026).</li>
+        <li>Prompt del MVP de RotaSat (detalle técnico de la app).</li>
+        <li>Plan Maestro Unificado (referencia de fondo).</li>
+      </ol>
+      <p class="small muted">Si un documento contradice a otro de nivel superior, se sigue el de nivel superior y se anota en el registro de decisiones.</p>
+    </div>
+  </div>
+
+  <h2>Convenciones del documento y de la app</h2>
+  <p>Todo dato que mostremos lleva una <strong>etiqueta de procedencia</strong>. Es una regla del prompt del MVP («diferenciar siempre datos observados, estimaciones, supuestos y demostraciones») y se usa igual en este plan, en la API (<code>evidence_status</code>) y en la interfaz.</p>
+  <table class="t">
+    <thead><tr><th style="width:17%">Etiqueta</th><th style="width:16%">Valor en la API</th><th>Significado</th><th style="width:30%">Ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag t-obs">Documentado / observado</span></td><td><code>documented</code></td><td>Respaldado directamente por una fuente o por una observación NASA.</td><td>Producción de soya 2023 (MDPyEP); lluvia diaria NASA POWER</td></tr>
+      <tr><td><span class="tag t-der">Derivado</span></td><td><code>derived</code></td><td>Calculado por nosotros a partir de datos, con una fórmula documentada.</td><td>Racha seca máxima, ET0 FAO-56, anomalía de lluvia</td></tr>
+      <tr><td><span class="tag t-sup">Supuesto</span></td><td><code>assumption</code></td><td>Decisión explícita sin respaldo directo; se declara y se puede cambiar.</td><td>Pesos iniciales 0.40 / 0.35 / 0.25</td></tr>
+      <tr><td><span class="tag t-agr">Del agricultor</span></td><td><code>farmer_provided</code></td><td>Información que da el usuario.</td><td>Rotación actual, riego, notas del terreno</td></tr>
+      <tr><td><span class="tag t-na">No disponible</span></td><td><code>unavailable</code></td><td>Dato faltante. Nunca se rellena en silencio.</td><td>Análisis de suelo, SMAP si no se descargó</td></tr>
+      <tr><td><span class="tag t-sim">Simulado</span></td><td><code>source: simulated | wokwi</code></td><td>Producido por el gemelo digital o por Wokwi. Nunca se presenta como medición.</td><td>Curvas del nodo en el escenario «sequía»</td></tr>
+      <tr><td><span class="tag t-ilu">Ilustrativo</span></td><td>—</td><td>Solo aparece en este documento: ejemplos o cifras que todavía no son resultado del motor.</td><td>Ejemplo de tarjeta de estrategia</td></tr>
+    </tbody>
+  </table>
+  <p>En las tablas, el responsable de cada tarea se marca con un chip: <span class="chip app">App</span> para Alvin, Matías y Kendra; <span class="chip hw">Prototipo</span> para Vanesa, Christian y Mateo; <span class="chip all">Todos</span> para bloques compartidos.</p>
+
+  <h2>Decisiones de unificación (los documentos no coincidían)</h2>
+  <p>Al cruzar los documentos aparecieron diferencias. Esta tabla fija qué se hace. <strong>Si el equipo acuerda otra cosa, se corrige aquí y se avisa por el canal.</strong></p>
+  <table class="t compact">
+    <thead><tr><th style="width:15%">Tema</th><th style="width:38%">Qué decía cada documento</th><th>Decisión en este plan</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Región piloto</strong></td><td>El Plan Maestro dejaba la región abierta, con criterios de elección. El prompt del MVP fija Cuatro Cañadas.</td><td>Solo Cuatro Cañadas, con el punto de referencia −17.2374, −62.2427. El agricultor puede indicar otro punto dentro del área piloto.</td></tr>
+      <tr><td><strong>Estrategias</strong></td><td>Plan Maestro: E3 = «Ingreso y forraje». Prompt del MVP: E3 = «Equilibrada».</td><td><strong>E0 Actual · E1 Cuidar suelo · E2 Cuidar agua · E3 Equilibrada.</strong> No hay datos de precios ni de forraje que respalden una E3 económica.</td></tr>
+      <tr><td><strong>Criterios del puntaje</strong></td><td>Plan Maestro: 6 criterios (suelo, agua, riesgo, plagas, economía, factibilidad). MVP: 3 criterios.</td><td>3 criterios cuantitativos: <strong>agua 0.40 · suelo 0.35 · riesgo 0.25</strong>, ajustables por el agricultor. Plagas entra en el criterio de suelo (diversidad de familias). Economía queda como criterio cualitativo hasta tener datos del agricultor.</td></tr>
+      <tr><td><strong>Incertidumbre</strong></td><td>Plan Maestro: Monte Carlo con 500 corridas y pesos perturbados. MVP: bootstrap de 200 iteraciones por años.</td><td><strong>Bootstrap de 200 iteraciones remuestreando años climáticos completos</strong>, con semilla fija, P10/P50/P90 y estabilidad del ranking.</td></tr>
+      <tr><td><strong>Stack de la interfaz</strong></td><td>Plan Maestro: React o Streamlit. MVP: React + Vite + TypeScript + Tailwind.</td><td>React + Vite + TS + Tailwind, con Leaflet y Recharts. <strong>Se descarta Streamlit.</strong></td></tr>
+      <tr><td><strong>Equipo</strong></td><td>El Plan Maestro asumía 4 Sistemas, 1 Industrial y 1 Electromecánica. El equipo real tiene 3 Sistemas, 1 Industrial y 2 Electromecánica.</td><td>Los 3 de Sistemas hacen la app; Vanesa, Christian y Mateo hacen la simulación y el prototipo. Las tareas del antiguo rol «I1» se reparten así: base agrícola con fuentes → Matías; pitch, envío y coordinación → Alvin; diseño de experimentos y calibración → Vanesa.</td></tr>
+      <tr><td><strong>Sensores</strong></td><td>Plan Maestro: BME280. Guía de hardware: sensores internos de humedad y temperatura, y externos LDR y ambiental. Equipo: BME680, LDR y DHT11.</td><td>Internos: <strong>3 × humedad capacitiva v1.2 + 3 × DS18B20</strong>. Externos: <strong>BME680</strong> como sensor principal (temperatura, humedad, presión y gas), <strong>DHT11</strong> como redundancia para control de calidad y <strong>LDR</strong> para la luz. El prototipo es pequeño: 3 macetas.</td></tr>
+      <tr><td><strong>Rol del hardware</strong></td><td>La guía nueva pide simular primero y después pasar al físico.</td><td>Hay 3 etapas con <strong>el mismo contrato JSON y el mismo firmware</strong>: gemelo digital en Python → Wokwi → placa física. El nodo <strong>no alimenta el motor de recomendación</strong> en el MVP: alimenta la pestaña «Datos de terreno».</td></tr>
+      <tr><td><strong>Cronograma</strong></td><td>Plan Maestro: sábado 9:00 a domingo 20:00, con noche de descanso. MVP: 12 h de implementación.</td><td>Ventana real de <strong>24 h, de sáb 09:00 a dom 09:00</strong>. La app queda funcional en unas 12 h (checkpoint 2, 21:00). Hay dos turnos de descanso rotativos y el envío es a las 08:00.</td></tr>
+      <tr><td><strong>Coordinación</strong></td><td>El Plan Maestro daba gestión y pitch al rol Industrial.</td><td>Vanesa trabaja solo en prototipo y simulación (decisión del equipo). <strong>Alvin coordina</strong> el proyecto, el pitch y el formulario; Vanesa lidera el subequipo de prototipo.</td></tr>
+      <tr><td><strong>Tabla de producción 2023</strong></td><td>En el prompt del MVP la tabla llegó «aplanada», con los números pegados.</td><td>Se re-tabuló en la sección 2.2. Los rendimientos implícitos salen coherentes, pero <strong>hay que verificar las cifras contra el PDF de la fuente antes de publicarlas</strong>.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ======================= 1 ======================= -->
+<div class="section" id="s1">
+  <h1><span class="num">1</span>Resumen ejecutivo</h1>
+
+  <div class="callout info"><span class="h">El reto en una frase</span>
+  Crear una herramienta de apoyo a la decisión que combine observaciones de la Tierra de la NASA con información local de suelo, características de cultivos y prioridades del agricultor. La herramienta debe comparar <strong>al menos tres estrategias de rotación, incluida la actual</strong>, y explicar para cada una por qué se sugiere, qué evidencia la respalda, qué beneficios puede tener, qué información falta y qué riesgos debe revisar un experto local. <strong>Apoya, no reemplaza</strong>, el criterio del agricultor.</div>
+
+  <div class="grid2">
+    <div class="box app">
+      <h3>Lo que construimos: la app RotaSat <span class="chip app">App</span></h3>
+      <p>Una aplicación web <strong>mobile-first</strong> para agricultores de Cuatro Cañadas. El agricultor cuenta qué siembra, qué sembró antes, qué le preocupa y si tiene riego. RotaSat calcula, con <strong>datos NASA POWER reales</strong> (lluvia, temperatura, radiación, viento y humedad) y una base agrícola local con fuentes, cuatro estrategias: <strong>E0 Actual, E1 Cuidar suelo, E2 Cuidar agua y E3 Equilibrada</strong>.</p>
+      <p>Cada estrategia trae su puntuación, su rango de incertidumbre, sus ventajas y desventajas, la información que falta y las preguntas para el agrónomo. La app tiene <strong>4 módulos</strong> (Comparar, Ventajas y desventajas, Riesgos e Incertidumbre), un <strong>visor geoespacial de 5 capas</strong> y la pestaña <strong>«Datos de terreno»</strong>.</p>
+    </div>
+    <div class="box hw">
+      <h3>La extensión física: nodo de campo <span class="chip hw">Prototipo</span></h3>
+      <p>Un nodo <strong>ESP32</strong> pequeño con 3 macetas (zonas A seca, B media y C húmeda). Mide la <strong>humedad y la temperatura del suelo</strong> de cada zona (sensores internos) y la <strong>temperatura, humedad, presión, gas y luz</strong> del aire (sensores externos: BME680, DHT11 y LDR).</p>
+      <p>Se construye en 3 etapas: <strong>gemelo digital en Python</strong>, forzado con datos NASA POWER de Cuatro Cañadas → <strong>simulación del circuito y del firmware en Wokwi</strong> → <strong>placa física</strong> con el mismo firmware. Así demuestra que un campo no es uniforme y que el satélite da contexto regional, mientras que el sensor da la verdad local.</p>
+    </div>
+  </div>
+
+  <h2>Entregables finales (domingo 08:00)</h2>
+  <div class="grid3">
+    <div class="box"><div class="kpi">1</div><div class="kpi-l">App pública</div>Frontend y API desplegados (o ejecución local con túnel), utilizables desde un teléfono.</div>
+    <div class="box"><div class="kpi">1</div><div class="kpi-l">Repositorio abierto</div>Monorepo con README, fuentes, limitaciones, pruebas A–N e instrucciones para Windows PowerShell.</div>
+    <div class="box"><div class="kpi">4</div><div class="kpi-l">Estrategias por consulta</div>E0–E3, cada una con los 5 bloques del reto, P10–P90 y preguntas para el agrónomo.</div>
+    <div class="box"><div class="kpi">3</div><div class="kpi-l">Etapas del nodo</div>Gemelo digital (Python), Wokwi (ESP32) y prototipo físico calibrado.</div>
+    <div class="box"><div class="kpi">7 / 30 s</div><div class="kpi-l">Demo</div>7 diapositivas o un video de 30 s, más el guion de 3 minutos con riego en vivo.</div>
+    <div class="box"><div class="kpi">EN</div><div class="kpi-l">Formulario</div>Envío en inglés con datos NASA usados, otros recursos y declaración de uso de IA.</div>
+  </div>
+
+  <h2>Tres reglas de oro</h2>
+  <ol>
+    <li><strong>De punta a punta antes que perfecto.</strong> A las <strong>17:00</strong> del sábado tiene que funcionar el recorrido NASA → Python → indicadores → recomendación → pantalla, aunque sea feo.</li>
+    <li><strong>Todo número lleva fuente, fecha, unidad y escala.</strong> Nada de datos satelitales inventados. Los datos simulados se marcan siempre como <span class="tag t-sim">Simulado</span>.</li>
+    <li><strong>Nada de promesas.</strong> Mostramos patrones, rangos e incertidumbre, y dejamos preguntas para el agrónomo. RotaSat interpreta datos NASA; <em>NASA no recomienda cultivos</em>.</li>
+  </ol>
+
+  <h2>Hitos que no se mueven</h2>
+  <table class="t compact">
+    <thead><tr><th style="width:12%">Hora</th><th style="width:34%">Hito</th><th>Criterio de salida</th></tr></thead>
+    <tbody>
+      <tr><td>Sáb 09:45</td><td>Contratos congelados</td><td>OpenAPI v0 y <code>sensor_reading.schema.json</code> v1 acordados por todos y subidos al repo.</td></tr>
+      <tr><td>Sáb 10:30</td><td>API con mocks</td><td>Todos los endpoints responden con datos de ejemplo; Kendra y Mateo pueden trabajar sin esperar.</td></tr>
+      <tr><td>Sáb 11:30</td><td>NASA POWER en caché</td><td>Serie diaria 2015–2025 y 2026 reciente guardadas; CSV horario entregado a Christian.</td></tr>
+      <tr><td>Sáb 14:30</td><td><code>physics.py</code> (ET0)</td><td>ET0 FAO-56 reproduce el ejemplo de FAO; Christian se lo entrega a Alvin.</td></tr>
+      <tr><td><strong>Sáb 17:00</strong></td><td><strong>Checkpoint 1</strong></td><td>Recorrido extremo a extremo de la app con ≥ 3 estrategias reales. JSON válido desde la simulación y desde Wokwi. Go/no-go del nodo físico.</td></tr>
+      <tr><td><strong>Sáb 21:00</strong></td><td><strong>Checkpoint 2</strong></td><td>Los 4 módulos funcionando, con incertidumbre. Nodo físico enviando a la API (o replay simulado como plan B). Alcance congelado.</td></tr>
+      <tr><td>Dom 01:00</td><td>Congelación de funciones</td><td>Desde aquí solo se corrigen errores, se documenta y se prepara el pitch.</td></tr>
+      <tr><td>Dom 06:00</td><td>QA con ojos nuevos</td><td>Prueba F en teléfono (menos de 3 min) y enlaces revisados en ventana privada.</td></tr>
+      <tr><td><strong>Dom 08:00</strong></td><td><strong>Envío</strong></td><td>Formulario en estado «enviado», verificado. De 08:30 a 09:00 queda un colchón solo para emergencias.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn"><span class="h">Mínimo funcional si el tiempo aprieta</span>
+  <strong>App:</strong> NASA POWER, indicadores, E0/E1/E2 y los 4 módulos en versión simple; el visor muestra «Información regional». <strong>Prototipo:</strong> gemelo digital y replay hacia la pestaña «Datos de terreno», con la insignia <span class="tag t-sim">Simulado</span>; el físico se muestra en fotos si no llega. Esta decisión se toma en el checkpoint 1.</div>
+</div>
